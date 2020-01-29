@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">QuantiTanti</string>
+    <string name="car_transport"><![CDATA[Car & transport]]></string>
+    <string name="clothes_shoes"><![CDATA[Clothes & shoes]]></string>
+    <string name="food_drinks"><![CDATA[Food & drinks]]></string>
+    <string name="utilities">Utilities</string>
+    <string name="groceries">Groceries</string>
+    <string name="education">Education</string>
+    <string name="sport_activities">Sport activities</string>
+    <string name="cosmetics">Cosmetics</string>
+    <string name="other_stuff">Other stuff</string>
+    <string name="pick_your_cost_category">Pick your cost category:</string>
+</resources>

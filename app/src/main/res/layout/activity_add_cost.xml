@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddCostActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar_ac"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"></androidx.appcompat.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/tv_addCost_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/pick_your_cost_category"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar_ac"></TextView>
+
+
+    <ImageButton
+        android:id="@+id/iBtn_clothes"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:alpha="0.3"
+        app:layout_constraintBottom_toBottomOf="@+id/iBtn_food"
+        app:layout_constraintEnd_toStartOf="@+id/iBtn_food"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iBtn_car"
+        app:layout_constraintTop_toTopOf="@+id/iBtn_food"
+        app:srcCompat="@drawable/clothes" />
+
+    <ImageButton
+        android:id="@+id/iBtn_car"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:alpha="0.3"
+        app:layout_constraintBottom_toBottomOf="@+id/iBtn_clothes"
+        app:layout_constraintEnd_toStartOf="@+id/iBtn_clothes"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iBtn_clothes"
+        app:srcCompat="@drawable/car" />
+
+
+    <ImageButton
+        android:id="@+id/iBtn_food"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:alpha="0.3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iBtn_clothes"
+        app:layout_constraintTop_toBottomOf="@+id/tv_addCost_label"
+        app:srcCompat="@drawable/food" />
+
+    <ImageButton
+        android:id="@+id/iBtn_utilities"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:alpha="0.3"
+        app:layout_constraintBottom_toBottomOf="@+id/iBtn_groceries"
+        app:layout_constraintEnd_toStartOf="@+id/iBtn_groceries"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iBtn_groceries"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/utilities" />
+
+    <ImageButton
+        android:id="@+id/iBtn_education"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:alpha="0.3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iBtn_groceries"
+        app:layout_constraintTop_toBottomOf="@+id/tv_category_label_food"
+        app:srcCompat="@drawable/education" />
+
+
+    <ImageButton
+        android:id="@+id/iBtn_groceries"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:alpha="0.3"
+        app:layout_constraintBottom_toBottomOf="@+id/iBtn_education"
+        app:layout_constraintEnd_toStartOf="@+id/iBtn_education"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iBtn_utilities"
+        app:layout_constraintTop_toTopOf="@+id/iBtn_education"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/groceries" />
+
+    <ImageButton
+        android:id="@+id/iBtn_sport"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:alpha="0.3"
+        app:layout_constraintBottom_toBottomOf="@+id/iBtn_cosmetics"
+        app:layout_constraintEnd_toStartOf="@+id/iBtn_cosmetics"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iBtn_cosmetics"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/sport" />
+
+    <TextView
+        android:id="@+id/tv_category_label_cosmetics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cosmetics"
+        app:layout_constraintEnd_toEndOf="@+id/iBtn_cosmetics"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toStartOf="@+id/iBtn_cosmetics"
+        app:layout_constraintTop_toBottomOf="@+id/iBtn_cosmetics" />
+
+    <TextView
+        android:id="@+id/tv_category_label_sport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sport_activities"
+        app:layout_constraintEnd_toEndOf="@+id/iBtn_sport"
+        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintStart_toStartOf="@+id/iBtn_sport"
+        app:layout_constraintTop_toBottomOf="@+id/iBtn_sport" />
+
+    <TextView
+        android:id="@+id/tv_category_label_other"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/other_stuff"
+        app:layout_constraintEnd_toEndOf="@+id/iBtn_other"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toStartOf="@+id/iBtn_other"
+        app:layout_constraintTop_toBottomOf="@+id/iBtn_other" />
+
+    <ImageButton
+        android:id="@+id/iBtn_other"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:alpha="0.3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iBtn_cosmetics"
+        app:layout_constraintTop_toBottomOf="@+id/tv_category_label_education"
+        app:srcCompat="@drawable/other" />
+
+    <ImageButton
+        android:id="@+id/iBtn_cosmetics"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:alpha="0.3"
+        app:layout_constraintBottom_toBottomOf="@+id/iBtn_other"
+        app:layout_constraintEnd_toStartOf="@+id/iBtn_other"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iBtn_sport"
+        app:layout_constraintTop_toTopOf="@+id/iBtn_other"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/cosmetics" />
+
+
+    <EditText
+        android:id="@+id/et_costDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="28dp"
+        android:hint="Cost description"
+        android:inputType="textPersonName"
+        android:singleLine="false"
+        app:layout_constraintEnd_toStartOf="@+id/et_costValue"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_category_label_sport" />
+
+    <EditText
+        android:id="@+id/et_costValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:gravity="end"
+        android:hint="Cost value"
+        android:inputType="number|numberDecimal"
+        android:singleLine="true"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_costDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1" />
+
+    <TextView
+        android:id="@+id/tv_category_label_car"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/car_transport"
+        app:layout_constraintEnd_toEndOf="@+id/iBtn_car"
+        app:layout_constraintStart_toStartOf="@+id/iBtn_car"
+        app:layout_constraintTop_toBottomOf="@+id/iBtn_car" />
+
+    <TextView
+        android:id="@+id/tv_category_label_clothes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clothes_shoes"
+        app:layout_constraintEnd_toEndOf="@+id/iBtn_clothes"
+        app:layout_constraintStart_toStartOf="@+id/iBtn_clothes"
+        app:layout_constraintTop_toBottomOf="@+id/iBtn_clothes" />
+
+    <TextView
+        android:id="@+id/tv_category_label_food"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/food_drinks"
+        app:layout_constraintEnd_toEndOf="@+id/iBtn_food"
+        app:layout_constraintStart_toStartOf="@+id/iBtn_food"
+        app:layout_constraintTop_toBottomOf="@+id/iBtn_food" />
+
+    <TextView
+        android:id="@+id/tv_category_label_utilities"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/utilities"
+        app:layout_constraintEnd_toEndOf="@+id/iBtn_utilities"
+        app:layout_constraintStart_toStartOf="@+id/iBtn_utilities"
+        app:layout_constraintTop_toBottomOf="@+id/iBtn_utilities"
+        tools:layout_editor_absoluteX="66dp" />
+
+    <TextView
+        android:id="@+id/tv_category_label_groceries"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/groceries"
+        app:layout_constraintEnd_toEndOf="@+id/iBtn_groceries"
+        app:layout_constraintStart_toStartOf="@+id/iBtn_groceries"
+        app:layout_constraintTop_toBottomOf="@+id/iBtn_groceries"
+        tools:layout_editor_absoluteX="177dp" />
+
+    <TextView
+        android:id="@+id/tv_category_label_education"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/education"
+        app:layout_constraintEnd_toEndOf="@+id/iBtn_education"
+        app:layout_constraintStart_toStartOf="@+id/iBtn_education"
+        app:layout_constraintTop_toBottomOf="@+id/iBtn_education" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tv_category_label_education" type="id"></item>
+    <item name="tv_category_label_sport" type="id"></item>
+    <item name="tv_category_label_food" type="id"></item>
+</resources>
