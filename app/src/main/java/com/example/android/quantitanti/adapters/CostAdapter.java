@@ -75,7 +75,7 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
         // Set values
         holder.tv_weekDay.setText(week_day);
         holder.tv_dateNo.setText(date_No);
-        holder.tv_mainCost.setText(mainCostString);
+        holder.tv_mainCost.setText(mainCostString + " kn");
         holder.tv_date_for_frontPage.setText(month + ", " + year);
 
         //mjesec i godina -> grupiranje itema
