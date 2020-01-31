@@ -184,7 +184,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="28dp"
         android:hint="Cost description"
-        android:inputType="textPersonName"
+        android:inputType="textShortMessage|textMultiLine"
         android:singleLine="false"
         app:layout_constraintEnd_toStartOf="@+id/et_costValue"
         app:layout_constraintHorizontal_weight="2"
