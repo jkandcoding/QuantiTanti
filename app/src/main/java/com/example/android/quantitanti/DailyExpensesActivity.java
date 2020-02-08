@@ -3,21 +3,23 @@ package com.example.android.quantitanti;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,15 +30,12 @@ import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.factories.DailyExpensesViewModelFactory;
 import com.example.android.quantitanti.helpers.Helper;
 import com.example.android.quantitanti.models.DailyExpensesViewModel;
+import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.threeten.bp.LocalDate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -52,7 +51,7 @@ import static com.example.android.quantitanti.database.CostEntry.CATEGORY_8;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_9;
 import static java.lang.String.valueOf;
 
-public class DailyExpensesActivity extends AppCompatActivity implements DailyCostAdapter.DailyItemClickListener{
+public class DailyExpensesActivity extends AppCompatActivity implements DailyCostAdapter.DailyItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     // Constant for logging
     private static final String TAG = CostListActivity.class.getSimpleName();
@@ -62,6 +61,10 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
     private DailyCostAdapter mAdapter;
 
     private CostDatabase mDb;
+
+    //constants for sp currency
+    public static String currency1;
+    public static String currency2;
 
     // Extra for the cost ID to be received after rotation
     public static final String INSTANCE_COST_ID = "instanceCostId";
@@ -93,8 +96,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
     int category8Cost;
     int category9Cost;
 
-    String valueString;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,13 +110,13 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // set calender on Toolbar
-            LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View calender = inflater.inflate(R.layout.calender_view, null);
-            myToolbar.addView(calender);
-         // set TextView on Toolbar
-            LayoutInflater inflater2 = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View monthYear = inflater2.inflate(R.layout.tv_toolbar_montyear, null);
-            myToolbar.addView(monthYear);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View calender = inflater.inflate(R.layout.calender_view, null);
+        myToolbar.addView(calender);
+        // set TextView on Toolbar
+        LayoutInflater inflater2 = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View monthYear = inflater2.inflate(R.layout.tv_toolbar_montyear, null);
+        myToolbar.addView(monthYear);
 
         mRecyclerView = findViewById(R.id.recyclerViewDailyCost);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -143,8 +144,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                 });
             }
         }
-
-
 
         /**
          * Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
@@ -189,9 +188,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                 });
                 builder.create();
                 builder.show();
-
-
-
             }
         }).attachToRecyclerView(mRecyclerView);
 
@@ -215,6 +211,7 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         }
         initViews();
 
+        setupSharedPreferences();
     }
 
     private void initViews() {
@@ -227,7 +224,7 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         String week_day = Helper.fromUperCaseToFirstCapitalizedLetter
                 (LocalDate.parse(mCostDate).getDayOfWeek().toString());
         String date_No = valueOf(LocalDate.parse(mCostDate).getDayOfMonth());
-        String month =Helper.fromUperCaseToFirstCapitalizedLetter
+        String month = Helper.fromUperCaseToFirstCapitalizedLetter
                 (LocalDate.parse(mCostDate).getMonth().toString());
         String year = valueOf(LocalDate.parse(mCostDate).getYear());
 
@@ -247,7 +244,7 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         Intent intent = new Intent(DailyExpensesActivity.this, AddCostActivity.class);
         intent.putExtra(AddCostActivity.EXTRA_COST_ID, itemId);
         startActivity(intent);
-        }
+    }
 
     @Override
     protected void onStart() {
@@ -263,12 +260,12 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
 
                 category1Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_1);
                 if (category1Cost != 0) {
-                categoryCosts.put(CATEGORY_1, category1Cost);
+                    categoryCosts.put(CATEGORY_1, category1Cost);
                 }
 
                 category2Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_2);
                 if (category2Cost != 0) {
-                categoryCosts.put(CATEGORY_2, category2Cost);
+                    categoryCosts.put(CATEGORY_2, category2Cost);
                 }
 
                 category3Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_3);
@@ -306,7 +303,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                     categoryCosts.put(CATEGORY_9, category9Cost);
                 }
 
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -316,24 +312,75 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                         Map.Entry<String, Integer> lastEntry = ((TreeMap<String, Integer>) categoryCosts).lastEntry();
                         for (Map.Entry<String, Integer> entry : categoryCosts.entrySet()) {
                             if ((entry.getKey() + "=" + entry.getValue()).equals(lastEntry.toString())) {
-                                tv_category_costs.append(entry.getKey()+": "+ Helper.fromIntToDecimalString(entry.getValue()) + " kn");
+                                tv_category_costs.append(entry.getKey() + ": " + currency1 + Helper.fromIntToDecimalString(entry.getValue()) + currency2);
                             } else {
-                                tv_category_costs.append(entry.getKey() + ": " + Helper.fromIntToDecimalString(entry.getValue()) + " kn\n");
-
+                                tv_category_costs.append(entry.getKey() + ": " + currency1 + Helper.fromIntToDecimalString(entry.getValue()) + currency2 + "\n");
                             }
-
                         }
 
-
                         // update total cost
-                        tv_total_cost.setText("TOTAL: " + totalCostString + " kn");
-
-
+                        tv_total_cost.setText("TOTAL: " + currency1 + totalCostString + currency2);
                     }
                 });
             }
         });
     }
 
-}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_daily_cost, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+            startActivity(startSettingsActivity);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        setCurrencyFromPreferences(sharedPreferences);
+        // Register the listener
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    private void setCurrencyFromPreferences(SharedPreferences sharedPreferences) {
+        String currency = sharedPreferences.getString(getString(R.string.pref_currency_key),
+                getString(R.string.pref_currency_value_kuna));
+        if (currency.equals(getString(R.string.pref_currency_value_kuna))) {
+            currency1 = "";
+            currency2 = " kn";
+        } else if (currency.equals(getString(R.string.pref_currency_value_euro))) {
+            currency1 = "";
+            currency2 = " €";
+        } else if (currency.equals(getString(R.string.pref_currency_value_pound))) {
+            currency1 = "£";
+            currency2 = "";
+        } else if (currency.equals(getString(R.string.pref_currency_value_dollar))) {
+            currency1 = "$";
+            currency2 = "";
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_currency_key))) {
+            setCurrencyFromPreferences(sharedPreferences);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister VisualizerActivity as an OnPreferenceChangedListener to avoid any memory leaks.
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+}

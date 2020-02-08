@@ -1,11 +1,6 @@
 package com.example.android.quantitanti.helpers;
 
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.util.Log;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Helper {
 
@@ -65,14 +60,7 @@ public class Helper {
         }
         return "error";
     }
-
-public static void test() {
-    int a = 9;
-    String b = fromIntToDecimalString(a);
-    Log.d(b, "testdecimal");
 }
 
 
 
-
-}

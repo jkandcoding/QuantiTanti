@@ -22,7 +22,6 @@ public abstract class CostDatabase extends RoomDatabase {
                 Log.d(LOG_TAG, "Creating new database instance");
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         CostDatabase.class, CostDatabase.DATABASE_NAME)
-
                         .build();
             }
         }

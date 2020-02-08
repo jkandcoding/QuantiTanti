@@ -38,6 +38,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     //ThreeTenABP - Date & Time
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
+    //sharedPreferences
+    implementation 'androidx.preference:preference:1.1.0-alpha05'
 
 
 }

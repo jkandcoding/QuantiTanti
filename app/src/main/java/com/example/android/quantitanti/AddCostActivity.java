@@ -255,13 +255,11 @@ public class AddCostActivity extends AppCompatActivity {
         monthString = Helper.fromUperCaseToFirstCapitalizedLetter(defaultTodayDate.getMonth().toString());
         yearString = valueOf(defaultTodayDate.getYear());
         dayOfWeekString = Helper.fromUperCaseToFirstCapitalizedLetter(defaultTodayDate.getDayOfWeek().toString());
-        Log.d(dayOfWeekString, "dayOfWeekString");
 
         //int for DatePicker
         dayOfMonth = defaultTodayDate.getDayOfMonth();
         month = defaultTodayDate.getMonthValue();
         year = defaultTodayDate.getYear();
-        Log.d(valueOf(month), "monthval");
 
         //set calender with default date
         mTv_weekDay.setText(dayOfWeekString);
@@ -444,7 +442,6 @@ public class AddCostActivity extends AppCompatActivity {
                         OffsetDateTime chosenDate = OffsetDateTime.of(year, month+1, dayOfMonth,
                                 0, 0, 0, 0, ZoneOffset.UTC);
                         chosenDateString = chosenDate.toLocalDate().toString();
-                        Log.d(chosenDateString, "chosenDateString");
 
                         //setting textviews with chosen date from DatePicker
                         dayOfMonthString = valueOf(chosenDate.getDayOfMonth());
@@ -454,10 +451,8 @@ public class AddCostActivity extends AppCompatActivity {
                         mTv_dateNo.setText(dayOfMonthString);
                         mTv_weekDay.setText(dayOfWeekString);
                         tv_toolbar_month_year.setText(monthString + ", " + yearString);
-
                     }
-                }, year, month-1, dayOfMonth);  //indexes of DatePic 0-11, indexes of threetenABP (1-12)
-        Log.d(year + "/" + month +"/" +  dayOfMonth, "chosenDateString");
+                }, year, month-1, dayOfMonth);  //indexes of DatePicker for month (0-11), indexes of threetenABP (1-12)
         datePickerDialog.show();
     }
 
@@ -479,7 +474,6 @@ public class AddCostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     /**
      * onSaveItemClicked is called when the "save" item is clicked.
      * It retrieves user input and inserts that new cost data into the underlying database.
@@ -497,8 +491,8 @@ public class AddCostActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(costString)) {
            double cost1 = (Double.parseDouble(costString));
            cost = Helper.fromDoubleToInt(cost1);
-
         }
+
         //save date
         if (chosenDateString != null) {
              date = chosenDateString;
@@ -536,12 +530,6 @@ public class AddCostActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
-
-
 }
 
 // limiting decimal places in input costValue to 2 digits

@@ -2,8 +2,11 @@ package com.example.android.quantitanti;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -12,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,14 +25,20 @@ import com.example.android.quantitanti.adapters.CostAdapter;
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.DailyExpensesView;
 import com.example.android.quantitanti.models.CostListViewModel;
+import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-public class CostListActivity extends AppCompatActivity implements CostAdapter.ItemClickListener {
+public class CostListActivity extends AppCompatActivity implements CostAdapter.ItemClickListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     // Constant for logging
     private static final String TAG = CostListActivity.class.getSimpleName();
+
+    //constants for sp currency
+    public static String currency1;
+    public static String currency2;
 
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
@@ -92,9 +102,6 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
                                     public void run() {
                                         int position = viewHolder.getAdapterPosition();
                                         List<DailyExpensesView> expenses = mAdapter.getDailyExpenses();
-                                        //expenses -> total daily expenses from RecyclerView, all of them
-                                        //iz odabranog troska (kojeg zelimo obrisati) uzimamo position (od adaptera)
-                                        //od toga uzimamo date i kao parametar ide u deleteDailyCosts() metodu
                                         String deleteDate = expenses.get(position).getOneDate();
                                         mDb.costDao().deleteDailyCosts(deleteDate);
                                     }
@@ -131,6 +138,8 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
 
         mDb = CostDatabase.getInstance(getApplicationContext());
         setupViewModel();
+
+        setupSharedPreferences();
     }
 
     private void setupViewModel() {
@@ -140,6 +149,8 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
             public void onChanged(List<DailyExpensesView> dailyExpensesViews) {
                 Log.d(TAG, "Updating list of costs from LiveData in ViewModel");
                 mAdapter.setmDailyExpenses(dailyExpensesViews);
+              //  mAdapter.setCurrencyVariables();
+
             }
         });
     }
@@ -150,5 +161,64 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
         Intent intent = new Intent(CostListActivity.this, DailyExpensesActivity.class);
         intent.putExtra(DailyExpensesActivity.EXTRA_COST_DATE, itemDate);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_cost_list, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+            startActivity(startSettingsActivity);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        setCurrencyFromPreferences(sharedPreferences);
+        // Register the listener
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    private void setCurrencyFromPreferences(SharedPreferences sharedPreferences) {
+        String currency = sharedPreferences.getString(getString(R.string.pref_currency_key),
+                getString(R.string.pref_currency_value_kuna));
+        if (currency.equals(getString(R.string.pref_currency_value_kuna))) {
+            currency1 = "";
+            currency2 = " kn";
+        } else if (currency.equals(getString(R.string.pref_currency_value_euro))) {
+            currency1 = "";
+            currency2 = " €";
+        } else if (currency.equals(getString(R.string.pref_currency_value_pound))) {
+            currency1 = "£";
+            currency2 = "";
+        } else if (currency.equals(getString(R.string.pref_currency_value_dollar))) {
+            currency1 = "$";
+            currency2 = "";
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_currency_key))) {
+            setCurrencyFromPreferences(sharedPreferences);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister VisualizerActivity as an OnPreferenceChangedListener to avoid any memory leaks.
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+
     }
 }

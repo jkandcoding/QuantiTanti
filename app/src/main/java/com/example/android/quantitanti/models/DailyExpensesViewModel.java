@@ -10,9 +10,6 @@ import java.util.List;
 
 public class DailyExpensesViewModel extends ViewModel {
 
-    // Constant for logging
-    private static final String TAG = DailyExpensesViewModel.class.getSimpleName();
-
     private LiveData<List<CostEntry>> costs;
 
     public DailyExpensesViewModel(CostDatabase database, String date) {

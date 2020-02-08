@@ -12,11 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.quantitanti.R;
 import com.example.android.quantitanti.database.CostEntry;
-import com.example.android.quantitanti.database.DailyExpensesView;
 import com.example.android.quantitanti.helpers.Helper;
 
 import java.util.List;
 
+import static com.example.android.quantitanti.DailyExpensesActivity.currency1;
+import static com.example.android.quantitanti.DailyExpensesActivity.currency2;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_1;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_2;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_3;
@@ -69,7 +70,7 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
         // Determine the values of the wanted data
         CostEntry costEntry = mCostEntries.get(position);
 
-        // pojedinacan trosak na datum
+        //individual cost on particular day
         String oneCostCategory = costEntry.getCategory();
         String oneCostName = costEntry.getName();
         int oneCostValue = costEntry.getCost();
@@ -77,7 +78,7 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
 
         //Set values
         holder.tv_costDescription.setText(oneCostName);
-        holder.tv_costValue.setText(oneCostValueString + " kn");
+        holder.tv_costValue.setText(currency1 + oneCostValueString + currency2);
 
         // setting imgv depending on category
             switch (oneCostCategory) {
@@ -140,8 +141,6 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
     public interface DailyItemClickListener {
         void onDailyItemClickListener(int itemId);
     }
-
-    
 
     public class DailyCostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView imgv_category;

@@ -9,17 +9,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".DailyExpensesActivity"
-            android:parentActivityName=".CostListActivity"
-            android:launchMode="singleTop"></activity>
-        <activity android:name=".AddCostActivity"
+        <activity android:name=".sharedpreferences.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CostListActivity" />
+        </activity>
+        <activity
+            android:name=".DailyExpensesActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".CostListActivity" />
+        <activity
+            android:name=".AddCostActivity"
             android:parentActivityName=".DailyExpensesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CostListActivity"
-            />
+                android:value=".CostListActivity" />
         </activity>
-        <activity android:name=".CostListActivity"
+        <activity
+            android:name=".CostListActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

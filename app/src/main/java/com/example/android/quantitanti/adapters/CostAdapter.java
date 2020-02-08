@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.quantitanti.R;
-import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.database.DailyExpensesView;
 import com.example.android.quantitanti.helpers.Helper;
 
@@ -18,10 +17,12 @@ import org.threeten.bp.LocalDate;
 
 import java.util.List;
 
+import static com.example.android.quantitanti.CostListActivity.currency1;
+import static com.example.android.quantitanti.CostListActivity.currency2;
 import static java.lang.String.valueOf;
 
 //Adapter for CostListActivity
-public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder> {
+public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder>  {
 
     // Member variable to handle item clicks
     final private ItemClickListener mItemClickListener;
@@ -68,17 +69,17 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
                 (LocalDate.parse(dailyExpens.getOneDate()).getMonth().toString());
         String year = valueOf(LocalDate.parse(dailyExpens.getOneDate()).getYear());
 
-        // dnevni trosak:
+        //daily cost:
         int dailyCost = dailyExpens.getDailyCost();
         String mainCostString = Helper.fromIntToDecimalString(dailyCost);
 
         // Set values
         holder.tv_weekDay.setText(week_day);
         holder.tv_dateNo.setText(date_No);
-        holder.tv_mainCost.setText(mainCostString + " kn");
+        holder.tv_mainCost.setText(currency1 + mainCostString + currency2);
         holder.tv_date_for_frontPage.setText(month + ", " + year);
 
-        //mjesec i godina -> grupiranje itema
+        //month & year -> grouping items
         if (position > 0) {
             if (LocalDate.parse(mDailyExpenses.get(position).getOneDate()).getMonth()
                     .equals(LocalDate.parse(mDailyExpenses.get(position - 1).getOneDate()).getMonth())
@@ -121,7 +122,6 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
         void onItemClickListener(String itemDate);
     }
 
-
     // Inner class for creating ViewHolders
     class CostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -148,7 +148,6 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
 
         @Override
         public void onClick(View v) {
-           // todo sto ovaj onClick radi?
             String elementDate = mDailyExpenses.get(getAdapterPosition()).getOneDate();
             mItemClickListener.onItemClickListener(elementDate);
         }
