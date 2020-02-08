@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="pref_currency_labels">
+        <item>@string/pref_currency_label_kuna</item>
+        <item>@string/pref_currency_label_euro</item>
+        <item>@string/pref_currency_label_pound</item>
+        <item>@string/pref_currency_label_dollar</item>
+    </array>
+
+    <array name="pref_currency_values">
+        <item>@string/pref_currency_value_kuna</item>
+        <item>@string/pref_currency_value_euro</item>
+        <item>@string/pref_currency_value_pound</item>
+        <item>@string/pref_currency_value_dollar</item>
+    </array>
+</resources>

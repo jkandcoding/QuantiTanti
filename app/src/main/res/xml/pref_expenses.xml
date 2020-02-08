@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <DropDownPreference
+        android:defaultValue="HRK"
+        android:entries="@array/pref_currency_labels"
+        android:summary="%s"
+        android:entryValues="@array/pref_currency_values"
+        android:key="@string/pref_currency_key"
+        android:title="@string/pref_currency_label"
+        >
+    </DropDownPreference>
+
+</PreferenceScreen>
