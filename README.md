@@ -21,5 +21,8 @@ Feel free to contribute. This is my first app as a developer, there is a few mor
 currently I'm pausing to work on another project. 
 I would love to here your opinion, though.
 
+## Acknowledgments
+Special thanks to Ana www.ana-art.eu, my graphic designer, who patiently made my beautiful icons in every size and format possibly until I figured it out which ones I really need <3.
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
