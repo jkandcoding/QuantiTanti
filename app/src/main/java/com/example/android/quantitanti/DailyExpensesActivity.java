@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +37,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.threeten.bp.LocalDate;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -86,6 +88,7 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
     TextView tv_category_costs;
     TextView tv_total_cost;
     int totalCost;
+    String totalCostString;
     int category1Cost;
     int category2Cost;
     int category3Cost;
@@ -163,9 +166,9 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                 AlertDialog.Builder builder = new AlertDialog.Builder(DailyExpensesActivity.this, R.style.AlertDialogStyle);
                 builder.setCancelable(false);
                 builder.setIcon(R.drawable.okvir_za_datum_warning);
-                builder.setTitle("Warning");
-                builder.setMessage("Are you sure you want to delete this cost?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setTitle(getString(R.string.warning));
+                builder.setMessage(getString(R.string.are_you_sure));
+                builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Get the position of the item to be deleted
                         AppExecutors.getInstance().diskIO().execute(new Runnable() {
@@ -175,11 +178,12 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                                 List<CostEntry> costEntries = mAdapter.getDailyCosts();
                                 //costEntries -> all costs from RecyclerView on certain date
                                 mDb.costDao().deleteCost(costEntries.get(position));
+                                sumCategoriesAndTotal();
                             }
                         });
                     }
                 });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog,
                         // so we will refresh the adapter to prevent hiding the item from UI
@@ -249,32 +253,36 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
     @Override
     protected void onStart() {
         super.onStart();
+        sumCategoriesAndTotal();
+    }
+
+    private void sumCategoriesAndTotal() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
 
                 totalCost = mDb.costDao().loadTotalCost(mCostDate);
-                final String totalCostString = Helper.fromIntToDecimalString(totalCost);
+                totalCostString = Helper.fromIntToDecimalString(totalCost);
 
                 final Map<String, Integer> categoryCosts = new TreeMap<String, Integer>();
 
                 category1Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_1);
-                if (category1Cost != 0) {
+                if (category1Cost > 0) {
                     categoryCosts.put(CATEGORY_1, category1Cost);
                 }
 
                 category2Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_2);
-                if (category2Cost != 0) {
+                if (category2Cost > 0) {
                     categoryCosts.put(CATEGORY_2, category2Cost);
                 }
 
                 category3Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_3);
-                if (category3Cost != 0) {
+                if (category3Cost > 0) {
                     categoryCosts.put(CATEGORY_3, category3Cost);
                 }
 
                 category4Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_4);
-                if (category4Cost != 0) {
+                if (category4Cost > 0) {
                     categoryCosts.put(CATEGORY_4, category4Cost);
                 }
 
@@ -284,22 +292,22 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                 }
 
                 category6Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_6);
-                if (category6Cost != 0) {
+                if (category6Cost > 0) {
                     categoryCosts.put(CATEGORY_6, category6Cost);
                 }
 
                 category7Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_7);
-                if (category7Cost != 0) {
+                if (category7Cost > 0) {
                     categoryCosts.put(CATEGORY_7, category7Cost);
                 }
 
                 category8Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_8);
-                if (category8Cost != 0) {
+                if (category8Cost > 0) {
                     categoryCosts.put(CATEGORY_8, category8Cost);
                 }
 
                 category9Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_9);
-                if (category9Cost != 0) {
+                if (category9Cost > 0) {
                     categoryCosts.put(CATEGORY_9, category9Cost);
                 }
 
@@ -319,7 +327,11 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                         }
 
                         // update total cost
-                        tv_total_cost.setText("TOTAL: " + currency1 + totalCostString + currency2);
+                        if (totalCost < 0) {
+                            tv_total_cost.setText("TOTAL > " + currency1 + "21 474 836.47 " + currency2);
+                        } else {
+                            tv_total_cost.setText("TOTAL: " + currency1 + totalCostString + currency2);
+                        }
                     }
                 });
             }

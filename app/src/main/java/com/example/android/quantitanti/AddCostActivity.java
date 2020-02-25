@@ -9,10 +9,12 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -237,7 +239,16 @@ public class AddCostActivity extends AppCompatActivity {
         // one cost item
         mCostDescription = findViewById(R.id.et_costDescription);
         mCostValue = findViewById(R.id.et_costValue);
-        mCostValue.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8, 2)});
+        mCostValue.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(5, 2)});
+        mCostValue.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    onSaveItemClicked();
+                }
+                return false;
+            }
+        });
 
         //calender
         mCalender = findViewById(R.id.view_calender);
@@ -474,6 +485,8 @@ public class AddCostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+
     /**
      * onSaveItemClicked is called when the "save" item is clicked.
      * It retrieves user input and inserts that new cost data into the underlying database.
@@ -526,6 +539,12 @@ public class AddCostActivity extends AppCompatActivity {
                     costEntry.setId(mCostId);
                     mDb.costDao().updateCost(costEntry);
                 }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(AddCostActivity.this, "Item saved", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 finish();
             }
         });

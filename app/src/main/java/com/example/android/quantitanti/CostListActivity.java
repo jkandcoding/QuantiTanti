@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.quantitanti.adapters.CostAdapter;
 import com.example.android.quantitanti.database.CostDatabase;
+import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.database.DailyExpensesView;
 import com.example.android.quantitanti.models.CostListViewModel;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
@@ -101,8 +102,8 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
                                     @Override
                                     public void run() {
                                         int position = viewHolder.getAdapterPosition();
-                                        List<DailyExpensesView> expenses = mAdapter.getDailyExpenses();
-                                        String deleteDate = expenses.get(position).getOneDate();
+                                        List<CostEntry> expenses = mAdapter.getDailyExpenses();
+                                        String deleteDate = expenses.get(position).getDate();
                                         mDb.costDao().deleteDailyCosts(deleteDate);
                                     }
                                 });
@@ -144,13 +145,11 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
 
     private void setupViewModel() {
         CostListViewModel viewModel = ViewModelProviders.of(this).get(CostListViewModel.class);
-        viewModel.getDailyExpenses().observe(this, new Observer<List<DailyExpensesView>>() {
+        viewModel.getDailyExpenses().observe(this, new Observer<List<CostEntry>>() {
             @Override
-            public void onChanged(List<DailyExpensesView> dailyExpensesViews) {
+            public void onChanged(List<CostEntry> costEntries) {
                 Log.d(TAG, "Updating list of costs from LiveData in ViewModel");
-                mAdapter.setmDailyExpenses(dailyExpensesViews);
-              //  mAdapter.setCurrencyVariables();
-
+                mAdapter.setmDailyExpenses(costEntries);
             }
         });
     }

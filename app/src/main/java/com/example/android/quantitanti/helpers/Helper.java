@@ -1,45 +1,43 @@
 package com.example.android.quantitanti.helpers;
 
-import android.util.Log;
-
 public class Helper {
 
 
     public static String fromLowerCaseToFirstCapitalizedLetter(String word) {
-        String wordCapitalized = word.substring(0,1).toUpperCase() + word.substring(1);
-        return wordCapitalized;
+        return word.substring(0,1).toUpperCase() + word.substring(1);
     }
 
     public static String fromUperCaseToFirstCapitalizedLetter(String word) {
-        String wordCapitalized = word.substring(0,1) + word.substring(1).toLowerCase();
-        return wordCapitalized;
+        return word.substring(0,1) + word.substring(1).toLowerCase();
     }
 
     public static int fromDoubleToInt(double varDouble) {
-        int varInt = (int) (varDouble * 100);
-        return varInt;
+        return  (int) (varDouble * 100);
     }
 
     public static String fromIntToDecimalString(int varInt) {
         if (varInt > 99999999) {
             String millions = String.valueOf(varInt/100000000);
-            String thousands = String.valueOf((varInt % 100000000)/100000);
-            String hundreds = String.valueOf((varInt % 100000)/100);
+            int thousands = (varInt % 100000000)/100000;
+            String thousandsS = thousandsDigits(thousands);
+            int hundreds = (varInt % 100000) / 100;
+            String hundredsS = hundredsDigits(hundreds);
             String decimal = String.valueOf(varInt % 100);
             if (varInt % 100 < 10) {
-                return millions + " " + thousands + " " + hundreds + ".0" + decimal;
+                return millions + " " + thousandsS + " " + hundredsS + ".0" + decimal;
             } else {
-                return millions + " " + thousands + " " + hundreds + "." + decimal;
+                return millions + " " + thousandsS + " " + hundredsS + "." + decimal;
             }
 
         } if (100000000 > varInt && varInt > 99999) {
             String thousands = String.valueOf(varInt / 100000);
-            String hundreds = String.valueOf((varInt % 100000) / 100);
+            int hundreds = (varInt % 100000) / 100;
+            String hundredsS = hundredsDigits(hundreds);
             String decimal = String.valueOf(varInt % 100);
             if (varInt % 100 < 10) {
-                return thousands + " " + hundreds + ".0" + decimal;
+                return thousands + " " + hundredsS + ".0" + decimal;
             } else {
-                return thousands + " " + hundreds + "." + decimal;
+                return thousands + " " + hundredsS + "." + decimal;
             }
 
         } if (100000 > varInt && varInt > 99) {
@@ -50,6 +48,7 @@ public class Helper {
             } else {
                 return hundreds + "." + decimal;
             }
+
         } if (varInt < 100) {
             String decimal = String.valueOf(varInt % 100);
             if (varInt % 100 < 10) {
@@ -59,6 +58,32 @@ public class Helper {
             }
         }
         return "error";
+    }
+
+    private static String hundredsDigits(int hundreds) {
+        if (100 > hundreds && hundreds > 9) {
+            return "0" + hundreds;
+        } if (10 > hundreds) {
+            return "00" + hundreds;
+        } if (hundreds > 99) {
+            return String.valueOf(hundreds);
+        } if (hundreds == 0) {
+            return "000";
+        }
+        return null;
+    }
+
+    private static String thousandsDigits(int thousands) {
+        if (100 > thousands && thousands > 9) {
+            return "0" + thousands;
+        } if (10 > thousands) {
+            return "00" + thousands;
+        } if (thousands > 99) {
+            return String.valueOf(thousands);
+        } if (thousands == 0) {
+            return "000";
+        }
+        return null;
     }
 }
 

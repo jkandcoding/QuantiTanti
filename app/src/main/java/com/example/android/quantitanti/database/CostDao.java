@@ -13,9 +13,6 @@ import java.util.List;
 @Dao
 public interface CostDao {
 
-    @Query("SELECT * FROM expenses ORDER BY date")
-    LiveData<List<CostEntry>> loadAllCosts();
-
     @Insert
     void insertCost(CostEntry costEntry);
 
@@ -35,16 +32,22 @@ public interface CostDao {
     @Query("DELETE FROM expenses WHERE date = :date")
     void deleteDailyCosts(String date);
 
-    @Query("SELECT * FROM DailyExpensesView ORDER BY oneDate")
-    LiveData<List<DailyExpensesView>> loadTotalCosts();
+//    @Query("SELECT * FROM DailyExpensesView ORDER BY oneDate")
+//    LiveData<List<DailyExpensesView>> loadTotalCosts();
+
+    @Query("SELECT DISTINCT id, date, SUM (cost) AS cost FROM expenses GROUP BY date ORDER BY date")
+    LiveData<List<CostEntry>> loadTotalCosts();
 
     //for CostListActivity
-    @Query("SELECT dailyCost FROM DailyExpensesView WHERE oneDate = :date")
+//    @Query("SELECT dailyCost FROM DailyExpensesView WHERE oneDate = :date")
+//    int loadTotalCost(String date);
+
+    //for CostListActivity
+    @Query("SELECT SUM (cost) AS dailycost FROM expenses WHERE date = :date")
     int loadTotalCost(String date);
 
     //sum category costs
     @Query("SELECT SUM (cost) AS sumCategory FROM expenses WHERE date = :date AND category = :category")
     int loadSumCategoryCost(String date, String category);
-
 
 }
