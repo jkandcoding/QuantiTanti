@@ -1,6 +1,8 @@
 package com.example.android.quantitanti.adapters;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,23 +83,25 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
             @Override
             public void run() {
                 mDb = CostDatabase.getInstance(mContext);
-                int dailyCost = mDb.costDao().loadTotalCost(dateExpense);
+                final int dailyCost = mDb.costDao().loadTotalCost(dateExpense);
 
-                String mainCostString = Helper.fromIntToDecimalString(dailyCost);
+                final String mainCostString = Helper.fromIntToDecimalString(dailyCost);
 
                 // Set values
-                holder.tv_weekDay.setText(week_day);
-                holder.tv_dateNo.setText(date_No);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    public void run() {
+                        holder.tv_weekDay.setText(week_day);
+                        holder.tv_dateNo.setText(date_No);
 
-                if (dailyCost < 0) {
-                    holder.tv_mainCost.setText("> " + currency1 + "21 474 836,47 " + currency2);
-                } else {
-                    holder.tv_mainCost.setText(currency1 + mainCostString + currency2);
-                }
-
-                holder.tv_date_for_frontPage.setText(month + ", " + year);
+                        if (dailyCost < 0) {
+                            holder.tv_mainCost.setText("> " + currency1 + "21 474 836,47 " + currency2);
+                        } else {
+                            holder.tv_mainCost.setText(currency1 + mainCostString + currency2);
+                        }
+                            holder.tv_date_for_frontPage.setText(month + ", " + year);
+                    }
+                });
             }
-
         });
 
         //month & year -> grouping items
