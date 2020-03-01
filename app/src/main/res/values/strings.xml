@@ -28,5 +28,9 @@
 
     <!-- Label for the currency preference -->
     <string name="pref_currency_label">Change your currency:</string>
+    <string name="warning">Warning</string>
+    <string name="are_you_sure">Are you sure you want to delete this cost?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

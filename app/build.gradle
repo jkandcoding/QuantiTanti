@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.android.quantitanti"
+        applicationId "com.jkandcoding.android.quantitanti"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "2.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -35,11 +35,13 @@ dependencies {
     //FAB
     implementation 'com.google.android.material:material:1.2.0-alpha03'
     // ViewModel
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     //ThreeTenABP - Date & Time
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
     //sharedPreferences
     implementation 'androidx.preference:preference:1.1.0-alpha05'
+    // debugImplementation because LeakCanary should only run in debug builds.
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 
 
 }

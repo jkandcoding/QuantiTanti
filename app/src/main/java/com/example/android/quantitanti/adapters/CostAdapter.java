@@ -1,6 +1,8 @@
 package com.example.android.quantitanti.adapters;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +11,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.android.quantitanti.AppExecutors;
 import com.example.android.quantitanti.R;
-import com.example.android.quantitanti.database.DailyExpensesView;
+import com.example.android.quantitanti.database.CostDatabase;
+import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.helpers.Helper;
 
 import org.threeten.bp.LocalDate;
@@ -28,8 +32,10 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
     final private ItemClickListener mItemClickListener;
 
     // Class variables for the List that holds cost data and the Context
-    private List<DailyExpensesView> mDailyExpenses;
+   // private List<DailyExpensesView> mDailyExpenses;
+    private List<CostEntry> mCostEntries;
     private Context mContext;
+    private CostDatabase mDb;
 
     public CostAdapter(ItemClickListener listener, Context context) {
         mItemClickListener = listener;
@@ -58,33 +64,52 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
      * @param position The position of the data in the Cursor
      */
     @Override
-    public void onBindViewHolder(@NonNull CostAdapter.CostViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final CostAdapter.CostViewHolder holder, int position) {
         // Determine the values of the wanted data
-        DailyExpensesView dailyExpens = mDailyExpenses.get(position);
+       // DailyExpensesView dailyExpens = mDailyExpenses.get(position);
+        final CostEntry costEntry = mCostEntries.get(position);
+        final String dateExpense = costEntry.getDate();
 
-        String week_day = Helper.fromUperCaseToFirstCapitalizedLetter
-                (LocalDate.parse(dailyExpens.getOneDate()).getDayOfWeek().toString());
-        String date_No = valueOf(LocalDate.parse(dailyExpens.getOneDate()).getDayOfMonth());
-        String month = Helper.fromUperCaseToFirstCapitalizedLetter
-                (LocalDate.parse(dailyExpens.getOneDate()).getMonth().toString());
-        String year = valueOf(LocalDate.parse(dailyExpens.getOneDate()).getYear());
+
+        final String week_day = Helper.fromUperCaseToFirstCapitalizedLetter
+                (LocalDate.parse(costEntry.getDate()).getDayOfWeek().toString());
+        final String date_No = valueOf(LocalDate.parse(costEntry.getDate()).getDayOfMonth());
+        final String month = Helper.fromUperCaseToFirstCapitalizedLetter
+                (LocalDate.parse(costEntry.getDate()).getMonth().toString());
+        final String year = valueOf(LocalDate.parse(costEntry.getDate()).getYear());
 
         //daily cost:
-        int dailyCost = dailyExpens.getDailyCost();
-        String mainCostString = Helper.fromIntToDecimalString(dailyCost);
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mDb = CostDatabase.getInstance(mContext);
+                final int dailyCost = mDb.costDao().loadTotalCost(dateExpense);
 
-        // Set values
-        holder.tv_weekDay.setText(week_day);
-        holder.tv_dateNo.setText(date_No);
-        holder.tv_mainCost.setText(currency1 + mainCostString + currency2);
-        holder.tv_date_for_frontPage.setText(month + ", " + year);
+                final String mainCostString = Helper.fromIntToDecimalString(dailyCost);
+
+                // Set values
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    public void run() {
+                        holder.tv_weekDay.setText(week_day);
+                        holder.tv_dateNo.setText(date_No);
+
+                        if (dailyCost < 0) {
+                            holder.tv_mainCost.setText("> " + currency1 + "21 474 836,47 " + currency2);
+                        } else {
+                            holder.tv_mainCost.setText(currency1 + mainCostString + currency2);
+                        }
+                            holder.tv_date_for_frontPage.setText(month + ", " + year);
+                    }
+                });
+            }
+        });
 
         //month & year -> grouping items
         if (position > 0) {
-            if (LocalDate.parse(mDailyExpenses.get(position).getOneDate()).getMonth()
-                    .equals(LocalDate.parse(mDailyExpenses.get(position - 1).getOneDate()).getMonth())
-                    && valueOf(LocalDate.parse(mDailyExpenses.get(position).getOneDate()).getYear())
-                    .equals(valueOf(LocalDate.parse(mDailyExpenses.get(position - 1).getOneDate()).getYear())) ) {
+            if (LocalDate.parse(mCostEntries.get(position).getDate()).getMonth()
+                    .equals(LocalDate.parse(mCostEntries.get(position - 1).getDate()).getMonth())
+                    && valueOf(LocalDate.parse(mCostEntries.get(position).getDate()).getYear())
+                    .equals(valueOf(LocalDate.parse(mCostEntries.get(position - 1).getDate()).getYear())) ) {
                 holder.tv_date_for_frontPage.setVisibility(View.GONE);
             } else {
                 holder.tv_date_for_frontPage.setVisibility(View.VISIBLE);
@@ -99,22 +124,22 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
      */
     @Override
     public int getItemCount() {
-        if (mDailyExpenses == null) {
+        if (mCostEntries == null) {
             return 0;
         }
-        return mDailyExpenses.size();
+        return mCostEntries.size();
     }
 
-    public List<DailyExpensesView> getDailyExpenses() {
-        return mDailyExpenses;
+    public List<CostEntry> getDailyExpenses() {
+        return mCostEntries;
     }
 
     /**
      * When data changes, this method updates the list of dailyexpenses
      * and notifies the adapter to use the new values on it
      */
-    public void setmDailyExpenses(List<DailyExpensesView> dailyExpenses) {
-        mDailyExpenses = dailyExpenses;
+    public void setmDailyExpenses(List<CostEntry> costEntries) {
+        mCostEntries = costEntries;
         notifyDataSetChanged();
     }
 
@@ -148,7 +173,7 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
 
         @Override
         public void onClick(View v) {
-            String elementDate = mDailyExpenses.get(getAdapterPosition()).getOneDate();
+            String elementDate = mCostEntries.get(getAdapterPosition()).getDate();
             mItemClickListener.onItemClickListener(elementDate);
         }
     }

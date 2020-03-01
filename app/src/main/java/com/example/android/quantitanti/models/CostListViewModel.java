@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData;
 
 import com.example.android.quantitanti.R;
 import com.example.android.quantitanti.database.CostDatabase;
+import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.database.DailyExpensesView;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class CostListViewModel extends AndroidViewModel {
     // Constant for logging
     private static final String TAG = CostListViewModel.class.getSimpleName();
 
-    private LiveData<List<DailyExpensesView>> expenses;
+    private LiveData<List<CostEntry>> expenses;
 
     public CostListViewModel(@NonNull Application application) {
         super(application);
@@ -31,7 +32,7 @@ public class CostListViewModel extends AndroidViewModel {
 
 
 
-    public LiveData<List<DailyExpensesView>> getDailyExpenses() {
+    public LiveData<List<CostEntry>> getDailyExpenses() {
         return expenses;
     }
 }
