@@ -6,7 +6,7 @@ android {
         applicationId "com.jkandcoding.android.quantitanti"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 2
+        versionCode 3
         versionName "2.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
