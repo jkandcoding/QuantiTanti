@@ -4,40 +4,58 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.example.android.quantitanti.adapters.DailyCostAdapter;
+
+import com.example.android.quantitanti.adapters.ScreenSlidePagerAdapter;
 import com.example.android.quantitanti.database.CostDatabase;
-import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.factories.DailyExpensesViewModelFactory;
 import com.example.android.quantitanti.helpers.Helper;
+import com.example.android.quantitanti.models.CostPojo;
+import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
 import com.example.android.quantitanti.models.DailyExpensesViewModel;
+import com.example.android.quantitanti.models.TotalCostPojo;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.threeten.bp.LocalDate;
 
-import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -51,9 +69,13 @@ import static com.example.android.quantitanti.database.CostEntry.CATEGORY_6;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_7;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_8;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_9;
+import static com.example.android.quantitanti.database.CostEntry.CURRENCY_1;
+import static com.example.android.quantitanti.database.CostEntry.CURRENCY_2;
+import static com.example.android.quantitanti.database.CostEntry.CURRENCY_3;
+import static com.example.android.quantitanti.database.CostEntry.CURRENCY_4;
 import static java.lang.String.valueOf;
 
-public class DailyExpensesActivity extends AppCompatActivity implements DailyCostAdapter.DailyItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class DailyExpensesActivity extends AppCompatActivity implements DailyCostAdapter.DailyItemClickListener {
 
     // Constant for logging
     private static final String TAG = CostListActivity.class.getSimpleName();
@@ -61,18 +83,35 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
     private DailyCostAdapter mAdapter;
+    //  private DailyCostTagAdapter mTagAdapter;
+
 
     private CostDatabase mDb;
 
     //constants for sp currency
+    String currency;
     public static String currency1;
     public static String currency2;
+    List<String> diffCurrencies;
+
+
+    //View Pager
+    //todo number of total_cost slides (no of diff currencies on a date)
+    public static int NUM_PAGES;
+    private ViewPager2 viewPager2;
+    private TabLayout tabLayout;
+    private ScreenSlidePagerAdapter pagerAdapter;
+    List<TotalCostPojo> totalCostPojosForAdapter;
+    List<Integer> minHight;
+    private ViewPager2.OnPageChangeCallback onPageChangeCallback;
+
 
     // Extra for the cost ID to be received after rotation
     public static final String INSTANCE_COST_ID = "instanceCostId";
     // Constant for default cost id to be used when not in update mode
     private static final int DEFAULT_COST_ID = -1;
     private int mCostId = DEFAULT_COST_ID;
+    private int costId;
 
     // Constant for default cost id to be used when not in update mode
     private static final String DEFAULT_COST_DATE = "2020-01-01";
@@ -87,6 +126,8 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
     //sum category costs
     TextView tv_category_costs;
     TextView tv_total_cost;
+    int categoryCostSlideHeight = 0;
+  //  List<Integer> viewPager2MaxHight;
     int totalCost;
     String totalCostString;
     int category1Cost;
@@ -99,11 +140,15 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
     int category8Cost;
     int category9Cost;
 
+    SliderLayout slider;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidThreeTen.init(this);
         setContentView(R.layout.activity_daily_expenses);
+
 
         mDb = CostDatabase.getInstance(getApplicationContext());
 
@@ -121,11 +166,60 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         View monthYear = inflater2.inflate(R.layout.tv_toolbar_montyear, null);
         myToolbar.addView(monthYear);
 
+        //setting DailyCostAdapter
         mRecyclerView = findViewById(R.id.recyclerViewDailyCost);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mAdapter = new DailyCostAdapter(this, this);
         mRecyclerView.setAdapter(mAdapter);
+
+
+// Instantiate a ViewPager, tablayout and a PagerAdapter:
+        viewPager2 = findViewById(R.id.pager);
+        tabLayout = findViewById(R.id.tablayout);
+        pagerAdapter = new ScreenSlidePagerAdapter(this, viewPager2);
+        viewPager2.setAdapter(pagerAdapter);
+        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, true, new TabLayoutMediator.TabConfigurationStrategy() {
+            @Override
+            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+
+            }
+        });
+        tabLayoutMediator.attach();
+
+//        onPageChangeCallback = new ViewPager2.OnPageChangeCallback() {
+//            @Override
+//            public void onPageSelected(int position) {
+//                super.onPageSelected(position);
+//                categoryCostSlideHeight = 0;
+//
+//              //  TotalCostPojo tcp = totalCostPojosForAdapter.get(position);
+//                TotalCostPojo tcp = pagerAdapter.getmTotalCostPojos().get(position);
+//
+//               // Log.d(String.valueOf(totalCostPojos), "nggzhkjnjn");
+//                categoryCostSlideHeight = tcp.getCategoryCosts().size();
+//
+//               // pagerAdapter.notifyDataSetChanged();
+//
+//
+//                //into viewholder - get TextView:
+//                View view = viewPager2.getChildAt(position);
+//                Log.d("activity", "redoslijed");
+//                TextView tv_category_costs = view.findViewById(R.id.tv_category_costs);
+//                  tv_category_costs.setText("");
+//                //todo slideHight2
+//                tv_category_costs.setMinLines(categoryCostSlideHeight);
+//                //todo slideHight3/3
+////                if (categoryCostSlideHeight > catSizeOnPosition) {
+////                    int newLineNumber = categoryCostSlideHeight - catSizeOnPosition;
+////                    Log.d(catSizeOnPosition + " : " + categoryCostSlideHeight + " : " + newLineNumber, "brojevi");
+////                    tv_category_costs.setText(new String(new char[newLineNumber]).replace("\0", "\n"));
+////                }
+//            }
+//        };
+//        viewPager2.registerOnPageChangeCallback(onPageChangeCallback);
+
+
 
         //receiving intent when onItemClickListener in CostListActivity
         Intent intent = getIntent();
@@ -137,16 +231,38 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
 
                 DailyExpensesViewModelFactory factory = new DailyExpensesViewModelFactory(mDb, mCostDate);
 
-                final DailyExpensesViewModel viewModel = ViewModelProviders.of(this, factory).get(DailyExpensesViewModel.class);
+                final DailyExpensesViewModel viewModel = new ViewModelProvider(this, factory).get(DailyExpensesViewModel.class);
 
-                viewModel.getCosts().observe(this, new Observer<List<CostEntry>>() {
+                viewModel.getCosts().observe(this, new Observer<List<DailyExpenseTagsWithPicsPojo>>() {
                     @Override
-                    public void onChanged(List<CostEntry> costEntries) {
-                        mAdapter.setmDailyCosts(costEntries);
+                    public void onChanged(List<DailyExpenseTagsWithPicsPojo> dailyExpenseTagsWithPicsPojos) {
+                        mAdapter.setmDailyCosts(dailyExpenseTagsWithPicsPojos);
                     }
                 });
+
+                viewModel.getTotalCategoryCosts().observe(this, totalCostPojos -> {
+                    List<Integer> viewPager2MaxHight = new ArrayList<>();
+                    int height = 0;
+                    for (TotalCostPojo tcp : totalCostPojos) {
+                         if (tcp.getCategoryCosts().size() > height) {
+                             height = tcp.getCategoryCosts().size();
+                         }
+                    }
+                    pagerAdapter.setmDailyCategoryCosts(totalCostPojos, height);
+
+                });
+
+
             }
         }
+
+
+
+
+
+
+
+
 
         /**
          * Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
@@ -175,10 +291,10 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                             @Override
                             public void run() {
                                 int position = viewHolder.getAdapterPosition();
-                                List<CostEntry> costEntries = mAdapter.getDailyCosts();
+                                List<DailyExpenseTagsWithPicsPojo> dailyExpensePicsPojos = mAdapter.getDailyCosts();
                                 //costEntries -> all costs from RecyclerView on certain date
-                                mDb.costDao().deleteCost(costEntries.get(position));
-                                sumCategoriesAndTotal();
+                                mDb.costDao().deleteCostWithId(dailyExpensePicsPojos.get(position).getCostEntry().getId());
+                                //  sumCategoriesAndTotal(); todo delete this
                             }
                         });
                     }
@@ -215,12 +331,13 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         }
         initViews();
 
-        setupSharedPreferences();
+
     }
 
     private void initViews() {
         tv_category_costs = findViewById(R.id.tv_category_costs);
         tv_total_cost = findViewById(R.id.tv_total_cost);
+        slider = findViewById(R.id.slider);
     }
 
     private void calenderDateSetting() {
@@ -250,93 +367,28 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         startActivity(intent);
     }
 
+
     @Override
-    protected void onStart() {
-        super.onStart();
-        sumCategoriesAndTotal();
+    public void onBackPressed() {
+        if (viewPager2.getCurrentItem() == 0) {
+            // If the user is currently looking at the first step, allow the system to handle the
+            // Back button. This calls finish() on this activity and pops the back stack.
+            super.onBackPressed();
+        } else {
+            // Otherwise, select the previous step.
+            viewPager2.setCurrentItem(viewPager2.getCurrentItem() - 1);
+        }
     }
 
-    private void sumCategoriesAndTotal() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-
-                totalCost = mDb.costDao().loadTotalCost(mCostDate);
-                totalCostString = Helper.fromIntToDecimalString(totalCost);
-
-                final Map<String, Integer> categoryCosts = new TreeMap<String, Integer>();
-
-                category1Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_1);
-                if (category1Cost > 0) {
-                    categoryCosts.put(CATEGORY_1, category1Cost);
-                }
-
-                category2Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_2);
-                if (category2Cost > 0) {
-                    categoryCosts.put(CATEGORY_2, category2Cost);
-                }
-
-                category3Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_3);
-                if (category3Cost > 0) {
-                    categoryCosts.put(CATEGORY_3, category3Cost);
-                }
-
-                category4Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_4);
-                if (category4Cost > 0) {
-                    categoryCosts.put(CATEGORY_4, category4Cost);
-                }
-
-                category5Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_5);
-                if (category5Cost != 0) {
-                    categoryCosts.put(CATEGORY_5, category5Cost);
-                }
-
-                category6Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_6);
-                if (category6Cost > 0) {
-                    categoryCosts.put(CATEGORY_6, category6Cost);
-                }
-
-                category7Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_7);
-                if (category7Cost > 0) {
-                    categoryCosts.put(CATEGORY_7, category7Cost);
-                }
-
-                category8Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_8);
-                if (category8Cost > 0) {
-                    categoryCosts.put(CATEGORY_8, category8Cost);
-                }
-
-                category9Cost = mDb.costDao().loadSumCategoryCost(mCostDate, CATEGORY_9);
-                if (category9Cost > 0) {
-                    categoryCosts.put(CATEGORY_9, category9Cost);
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // update categoryCosts
-                        tv_category_costs.setText("");
-
-                        Map.Entry<String, Integer> lastEntry = ((TreeMap<String, Integer>) categoryCosts).lastEntry();
-                        for (Map.Entry<String, Integer> entry : categoryCosts.entrySet()) {
-                            if ((entry.getKey() + "=" + entry.getValue()).equals(lastEntry.toString())) {
-                                tv_category_costs.append(entry.getKey() + ": " + currency1 + Helper.fromIntToDecimalString(entry.getValue()) + currency2);
-                            } else {
-                                tv_category_costs.append(entry.getKey() + ": " + currency1 + Helper.fromIntToDecimalString(entry.getValue()) + currency2 + "\n");
-                            }
-                        }
-
-                        // update total cost
-                        if (totalCost < 0) {
-                            tv_total_cost.setText("TOTAL > " + currency1 + "21 474 836.47 " + currency2);
-                        } else {
-                            tv_total_cost.setText("TOTAL: " + currency1 + totalCostString + currency2);
-                        }
-                    }
-                });
-            }
-        });
+    public void setTotalCostPojosForAdapter(List<TotalCostPojo> totalCostPojos) {
+        if (totalCostPojos == null) {
+            Toast.makeText(this, "There is no data", Toast.LENGTH_SHORT).show();
+        } else {
+            totalCostPojosForAdapter = totalCostPojos;
+            Log.d(String.valueOf(totalCostPojosForAdapter), " dhdhdhd");  //ne radi
+        }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -355,44 +407,10 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupSharedPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        setCurrencyFromPreferences(sharedPreferences);
-        // Register the listener
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    private void setCurrencyFromPreferences(SharedPreferences sharedPreferences) {
-        String currency = sharedPreferences.getString(getString(R.string.pref_currency_key),
-                getString(R.string.pref_currency_value_kuna));
-        if (currency.equals(getString(R.string.pref_currency_value_kuna))) {
-            currency1 = "";
-            currency2 = " kn";
-        } else if (currency.equals(getString(R.string.pref_currency_value_euro))) {
-            currency1 = "";
-            currency2 = " €";
-        } else if (currency.equals(getString(R.string.pref_currency_value_pound))) {
-            currency1 = "£";
-            currency2 = "";
-        } else if (currency.equals(getString(R.string.pref_currency_value_dollar))) {
-            currency1 = "$";
-            currency2 = "";
-        }
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getString(R.string.pref_currency_key))) {
-            setCurrencyFromPreferences(sharedPreferences);
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Unregister VisualizerActivity as an OnPreferenceChangedListener to avoid any memory leaks.
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .unregisterOnSharedPreferenceChangeListener(this);
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        viewPager2.unregisterOnPageChangeCallback(onPageChangeCallback);
+//    }
 }
+

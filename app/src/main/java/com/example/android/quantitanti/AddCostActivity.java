@@ -1,10 +1,18 @@
 package com.example.android.quantitanti;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -18,26 +26,54 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
+import com.daimajia.slider.library.SliderLayout;
+import com.example.android.quantitanti.adapters.TagsAdapter;
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.CostEntry;
+import com.example.android.quantitanti.database.Expenses_tags_join;
+import com.example.android.quantitanti.database.PicsEntry;
 import com.example.android.quantitanti.factories.AddCostViewModelFactory;
+import com.example.android.quantitanti.fragments.MultiselectTagDialogFragment;
 import com.example.android.quantitanti.helpers.Helper;
 import com.example.android.quantitanti.models.AddCostViewModel;
+import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
+import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.jakewharton.threetenabp.AndroidThreeTen;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.ZoneOffset;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,14 +88,18 @@ import static com.example.android.quantitanti.database.CostEntry.CATEGORY_8;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_9;
 import static java.lang.String.valueOf;
 
-public class AddCostActivity extends AppCompatActivity {
+public class AddCostActivity extends AppCompatActivity implements MultiselectTagDialogFragment.OnDataPass, SharedPreferences.OnSharedPreferenceChangeListener {
 
+    // String key for MultiSelectTagDialogFragment
+    public static final String BUNDLE_TAGS = "bundleTags";
     // Extra for the cost ID to be received in the intent
     public static final String EXTRA_COST_ID = "extraCostId";
     // Extra for the cost ID to be received after rotation
     public static final String INSTANCE_COST_ID = "instanceCostId";
     // Constant for default cost id to be used when not in update mode
     private static final int DEFAULT_COST_ID = -1;
+    //Arbitrary image code
+    public static final int MY_IMAGE_CODE = 8;
     // Constant for logging
     private static final String TAG = AddCostActivity.class.getSimpleName();
     // Fields for views
@@ -67,6 +107,13 @@ public class AddCostActivity extends AppCompatActivity {
     String category;
     EditText mCostDescription;
     EditText mCostValue;
+    TextView mShowCurrency;
+    String currencySave;
+    View horScrollV;
+
+    //constants for sp currency
+    public static String currency1;
+    public static String currency2;
 
     //Category buttons
     ImageButton iBtn_car;
@@ -101,7 +148,33 @@ public class AddCostActivity extends AppCompatActivity {
     String yearString;
     String dayOfWeekString;
 
+
+    private TagsAdapter mtagsAdapter;
+
+    //tags
     TextView tv_addCost_label;
+    TextView tv_pickATag;
+    ChipGroup cg_tags;
+
+    List<String> choosenTags = new ArrayList<>();
+    List<Integer> choosenTagsIds = new ArrayList<>();
+    int costIdWithTagOrPic;
+
+    //pics
+    TextView tv_takeAPic;
+    ChipGroup cg_picUriResult;
+    List<String> choosenPicNames = new ArrayList<>();
+    private String pictureFilePath;
+    String selectedImageUriString;
+    String picName;
+    Map<String, String> picDataForDB = new HashMap<>();
+    private static final int REQUEST_CAPTURE_IMAGE = 100;
+    static final int REQUEST_GALLERY_PHOTO = 200;
+    String photoUriFromCameraString = "";
+    String photoUriFromGalleryString = "";
+    File mPhotoFile;
+    private SliderLayout slider;
+    ImageView imageView;
 
     private int mCostId = DEFAULT_COST_ID;
     private static final String DEFAULT_COST_DATE = "2020-01-01";
@@ -122,17 +195,18 @@ public class AddCostActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // set calender on Toolbar
-            LayoutInflater inflator = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View calender = inflator.inflate(R.layout.calender_view, null);
-            myToolbar.addView(calender);
+        LayoutInflater inflator = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View calender = inflator.inflate(R.layout.calender_view, null);
+        myToolbar.addView(calender);
         // set TextView on Toolbar
-            LayoutInflater inflater2 = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View monthYear = inflater2.inflate(R.layout.tv_toolbar_montyear, null);
-            myToolbar.addView(monthYear);
+        LayoutInflater inflater2 = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View monthYear = inflater2.inflate(R.layout.tv_toolbar_montyear, null);
+        myToolbar.addView(monthYear);
 
         initViews();
 
         mDb = CostDatabase.getInstance(getApplicationContext());
+
 
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_COST_ID)) {
             mCostId = savedInstanceState.getInt(INSTANCE_COST_ID, DEFAULT_COST_ID);
@@ -146,38 +220,101 @@ public class AddCostActivity extends AppCompatActivity {
                 calenderDateSetting();
 
                 iBtn_car.setAlpha((float) 1);
-                setCategory = CATEGORY_1 ;
+                setCategory = CATEGORY_1;
             }
-        }
-
-        else if (intent != null && intent.hasExtra(EXTRA_COST_ID)) {
+        } else if (intent != null && intent.hasExtra(EXTRA_COST_ID)) {
             setTitle("Update:");
             tv_addCost_label.setText("Cost category:");
             if (mCostId == DEFAULT_COST_ID) {
                 // populate the UI
                 mCostId = intent.getIntExtra(EXTRA_COST_ID, DEFAULT_COST_ID);
 
-
                 AddCostViewModelFactory factory = new AddCostViewModelFactory(mDb, mCostId);
                 final AddCostViewModel viewModel =
-                        ViewModelProviders.of(this, factory).get(AddCostViewModel.class);
+                        new ViewModelProvider(this, factory).get(AddCostViewModel.class);
 
-                viewModel.getCost().observe(this, new Observer<CostEntry>() {
+
+                //getCost from ViewModel
+                viewModel.getCost().observe(this, new Observer<DailyExpenseTagsWithPicsPojo>() {
                     @Override
-                    public void onChanged(CostEntry costEntry) {
+                    public void onChanged(DailyExpenseTagsWithPicsPojo dailyExpTagsWithPicsPojo) {
                         viewModel.getCost().removeObserver(this);
-                        populateUI(costEntry);
+                        populateUI(dailyExpTagsWithPicsPojo);
                     }
                 });
             }
-        }
-
-        else {
+        } else {
             iBtn_car.setAlpha((float) 1);
             setCategory = CATEGORY_1;
         }
 
         onCategoryButtonsClicked();
+        pickATag();
+        takeAPic();
+
+        setupSharedPreferences();
+        pickCurrency();
+    }
+
+    private void setCurrencyFromPreferences(SharedPreferences sharedPreferences) {
+        String currency = sharedPreferences.getString(getString(R.string.pref_currency_key),
+                getString(R.string.pref_currency_value_kuna));
+        if (currency.equals(getString(R.string.pref_currency_value_kuna))) {
+            currency1 = "";
+            currency2 = " kn";
+        } else if (currency.equals(getString(R.string.pref_currency_value_euro))) {
+            currency1 = "";
+            currency2 = " €";
+        } else if (currency.equals(getString(R.string.pref_currency_value_pound))) {
+            currency1 = "£";
+            currency2 = "";
+        } else if (currency.equals(getString(R.string.pref_currency_value_dollar))) {
+            currency1 = "$";
+            currency2 = "";
+        }
+        if (currency1.isEmpty()) {
+            mShowCurrency.setText(currency2.trim());
+        } else if (currency2.isEmpty()) {
+            mShowCurrency.setText(currency1);
+        }
+
+
+    }
+
+    private void pickCurrency() {
+        mShowCurrency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startSettingsActivity = new Intent(AddCostActivity.this, SettingsActivity.class);
+                startActivity(startSettingsActivity);
+            }
+        });
+
+    }
+
+    private void setupSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        setCurrencyFromPreferences(sharedPreferences);
+        //Register the listener
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_currency_key))) {
+            setCurrencyFromPreferences(sharedPreferences);
+
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister to avoid any memory leaks.
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 
     private void calenderDateSetting() {
@@ -195,25 +332,56 @@ public class AddCostActivity extends AppCompatActivity {
         tv_toolbar_month_year.setTypeface(null, Typeface.BOLD);
     }
 
-    private void populateUI(CostEntry costEntry) {
-        if (costEntry == null) {
+    private void populateUI(DailyExpenseTagsWithPicsPojo dailyExpTagsWithPicsPojo) {
+        if (dailyExpTagsWithPicsPojo == null) {
             return;
         }
-
-        updateDateString = costEntry.getDate();
-        updateCategory = costEntry.getCategory();
+        updateCategory = dailyExpTagsWithPicsPojo.getCostEntry().getCategory();
         updateCategoryImgBtn();
+
+        updateDateString = dailyExpTagsWithPicsPojo.getCostEntry().getDate();
         mTv_weekDay.setText(Helper.fromUperCaseToFirstCapitalizedLetter
                 (LocalDate.parse(updateDateString).getDayOfWeek().toString()));
         mTv_dateNo.setText(valueOf(LocalDate.parse(updateDateString).getDayOfMonth()));
-
         String month = Helper.fromUperCaseToFirstCapitalizedLetter
                 (LocalDate.parse(updateDateString).getMonth().toString());
         String year = valueOf(LocalDate.parse(updateDateString).getYear());
         tv_toolbar_month_year.setText(month + ", " + year);
         tv_toolbar_month_year.setTypeface(null, Typeface.BOLD);
-        mCostDescription.setText(costEntry.getName());
-        mCostValue.setText(Helper.fromIntToDecimalString(costEntry.getCost()));
+
+        mCostDescription.setText(dailyExpTagsWithPicsPojo.getCostEntry().getName());
+
+        mCostValue.setText(Helper.fromIntToDecimalString(dailyExpTagsWithPicsPojo.getCostEntry().getCost()));
+
+        mShowCurrency.setText(dailyExpTagsWithPicsPojo.getCostEntry().getCurrency());
+
+        fillCgTags(dailyExpTagsWithPicsPojo.getTagNames());
+
+        //fill the hashmap with picNames and Uris for Db entry:
+        List<PicsEntry> picsData = dailyExpTagsWithPicsPojo.getPicsEntries();
+        for (PicsEntry p : picsData) {
+            picDataForDB.put(p.getPic_name(), p.getPic_uri());
+
+        }
+
+        //fill the chipgroup:
+        cg_picUriResult.setVisibility(View.VISIBLE);
+
+
+        for (Map.Entry<String, String> entry : picDataForDB.entrySet()) {
+            Chip chip_pic = new Chip(this);
+            //todo change to getKey()
+            chip_pic.setText(entry.getValue());
+            Log.d(entry.getValue(), "hhhhhhhhh");
+            chip_pic.setCloseIconVisible(true);
+            chip_pic.setOnCloseIconClickListener(v -> {
+                cg_picUriResult.removeView(chip_pic);
+                removeFromHashmap(entry.getKey());
+            });
+
+            cg_picUriResult.addView(chip_pic);
+        }
+
     }
 
     @Override
@@ -233,13 +401,23 @@ public class AddCostActivity extends AppCompatActivity {
         iBtn_sport = findViewById(R.id.iBtn_sport);
         iBtn_cosmetics = findViewById(R.id.iBtn_cosmetics);
         iBtn_other = findViewById(R.id.iBtn_other);
+        horScrollV = findViewById(R.id.horizontalScrollView);
 
-        tv_addCost_label =findViewById(R.id.tv_addCost_label);
+        //tags
+        tv_addCost_label = findViewById(R.id.tv_addCost_label);
+        tv_pickATag = findViewById(R.id.tv_pickATag);
+        cg_tags = findViewById(R.id.cg_tags);
+
+        //pics
+        tv_takeAPic = findViewById(R.id.tv_takeAPic);
+        cg_picUriResult = findViewById(R.id.cg_picUriResult);
+        slider = findViewById(R.id.slider);
+
 
         // one cost item
         mCostDescription = findViewById(R.id.et_costDescription);
         mCostValue = findViewById(R.id.et_costValue);
-        mCostValue.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(5, 2)});
+        mCostValue.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7, 2)});
         mCostValue.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -249,6 +427,7 @@ public class AddCostActivity extends AppCompatActivity {
                 return false;
             }
         });
+        mShowCurrency = findViewById(R.id.tv_showCurrency);
 
         //calender
         mCalender = findViewById(R.id.view_calender);
@@ -294,8 +473,8 @@ public class AddCostActivity extends AppCompatActivity {
                 if (updateCategory != null || setCategory != null) {
                     setAlphaLow();
                 }
-                iBtn_car.setAlpha((float)1);
-                 setCategory = null;
+                iBtn_car.setAlpha((float) 1);
+                setCategory = null;
                 setCategory = CATEGORY_1;
             }
         });
@@ -306,7 +485,7 @@ public class AddCostActivity extends AppCompatActivity {
                 if (updateCategory != null || setCategory != null) {
                     setAlphaLow();
                 }
-                iBtn_clothes.setAlpha((float)1);
+                iBtn_clothes.setAlpha((float) 1);
                 setCategory = null;
                 setCategory = CATEGORY_2;
             }
@@ -318,7 +497,7 @@ public class AddCostActivity extends AppCompatActivity {
                 if (updateCategory != null || setCategory != null) {
                     setAlphaLow();
                 }
-                iBtn_food.setAlpha((float)1);
+                iBtn_food.setAlpha((float) 1);
                 setCategory = null;
                 setCategory = CATEGORY_3;
             }
@@ -330,7 +509,7 @@ public class AddCostActivity extends AppCompatActivity {
                 if (updateCategory != null || setCategory != null) {
                     setAlphaLow();
                 }
-                iBtn_utilities.setAlpha((float)1);
+                iBtn_utilities.setAlpha((float) 1);
                 setCategory = null;
                 setCategory = CATEGORY_4;
             }
@@ -342,7 +521,7 @@ public class AddCostActivity extends AppCompatActivity {
                 if (updateCategory != null || setCategory != null) {
                     setAlphaLow();
                 }
-                iBtn_groceries.setAlpha((float)1);
+                iBtn_groceries.setAlpha((float) 1);
                 setCategory = null;
                 setCategory = CATEGORY_5;
             }
@@ -354,7 +533,7 @@ public class AddCostActivity extends AppCompatActivity {
                 if (updateCategory != null || setCategory != null) {
                     setAlphaLow();
                 }
-                iBtn_education.setAlpha((float)1);
+                iBtn_education.setAlpha((float) 1);
                 setCategory = null;
                 setCategory = CATEGORY_6;
             }
@@ -366,7 +545,7 @@ public class AddCostActivity extends AppCompatActivity {
                 if (updateCategory != null || setCategory != null) {
                     setAlphaLow();
                 }
-                iBtn_sport.setAlpha((float)1);
+                iBtn_sport.setAlpha((float) 1);
                 setCategory = null;
                 setCategory = CATEGORY_7;
             }
@@ -378,7 +557,7 @@ public class AddCostActivity extends AppCompatActivity {
                 if (updateCategory != null || setCategory != null) {
                     setAlphaLow();
                 }
-                iBtn_cosmetics.setAlpha((float)1);
+                iBtn_cosmetics.setAlpha((float) 1);
                 setCategory = null;
                 setCategory = CATEGORY_8;
             }
@@ -391,12 +570,27 @@ public class AddCostActivity extends AppCompatActivity {
                     setAlphaLow();
                 }
                 iBtn_other.setAlpha((float) 1);
+//            iBtn_other.setFocusable(true);            //ne radi
+//            iBtn_other.setFocusableInTouchMode(true);
+//            iBtn_other.requestFocus(View.FOCUS_RIGHT);
                 setCategory = null;
                 setCategory = CATEGORY_9;
             }
         });
 
     }
+
+
+//    public void ctgBtnGetInFocus(View v) {
+//        horScrollV.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//            @Override
+//            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
+//                                       int oldTop, int oldRight, int oldBottom) {
+//                horScrollV.removeOnLayoutChangeListener(this);
+//                horScrollV.scrollTo(View.FOCUS_RIGHT, 0);
+//            }
+//        });
+//    }
 
     public void setAlphaLow() {
         iBtn_car.setAlpha((float) 0.3);
@@ -442,7 +636,7 @@ public class AddCostActivity extends AppCompatActivity {
         }
     }
 
-   public void onCalenderClicked() {
+    public void onCalenderClicked() {
         datePickerDialog = new DatePickerDialog(AddCostActivity.this, R.style.MyDatePickerDialogTheme,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
@@ -450,7 +644,7 @@ public class AddCostActivity extends AppCompatActivity {
                         chosenDateString = null;
 
                         // Get chosen date from DatePicker for saving into db
-                        OffsetDateTime chosenDate = OffsetDateTime.of(year, month+1, dayOfMonth,
+                        OffsetDateTime chosenDate = OffsetDateTime.of(year, month + 1, dayOfMonth,
                                 0, 0, 0, 0, ZoneOffset.UTC);
                         chosenDateString = chosenDate.toLocalDate().toString();
 
@@ -463,8 +657,305 @@ public class AddCostActivity extends AppCompatActivity {
                         mTv_weekDay.setText(dayOfWeekString);
                         tv_toolbar_month_year.setText(monthString + ", " + yearString);
                     }
-                }, year, month-1, dayOfMonth);  //indexes of DatePicker for month (0-11), indexes of threetenABP (1-12)
+                }, year, month - 1, dayOfMonth);  //indexes of DatePicker for month (0-11), indexes of threetenABP (1-12)
         datePickerDialog.show();
+    }
+
+
+    public void pickATag() {
+        tv_pickATag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+//                if (prev != null) {
+//                    ft.remove(prev);
+//                }
+//                ft.addToBackStack(null);
+                DialogFragment dialogFragment = new MultiselectTagDialogFragment();
+                //send tags that should be checked to dialogFragment
+                if (choosenTags.size() != 0) {
+                    Bundle bundle = new Bundle();
+                    ArrayList<String> choosenTagsArray = new ArrayList<>(choosenTags.size());
+                    choosenTagsArray.addAll(choosenTags);
+                    bundle.putStringArrayList(BUNDLE_TAGS, choosenTagsArray);
+                    dialogFragment.setArguments(bundle);
+                }
+                dialogFragment.show(ft, "dialog");
+            }
+        });
+    }
+
+    @Override
+    public void onDataPass(List<String> data) {
+        fillCgTags(data);
+    }
+
+    private void fillCgTags(List<String> data) {
+        choosenTags.clear();
+        choosenTags.addAll(data);
+        Log.d(String.valueOf(choosenTags), "sadadada");
+        cg_tags.setVisibility(View.VISIBLE);
+        cg_tags.removeAllViews();
+        for (String s : data) {
+            final Chip chip_tag = new Chip(this);
+            chip_tag.setText(s);
+            chip_tag.setCloseIconVisible(true);
+            chip_tag.setOnCloseIconClickListener(v -> {
+                cg_tags.removeView(chip_tag);
+                String removedTag = chip_tag.getText().toString();
+                if (choosenTags.contains(removedTag)) {
+                    choosenTags.remove(removedTag);
+                    Log.d(String.valueOf(choosenTags), "sadadada");
+                }
+            });
+            cg_tags.addView(chip_tag);
+        }
+    }
+
+    public void takeAPic() {
+        tv_takeAPic.setOnClickListener(v -> {
+
+            // Alert dialog for capture or select from galley
+
+            final CharSequence[] items = {
+                    "Take Photo", "Choose from Library",
+                    "Cancel"
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(AddCostActivity.this);
+            builder.setTitle("Source:");
+            builder.setItems(items, (dialog, item) -> {
+                if (items[item].equals("Take Photo")) {
+                    requestStoragePermission(true);
+                } else if (items[item].equals("Choose from Library")) {
+                    requestStoragePermission(false);
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        });
+    }
+
+    /**
+     * Capture image from camera
+     */
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                // Error occurred while creating the File
+            }
+            if (photoFile != null) {
+                Uri photoUri = FileProvider.getUriForFile(this,
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        photoFile);
+
+                mPhotoFile = photoFile;
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(takePictureIntent, REQUEST_CAPTURE_IMAGE);
+            }
+        }
+    }
+
+    /**
+     * Select image from gallery
+     */
+    private void dispatchGalleryIntent() {
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickPhoto.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivityForResult(pickPhoto, REQUEST_GALLERY_PHOTO);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+
+            if (requestCode == REQUEST_CAPTURE_IMAGE) {
+                File imgFile = new File(pictureFilePath);
+                if (imgFile.exists()) {
+                    photoUriFromCameraString = (Uri.fromFile(imgFile)).toString();
+                    nameYourPic();
+                }
+
+            } else if (requestCode == REQUEST_GALLERY_PHOTO) {
+                Uri selectedImage = data.getData();
+
+                //todo if img is rotated, #305: https://github.com/daimajia/AndroidImageSlider/issues/305
+                File imgFile = new File(getRealPathFromUri(selectedImage));
+                if (imgFile.exists()) {
+                    photoUriFromGalleryString = (Uri.fromFile(imgFile)).toString();
+                }
+
+                nameYourPic();
+            }
+        }
+    }
+
+    public void nameYourPic() {
+        //Name your picture:
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        final EditText edittext = new EditText(getApplicationContext());
+        alert.setTitle("Name your picture");
+        alert.setView(edittext);
+        alert.setCancelable(false);
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                if (edittext.getText().toString().isEmpty()) {
+                    picName = timeStamp;
+                } else {
+                    picName = edittext.getText().toString().trim() + "_" + timeStamp;
+                }
+
+                if (!photoUriFromCameraString.isEmpty()) {
+                    picDataForDB.put(picName, photoUriFromCameraString);
+                }
+                if (!photoUriFromGalleryString.isEmpty()) {
+                    picDataForDB.put(picName, photoUriFromGalleryString);
+                }
+
+                photoUriFromCameraString = "";
+                photoUriFromGalleryString = "";
+
+                setPicTags();
+            }
+        });
+        alert.show();
+    }
+
+    public void setPicTags() {
+        //  choosenPicNames.add(picName);
+        Log.d("2", "redoslijed");
+        cg_picUriResult.setVisibility(View.VISIBLE);
+
+        final Chip chip_pic = new Chip(this);
+        chip_pic.setText(picName);
+        chip_pic.setCloseIconVisible(true);
+        chip_pic.setOnCloseIconClickListener(v -> {
+            cg_picUriResult.removeView(chip_pic);
+            removeFromHashmap(picName);
+        });
+        cg_picUriResult.addView(chip_pic);
+
+    }
+
+    public void removeFromHashmap(String name) {
+        Iterator<String> iterator = picDataForDB.keySet().iterator();
+        while (iterator.hasNext()) {
+            String mapKey = iterator.next();
+            if (mapKey.contains(name)) {
+                iterator.remove();
+            }
+        }
+    }
+
+
+    /**
+     * Requesting multiple permissions (storage and camera) at once
+     * This uses multiple permission model from dexter
+     * On permanent denial opens settings dialog
+     */
+    private void requestStoragePermission(final boolean isCamera) {
+        Dexter.withActivity(this)
+                .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+                            if (isCamera) {
+                                dispatchTakePictureIntent();
+                            } else {
+                                dispatchGalleryIntent();
+                            }
+                        }
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // show alert dialog navigating to Settings
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<com.karumi.dexter.listener.PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                })
+                .withErrorListener(
+                        error -> Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT)
+                                .show())
+                .onSameThread()
+                .check();
+    }
+
+    /**
+     * Showing Alert Dialog with Settings option
+     * Navigates user to app settings
+     * NOTE: Keep proper title and message depending on your app
+     */
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage(
+                "This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GO TO SETTINGS", (dialog, which) -> {
+            dialog.cancel();
+            openSettings();
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+    // navigating user to app settings
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
+    }
+
+
+    /**
+     * Create file with current timestamp name
+     *
+     * @throws IOException
+     */
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        String mFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File mFile = File.createTempFile(mFileName, ".jpg", storageDir);
+        pictureFilePath = mFile.getAbsolutePath();
+        return mFile;
+    }
+
+    /**
+     * Get real file path from URI
+     */
+    public String getRealPathFromUri(Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            cursor = getContentResolver().query(contentUri, proj, null, null, null);
+            assert cursor != null;
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     @Override
@@ -480,11 +971,10 @@ public class AddCostActivity extends AppCompatActivity {
         if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
         } else if (id == R.id.item_save) {
-                    onSaveItemClicked();
+            onSaveItemClicked();
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
     /**
@@ -502,20 +992,20 @@ public class AddCostActivity extends AppCompatActivity {
         costString = costString.replace(" ", "");
         int cost = 0;
         if (!TextUtils.isEmpty(costString)) {
-           double cost1 = (Double.parseDouble(costString));
-           cost = Helper.fromDoubleToInt(cost1);
+            double cost1 = (Double.parseDouble(costString));
+            cost = Helper.fromDoubleToInt(cost1);
         }
 
         //save date
         if (chosenDateString != null) {
-             date = chosenDateString;
-             //click on costItem
+            date = chosenDateString;
+            //click on costItem
         } else if (chosenDateString == null && mCostId != DEFAULT_COST_ID) {
-           date = updateDateString;
-           //click on new cost under DailyCostActivity
-        }  else if (chosenDateString == null && mCostDate != DEFAULT_COST_DATE) {
+            date = updateDateString;
+            //click on new cost under DailyCostActivity
+        } else if (chosenDateString == null && mCostDate != DEFAULT_COST_DATE) {
             date = mCostDate;
-        }  else {
+        } else {
             date = defaultTodayDateString;
         }
 
@@ -526,8 +1016,11 @@ public class AddCostActivity extends AppCompatActivity {
             category = setCategory;
         }
 
-        // unos u bazu
-        final CostEntry costEntry = new CostEntry(category, name, cost, date);
+        //save currency
+        currencySave = mShowCurrency.getText().toString().trim();
+
+        //ENTRY INTO DATABASE:
+        final CostEntry costEntry = new CostEntry(category, name, cost, date, currencySave);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -539,24 +1032,111 @@ public class AddCostActivity extends AppCompatActivity {
                     costEntry.setId(mCostId);
                     mDb.costDao().updateCost(costEntry);
                 }
+                costIdWithTagOrPic = mDb.costDao().loadLastCostId();
+                Log.d(String.valueOf(costIdWithTagOrPic), "costIdWithTagOrPic"); //ok
+
+                //if tags exist:
+                for (final String tag : choosenTags) {
+                    choosenTagsIds.add(mDb.tagsDao().loadTagId(tag));
+                }
+                //insert new cost-tag
+                if (mCostId == DEFAULT_COST_ID) {
+                    if (!choosenTags.isEmpty()) {
+                        for (final Integer chosenTagId : choosenTagsIds) {
+                            mDb.expenses_tags_join_dao().insert(new Expenses_tags_join(costIdWithTagOrPic, chosenTagId));
+                        }
+                    }
+                } else {
+                    //update cost-tag
+                    List<Integer> tagIdsFromDB = mDb.expenses_tags_join_dao().getTagIdsForCost(mCostId);
+                    List<Integer> helperList = new ArrayList<>();
+
+                    if (!tagIdsFromDB.isEmpty() && !choosenTagsIds.isEmpty()) {
+                        for (Integer i : tagIdsFromDB) {
+                            if (choosenTagsIds.contains(i)) {
+                                helperList.add(i);
+                            }
+                        }
+                        tagIdsFromDB.removeAll(helperList);
+                        choosenTagsIds.removeAll(helperList);
+                    }
+                    if (tagIdsFromDB.size() != 0) {
+                        for (Integer i : tagIdsFromDB) {
+                            mDb.expenses_tags_join_dao().delete(new Expenses_tags_join(mCostId, i));
+                        }
+                    }
+                    if (choosenTagsIds.size() != 0) {
+                        for (Integer i : choosenTagsIds) {
+                            mDb.expenses_tags_join_dao().insert(new Expenses_tags_join(mCostId, i));
+                        }
+                    }
+                }
+
+                //if pics exist:
+                if (cg_picUriResult != null) {
+                    if (mCostId == DEFAULT_COST_ID) {
+                        //insert new pic
+                        for (Map.Entry<String, String> entry : picDataForDB.entrySet()) {
+                            mDb.picsDao().insertPic(new PicsEntry(entry.getValue(), entry.getKey(), costIdWithTagOrPic));
+                        }
+                    } else {
+                        //update pic:
+                        List<PicsEntry> foundForDelete = new ArrayList<>();     //helper list
+                        List<String> foundForDelMap = new ArrayList<>();        //helper list
+
+                        List<PicsEntry> picsFromDB = mDb.picsDao().loadPicsByCostId(mCostId);
+                        if (picsFromDB.size() != 0 && picDataForDB.size() != 0) {
+                            for (Map.Entry<String, String> entry : picDataForDB.entrySet()) {
+                                for (PicsEntry picsEntry : picsFromDB) {
+                                    if (picsEntry.getPic_name().equals(entry.getKey())) {
+                                        foundForDelMap.add(entry.getKey());
+                                        foundForDelete.add(picsEntry);
+                                    }
+                                }
+                            }
+                            for (String s : foundForDelMap) {
+                                removeFromHashmap(s);
+                            }
+                            picsFromDB.removeAll(foundForDelete);
+                        }
+                        if (picsFromDB.size() != 0) {
+                            for (PicsEntry picsEntry : picsFromDB) {
+                                mDb.picsDao().deletePic(picsEntry);
+                            }
+                        }
+                        if (picDataForDB.size() != 0) {
+                            for (Map.Entry<String, String> entry : picDataForDB.entrySet()) {
+                                mDb.picsDao().insertPic(new PicsEntry(entry.getValue(), entry.getKey(), mCostId));
+                            }
+                        }
+                    }
+                }
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(AddCostActivity.this, "Item saved", Toast.LENGTH_SHORT).show();
                     }
                 });
+                //  Log.d(String.valueOf(picDataForDB), "huhuhuhuh");  //
                 finish();
+
             }
         });
     }
+
+
 }
+//------------------------------------------------------------------------------------------
 
 // limiting decimal places in input costValue to 2 digits
 class DecimalDigitsInputFilter implements InputFilter {
     private Pattern mPattern;
+
     DecimalDigitsInputFilter(int digitsBeforeZero, int digitsAfterZero) {
         mPattern = Pattern.compile("[0-9]{0," + (digitsBeforeZero - 1) + "}+((\\.[0-9]{0," + (digitsAfterZero - 1) + "})?)||(\\.)?");
     }
+
     @Override
     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
         Matcher matcher = mPattern.matcher(dest);

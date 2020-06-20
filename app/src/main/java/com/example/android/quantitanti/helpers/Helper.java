@@ -1,5 +1,29 @@
 package com.example.android.quantitanti.helpers;
 
+import android.app.Activity;
+import android.content.ContentUris;
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+
+import static com.example.android.quantitanti.database.CostEntry.CURRENCY_1;
+import static com.example.android.quantitanti.database.CostEntry.CURRENCY_2;
+import static com.example.android.quantitanti.database.CostEntry.CURRENCY_3;
+import static com.example.android.quantitanti.database.CostEntry.CURRENCY_4;
+
 public class Helper {
 
 
@@ -85,6 +109,65 @@ public class Helper {
         }
         return null;
     }
+
+    public static void hideKeyboardFromActivity(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void hideKeyboardFromFragment(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
+    public static void setCurrencyForUI(String currency) {
+
+        String currency1 = "";
+        String currency2 = "";
+
+        if (currency.equals(CURRENCY_1)) {
+            currency1 = "";
+            currency2 = " kn";
+        } else if (currency.equals(CURRENCY_2)) {
+            currency1 = "";
+            currency2 = " €";
+        } else if (currency.equals(CURRENCY_3)) {
+            currency1 = "£";
+            currency2 = "";
+        } else if (currency.equals(CURRENCY_4)) {
+            currency1 = "$";
+            currency2 = "";
+        }
+
+    }
+
 }
 
 

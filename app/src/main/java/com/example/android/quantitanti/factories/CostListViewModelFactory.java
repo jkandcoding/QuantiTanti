@@ -4,23 +4,21 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android.quantitanti.database.CostDatabase;
+import com.example.android.quantitanti.models.CostListViewModel;
 import com.example.android.quantitanti.models.DailyExpensesViewModel;
 
-public class DailyExpensesViewModelFactory extends ViewModelProvider.NewInstanceFactory {
+public class CostListViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
-    private final CostDatabase dailyExDb;
-    private final String dailyExDate;
+    private final CostDatabase mDb;
 
-
-    public DailyExpensesViewModelFactory(CostDatabase database, String date) {
-        dailyExDb = database;
-        dailyExDate = date;
-
+    public CostListViewModelFactory(CostDatabase database) {
+        mDb = database;
     }
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         //noinspection unchecked
-        return (T) new DailyExpensesViewModel(dailyExDb, dailyExDate);
+        return (T) new CostListViewModel(mDb);
     }
+
 }

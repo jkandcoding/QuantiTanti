@@ -5,16 +5,21 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.CostEntry;
+import com.example.android.quantitanti.database.TagEntry;
+
+import java.util.List;
 
 public class AddCostViewModel extends ViewModel {
 
-    private LiveData<CostEntry> cost;
+    private LiveData<DailyExpenseTagsWithPicsPojo> cost;
 
     public AddCostViewModel(CostDatabase database, int costId) {
-        cost = database.costDao().loadCostById(costId);
+      //  cost = database.costDao().loadCostById(costId);
+        cost = database.dailyExpensesDao().loadCostWithTagsAndPicsById(costId);
     }
 
-    public LiveData<CostEntry> getCost() {
+    public LiveData<DailyExpenseTagsWithPicsPojo> getCost() {
         return cost;
     }
+
 }

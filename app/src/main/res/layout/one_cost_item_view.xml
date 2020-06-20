@@ -11,36 +11,83 @@
         android:id="@+id/imgv_category"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="1"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        ></ImageView>
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_costDescription"
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="4"
-        android:layout_marginStart="16dp"
+        android:orientation="vertical"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toStartOf="@+id/tv_costValue"
+        android:layout_marginStart="16dp"
+        app:layout_constraintHorizontal_weight="4"
+        app:layout_constraintEnd_toStartOf="@+id/iv_getPic"
         app:layout_constraintStart_toEndOf="@+id/imgv_category"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_costDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Neki description" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cg_tags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="56dp"
+            tools:layout_editor_absoluteY="31dp">
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_getPic"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/tv_costValue"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <TextView
         android:id="@+id/tv_costValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="3"
+        android:layout_marginTop="16dp"
+        android:paddingStart="8dp"
         android:gravity="end"
         android:inputType="number|numberDecimal"
+        android:text="300,00"
+        app:layout_constraintEnd_toStartOf="@+id/tv_currencyCost"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_currencyCost"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/tb_toggle"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ToggleButton
+        android:id="@+id/tb_toggle"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:text="ToggleButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/tv_costDescription"
+        app:layout_constraintHorizontal_weight="1"
         app:layout_constraintTop_toTopOf="parent" />
 
 

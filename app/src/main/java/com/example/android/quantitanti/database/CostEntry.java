@@ -4,6 +4,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.util.List;
+
 @Entity(tableName = "expenses")
 public class CostEntry {
 
@@ -13,7 +15,10 @@ public class CostEntry {
     private String name;
     private int cost;
     private String date;
+    private String currency;
 
+    @Ignore
+    private List<TagEntry> tagEntries = null;
 
     //todo upisi kategorije
     /**
@@ -38,20 +43,39 @@ public class CostEntry {
     @Ignore
     public static final String CATEGORY_9 = "Other";
 
-    public CostEntry(int id, String category, String name, int cost, String date) {
+    /**
+     * Possible values for the currency
+     */
+    @Ignore
+    public static final String CURRENCY_1 = "kn";
+    @Ignore
+    public static final String CURRENCY_2 = "€";
+    @Ignore
+    public static final String CURRENCY_3 = "£";
+    @Ignore
+    public static final String CURRENCY_4 = "$";
+
+
+
+    public CostEntry() {
+    }
+
+    public CostEntry(int id, String category, String name, int cost, String date, String currency) {
         this.id = id;
         this.category = category;
         this.name = name;
         this.cost = cost;
         this.date = date;
+        this.currency = currency;
     }
 
     @Ignore
-    public CostEntry(String category, String name, int cost, String date) {
+    public CostEntry(String category, String name, int cost, String date, String currency) {
         this.category = category;
         this.name = name;
         this.cost = cost;
         this.date = date;
+        this.currency = currency;
     }
 
     public int getId() {
@@ -94,5 +118,8 @@ public class CostEntry {
         this.date = date;
     }
 
+    public String getCurrency() { return currency; }
+
+    public void setCurrency(String currency) { this.currency = currency; }
 
 }

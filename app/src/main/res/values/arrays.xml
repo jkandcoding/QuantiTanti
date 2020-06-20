@@ -13,4 +13,10 @@
         <item>@string/pref_currency_value_pound</item>
         <item>@string/pref_currency_value_dollar</item>
     </array>
+
+    <array name="tags">
+        <item>rockas</item>
+        <item>posao</item>
+        <item>nesto</item>
+    </array>
 </resources>

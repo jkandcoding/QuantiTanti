@@ -21,16 +21,15 @@ public class SettingsActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         setTitle("Settings");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        // When the home button is pressed, take the user back to the VisualizerActivity
+        // When the home button is pressed, take the user back (do not have parent activity in manifest)
         if (id == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
+          //  NavUtils.navigateUpFromSameTask(this);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

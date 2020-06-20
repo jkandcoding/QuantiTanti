@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout
+    android:id="@+id/totalCost_slide" xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/tv_category_costs"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
-        android:textStyle="bold"
-        ></TextView>
+        android:textStyle="bold" />
 
     <View
         android:id="@+id/view_divider"
@@ -19,16 +20,17 @@
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/colorPrimaryDark"></View>
+        android:background="@color/colorPrimaryDark" />
 
     <TextView
         android:id="@+id/tv_total_cost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minLines="1"
         android:layout_marginTop="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:textStyle="bold"
-        android:hint="TOTAL: 750 kn"></TextView>
+        android:hint="TOTAL: 750 kn" />
 
 </LinearLayout>

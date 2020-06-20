@@ -83,7 +83,8 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
             @Override
             public void run() {
                 mDb = CostDatabase.getInstance(mContext);
-                final int dailyCost = mDb.costDao().loadTotalCost(dateExpense);
+                //todo ispravi valutu (dodaj varijablu currency)
+                final int dailyCost = mDb.costDao().loadTotalCost(dateExpense, "kn");
 
                 final String mainCostString = Helper.fromIntToDecimalString(dailyCost);
 

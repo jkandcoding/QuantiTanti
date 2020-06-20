@@ -14,6 +14,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -24,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.android.quantitanti.adapters.CostAdapter;
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.CostEntry;
-import com.example.android.quantitanti.database.DailyExpensesView;
+import com.example.android.quantitanti.factories.CostListViewModelFactory;
 import com.example.android.quantitanti.models.CostListViewModel;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -144,7 +146,9 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
     }
 
     private void setupViewModel() {
-        CostListViewModel viewModel = ViewModelProviders.of(this).get(CostListViewModel.class);
+        CostListViewModelFactory factory = new CostListViewModelFactory(mDb);
+
+        CostListViewModel viewModel = new ViewModelProvider(this, factory).get(CostListViewModel.class);
         viewModel.getDailyExpenses().observe(this, new Observer<List<CostEntry>>() {
             @Override
             public void onChanged(List<CostEntry> costEntries) {
@@ -215,7 +219,7 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Unregister VisualizerActivity as an OnPreferenceChangedListener to avoid any memory leaks.
+        // Unregister to avoid any memory leaks.
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(this);
 
