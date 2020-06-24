@@ -10,6 +10,8 @@ import androidx.room.Update;
 
 import com.example.android.quantitanti.models.CostPojo;
 import com.example.android.quantitanti.models.TotalCostPojo;
+import com.example.android.quantitanti.models.TotalFrontCostPojo;
+import com.example.android.quantitanti.models.TotalFrontHelpPojo;
 
 import java.util.List;
 
@@ -43,19 +45,20 @@ public interface CostDao {
     void deleteDailyCosts(String date);
 
     //todo change this to return SUM (cost) in all currencies
-    @Query("SELECT DISTINCT id, date, SUM (cost) AS cost, currency FROM expenses WHERE currency IS 'kn' GROUP BY date ORDER BY date")
-    LiveData<List<CostEntry>> loadTotalCosts();
+    @Query("SELECT date, currency, cost FROM expenses ORDER BY date")
+    LiveData<List<TotalFrontHelpPojo>> loadTotalCosts();
 
-     //for CostListActivity
+    @Query("SELECT DISTINCT currency FROM expenses")
+    LiveData<List<String>> loadAllDiffCurrencies();
+
+
+     //for CostListActivity -> todo OVO CU BRISATI
     @Query("SELECT SUM (cost) AS dailycost FROM expenses WHERE date = :date AND currency = :currency")
     int loadTotalCost(String date, String currency);
 
     //sum category costs
     @Query("SELECT SUM (cost) AS sumCategory FROM expenses WHERE date = :date AND category = :category AND currency = :currency")
     int loadSumCategoryCost(String date, String category, String currency);
-
-    @Query("SELECT DISTINCT currency FROM expenses WHERE date = :date")
-    List<String> loadAllDiffCurrencies(String date);
 
     @Query("SELECT currency, category, cost AS categoryCosts FROM expenses WHERE date = :date")
     LiveData<List<CostPojo>> loadCategoryCosts(String date);

@@ -28,13 +28,13 @@ import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.factories.CostListViewModelFactory;
 import com.example.android.quantitanti.models.CostListViewModel;
+import com.example.android.quantitanti.models.TotalFrontCostPojo;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-public class CostListActivity extends AppCompatActivity implements CostAdapter.ItemClickListener,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+public class CostListActivity extends AppCompatActivity implements CostAdapter.ItemClickListener {
 
     // Constant for logging
     private static final String TAG = CostListActivity.class.getSimpleName();
@@ -49,6 +49,7 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
     private CostAdapter mAdapter;
 
     private CostDatabase mDb;
+    private String currencyForDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +105,7 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
                                     @Override
                                     public void run() {
                                         int position = viewHolder.getAdapterPosition();
-                                        List<CostEntry> expenses = mAdapter.getDailyExpenses();
+                                        List<TotalFrontCostPojo> expenses = mAdapter.getDailyExpenses();
                                         String deleteDate = expenses.get(position).getDate();
                                         mDb.costDao().deleteDailyCosts(deleteDate);
                                     }
@@ -140,20 +141,20 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
         });
 
         mDb = CostDatabase.getInstance(getApplicationContext());
-        setupViewModel();
 
-        setupSharedPreferences();
+
+ //       setupSharedPreferences();
+        setupViewModel();
     }
 
     private void setupViewModel() {
         CostListViewModelFactory factory = new CostListViewModelFactory(mDb);
 
         CostListViewModel viewModel = new ViewModelProvider(this, factory).get(CostListViewModel.class);
-        viewModel.getDailyExpenses().observe(this, new Observer<List<CostEntry>>() {
+        viewModel.getDailyExpenses().observe(this, new Observer<List<TotalFrontCostPojo>>() {
             @Override
-            public void onChanged(List<CostEntry> costEntries) {
-                Log.d(TAG, "Updating list of costs from LiveData in ViewModel");
-                mAdapter.setmDailyExpenses(costEntries);
+            public void onChanged(List<TotalFrontCostPojo> totalFrontCostPojos) {
+                mAdapter.setmDailyExpenses(totalFrontCostPojos);
             }
         });
     }
@@ -183,45 +184,54 @@ public class CostListActivity extends AppCompatActivity implements CostAdapter.I
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupSharedPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        setCurrencyFromPreferences(sharedPreferences);
-        // Register the listener
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
 
-    private void setCurrencyFromPreferences(SharedPreferences sharedPreferences) {
-        String currency = sharedPreferences.getString(getString(R.string.pref_currency_key),
-                getString(R.string.pref_currency_value_kuna));
-        if (currency.equals(getString(R.string.pref_currency_value_kuna))) {
-            currency1 = "";
-            currency2 = " kn";
-        } else if (currency.equals(getString(R.string.pref_currency_value_euro))) {
-            currency1 = "";
-            currency2 = " €";
-        } else if (currency.equals(getString(R.string.pref_currency_value_pound))) {
-            currency1 = "£";
-            currency2 = "";
-        } else if (currency.equals(getString(R.string.pref_currency_value_dollar))) {
-            currency1 = "$";
-            currency2 = "";
-        }
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getString(R.string.pref_currency_key))) {
-            setCurrencyFromPreferences(sharedPreferences);
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Unregister to avoid any memory leaks.
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .unregisterOnSharedPreferenceChangeListener(this);
-
-    }
+//    private void setupSharedPreferences() {
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+//        setCurrencyFromPreferences(sharedPreferences);
+//        // Register the listener
+//        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+//    }
+//
+//
+//    private void setCurrencyFromPreferences(SharedPreferences sharedPreferences) {
+//         String currency = sharedPreferences.getString(getString(R.string.pref_currency_key),
+//                getString(R.string.pref_currency_value_kuna));
+//        if (currency.equals(getString(R.string.pref_currency_value_kuna))) {
+//            currencyForDb = getString(R.string.knS);
+//            currency1 = "";
+//            currency2 = " kn";
+//        } else if (currency.equals(getString(R.string.pref_currency_value_euro))) {
+//            currencyForDb = getString(R.string.euroS);
+//            currency1 = "";
+//            currency2 = " €";
+//        } else if (currency.equals(getString(R.string.pref_currency_value_pound))) {
+//            currencyForDb = getString(R.string.poundS);
+//            currency1 = "£";
+//            currency2 = "";
+//        } else if (currency.equals(getString(R.string.pref_currency_value_dollar))) {
+//            currencyForDb = getString(R.string.dollarS);
+//            currency1 = "$";
+//            currency2 = "";
+//        }
+//    }
+//
+//
+//    @Override
+//    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+//        if (key.equals(getString(R.string.pref_currency_key))) {
+//            setCurrencyFromPreferences(sharedPreferences);
+//          //  setupViewModel();
+//            mAdapter.notifyDataSetChanged();
+//        }
+//    }
+//
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        // Unregister to avoid any memory leaks.
+//        PreferenceManager.getDefaultSharedPreferences(this)
+//                .unregisterOnSharedPreferenceChangeListener(this);
+//
+//    }
 }

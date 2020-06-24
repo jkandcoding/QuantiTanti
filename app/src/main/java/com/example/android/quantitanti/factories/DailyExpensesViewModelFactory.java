@@ -15,7 +15,6 @@ public class DailyExpensesViewModelFactory extends ViewModelProvider.NewInstance
     public DailyExpensesViewModelFactory(CostDatabase database, String date) {
         dailyExDb = database;
         dailyExDate = date;
-
     }
 
     @Override

@@ -254,7 +254,7 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
 
         @Override
         public void onClick(View v) {
-            int elementId = mdailyExpenseTagsWithPicsPojos.get(getAdapterPosition()).getCostEntry().getId();
+            int elementId = mdailyExpenseTagsWithPicsPojos.get(getBindingAdapterPosition()).getCostEntry().getId();  //get(getAdapterPosition) -> deprecated
             mDailyItemClickListener.onDailyItemClickListener(elementId);
         }
     }

@@ -1,10 +1,5 @@
 package com.example.android.quantitanti.models;
 
-import androidx.room.Relation;
-
-import com.example.android.quantitanti.database.CostEntry;
-
-import java.util.List;
 import java.util.Map;
 
 public class TotalCostPojo {

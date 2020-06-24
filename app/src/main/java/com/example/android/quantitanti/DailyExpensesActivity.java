@@ -187,39 +187,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         });
         tabLayoutMediator.attach();
 
-//        onPageChangeCallback = new ViewPager2.OnPageChangeCallback() {
-//            @Override
-//            public void onPageSelected(int position) {
-//                super.onPageSelected(position);
-//                categoryCostSlideHeight = 0;
-//
-//              //  TotalCostPojo tcp = totalCostPojosForAdapter.get(position);
-//                TotalCostPojo tcp = pagerAdapter.getmTotalCostPojos().get(position);
-//
-//               // Log.d(String.valueOf(totalCostPojos), "nggzhkjnjn");
-//                categoryCostSlideHeight = tcp.getCategoryCosts().size();
-//
-//               // pagerAdapter.notifyDataSetChanged();
-//
-//
-//                //into viewholder - get TextView:
-//                View view = viewPager2.getChildAt(position);
-//                Log.d("activity", "redoslijed");
-//                TextView tv_category_costs = view.findViewById(R.id.tv_category_costs);
-//                  tv_category_costs.setText("");
-//                //todo slideHight2
-//                tv_category_costs.setMinLines(categoryCostSlideHeight);
-//                //todo slideHight3/3
-////                if (categoryCostSlideHeight > catSizeOnPosition) {
-////                    int newLineNumber = categoryCostSlideHeight - catSizeOnPosition;
-////                    Log.d(catSizeOnPosition + " : " + categoryCostSlideHeight + " : " + newLineNumber, "brojevi");
-////                    tv_category_costs.setText(new String(new char[newLineNumber]).replace("\0", "\n"));
-////                }
-//            }
-//        };
-//        viewPager2.registerOnPageChangeCallback(onPageChangeCallback);
-
-
 
         //receiving intent when onItemClickListener in CostListActivity
         Intent intent = getIntent();
@@ -241,7 +208,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                 });
 
                 viewModel.getTotalCategoryCosts().observe(this, totalCostPojos -> {
-                    List<Integer> viewPager2MaxHight = new ArrayList<>();
                     int height = 0;
                     for (TotalCostPojo tcp : totalCostPojos) {
                          if (tcp.getCategoryCosts().size() > height) {
@@ -249,20 +215,9 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                          }
                     }
                     pagerAdapter.setmDailyCategoryCosts(totalCostPojos, height);
-
                 });
-
-
             }
         }
-
-
-
-
-
-
-
-
 
         /**
          * Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.

@@ -14,7 +14,6 @@ public class AddCostViewModel extends ViewModel {
     private LiveData<DailyExpenseTagsWithPicsPojo> cost;
 
     public AddCostViewModel(CostDatabase database, int costId) {
-      //  cost = database.costDao().loadCostById(costId);
         cost = database.dailyExpensesDao().loadCostWithTagsAndPicsById(costId);
     }
 

@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"></androidx.appcompat.widget.Toolbar>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <!-- RecyclerView that is responsible for holding a listCostEntry data -->
     <!--    <androidx.recyclerview.widget.RecyclerView   ->  zamijenjen sa slijedecim:   -->
@@ -56,7 +56,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3"></TextView>
+            app:layout_constraintVertical_bias="0.3" />
 
         <TextView
             android:id="@+id/tv_empty2"
@@ -69,7 +69,7 @@
             android:textColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="@+id/tv_empty1"
             app:layout_constraintStart_toStartOf="@+id/tv_empty1"
-            app:layout_constraintTop_toBottomOf="@+id/tv_empty1"></TextView>
+            app:layout_constraintTop_toBottomOf="@+id/tv_empty1" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
