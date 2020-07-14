@@ -1,4 +1,4 @@
-package com.example.android.quantitanti.models;
+package com.example.android.quantitanti.viewmodels;
 
 import android.app.Application;
 import android.content.Context;

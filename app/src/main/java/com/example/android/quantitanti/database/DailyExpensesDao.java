@@ -19,4 +19,9 @@ public interface DailyExpensesDao {
     @Transaction
     @Query("SELECT * FROM expenses WHERE id =:id")
     LiveData<DailyExpenseTagsWithPicsPojo> loadCostWithTagsAndPicsById(int id);
+
+    //for AllCostsFragment
+    @Transaction
+    @Query("SELECT * FROM expenses ORDER BY date DESC")
+    LiveData<List<DailyExpenseTagsWithPicsPojo>> loadAllCostsWithTagsAndPicsForFragment();
 }

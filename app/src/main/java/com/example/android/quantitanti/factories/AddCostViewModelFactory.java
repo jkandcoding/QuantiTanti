@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.android.quantitanti.database.CostDatabase;
-import com.example.android.quantitanti.models.AddCostViewModel;
+import com.example.android.quantitanti.viewmodels.AddCostViewModel;
 
 public class AddCostViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 

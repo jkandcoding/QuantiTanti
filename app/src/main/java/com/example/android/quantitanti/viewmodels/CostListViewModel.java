@@ -1,4 +1,4 @@
-package com.example.android.quantitanti.models;
+package com.example.android.quantitanti.viewmodels;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.CostEntry;
+import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
+import com.example.android.quantitanti.models.TotalFrontCostPojo;
+import com.example.android.quantitanti.models.TotalFrontHelpPojo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +17,26 @@ import java.util.TreeMap;
 
 public class CostListViewModel extends ViewModel {
 
+    //TotalCostFragment
     private LiveData<List<TotalFrontHelpPojo>> expenses;
 
+    //AllCostsFragment
+    private LiveData<List<DailyExpenseTagsWithPicsPojo>> allCosts;
+
     public CostListViewModel(CostDatabase database) {
+        //TotalCostFragment
         expenses = database.costDao().loadTotalCosts();
+
+        //AllCostsFragment
+        allCosts = database.dailyExpensesDao().loadAllCostsWithTagsAndPicsForFragment();
     }
 
     public LiveData<List<TotalFrontCostPojo>> getDailyExpenses() {
         return Transformations.map(expenses, this::convertToTotalFrontCosts);
+    }
+
+    public LiveData<List<DailyExpenseTagsWithPicsPojo>> getAllCosts() {
+        return allCosts;
     }
 
     private List<TotalFrontCostPojo> convertToTotalFrontCosts(List<TotalFrontHelpPojo> totalFrontHelpPojos) {

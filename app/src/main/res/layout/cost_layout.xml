@@ -5,6 +5,28 @@
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            layout="@layout/calender_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp" />
+
+        <TextView
+            android:id="@+id/tv_mainCost"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textStyle="bold" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tv_date_for_frontPage"
         android:layout_width="wrap_content"
@@ -13,24 +35,5 @@
         android:textStyle="bold"
         android:textColor="@color/colorPrimaryDark"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"></TextView>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="horizontal" android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <include layout="@layout/calender_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"></include>
-
-        <TextView
-            android:id="@+id/tv_mainCost"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textStyle="bold" />
-    </LinearLayout>
+        android:layout_marginTop="4dp" />
 </LinearLayout>

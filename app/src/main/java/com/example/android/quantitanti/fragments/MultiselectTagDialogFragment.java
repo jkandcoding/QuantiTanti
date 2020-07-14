@@ -23,7 +23,7 @@ import com.example.android.quantitanti.adapters.TagsAdapter;
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.TagEntry;
 import com.example.android.quantitanti.models.Tags;
-import com.example.android.quantitanti.models.TagsViewModel;
+import com.example.android.quantitanti.viewmodels.TagsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

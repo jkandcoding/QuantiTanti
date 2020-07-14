@@ -1,4 +1,4 @@
-package com.example.android.quantitanti.models;
+package com.example.android.quantitanti.viewmodels;
 
 import android.util.Log;
 
@@ -9,6 +9,9 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.quantitanti.database.CostDatabase;
+import com.example.android.quantitanti.models.CostPojo;
+import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
+import com.example.android.quantitanti.models.TotalCostPojo;
 
 import java.util.ArrayList;
 import java.util.HashMap;

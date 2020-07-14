@@ -1,34 +1,17 @@
 package com.example.android.quantitanti.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.daimajia.slider.library.Animations.DescriptionAnimation;
-import com.daimajia.slider.library.SliderLayout;
-import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.TextSliderView;
-import com.daimajia.slider.library.Tricks.ViewPagerEx;
-import com.example.android.quantitanti.DailyExpensesActivity;
 import com.example.android.quantitanti.R;
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.PicsEntry;
@@ -38,7 +21,6 @@ import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,14 +51,8 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
 
     public static final String BUNDLE_PHOTOS = "bundlePhotos";
 
-    // private DailyCostTagAdapter mTagAdapter;
-    //  private List<TagEntry> mTagEntries;
     private Context mContext;
-    private CostDatabase mDb;
-
-
-
-    //private ImageView imgv_category;
+    //private CostDatabase mDb;
 
     public DailyCostAdapter(DailyItemClickListener listener, Context context) {
         mDailyItemClickListener = listener;
@@ -225,9 +201,10 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
 
     public interface DailyItemClickListener {
         void onDailyItemClickListener(int itemId);
+        void onDailyItemLongClickListener(int itemId);
     }
 
-    public class DailyCostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class DailyCostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         ImageView imgv_category;
         TextView tv_costDescription;
         TextView tv_costValue;
@@ -250,12 +227,20 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
             cg_tags = itemView.findViewById(R.id.cg_tags);
             iv_getPic = itemView.findViewById(R.id.iv_getPic);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            int elementId = mdailyExpenseTagsWithPicsPojos.get(getBindingAdapterPosition()).getCostEntry().getId();  //get(getAdapterPosition) -> deprecated
+            int elementId = mdailyExpenseTagsWithPicsPojos.get(getAbsoluteAdapterPosition()).getCostEntry().getId();  //get(getAdapterPosition) -> deprecated
             mDailyItemClickListener.onDailyItemClickListener(elementId);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            int elementId = mdailyExpenseTagsWithPicsPojos.get(getAbsoluteAdapterPosition()).getCostEntry().getId();
+            mDailyItemClickListener.onDailyItemLongClickListener(elementId);
+            return true;
         }
     }
 

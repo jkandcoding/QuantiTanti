@@ -3,20 +3,13 @@ package com.example.android.quantitanti;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -24,28 +17,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.daimajia.slider.library.SliderLayout;
-import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.example.android.quantitanti.adapters.DailyCostAdapter;
 
 import com.example.android.quantitanti.adapters.ScreenSlidePagerAdapter;
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.factories.DailyExpensesViewModelFactory;
 import com.example.android.quantitanti.helpers.Helper;
-import com.example.android.quantitanti.models.CostPojo;
 import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
-import com.example.android.quantitanti.models.DailyExpensesViewModel;
+import com.example.android.quantitanti.viewmodels.DailyExpensesViewModel;
 import com.example.android.quantitanti.models.TotalCostPojo;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -55,24 +40,8 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.threeten.bp.LocalDate;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
-import static com.example.android.quantitanti.database.CostEntry.CATEGORY_1;
-import static com.example.android.quantitanti.database.CostEntry.CATEGORY_2;
-import static com.example.android.quantitanti.database.CostEntry.CATEGORY_3;
-import static com.example.android.quantitanti.database.CostEntry.CATEGORY_4;
-import static com.example.android.quantitanti.database.CostEntry.CATEGORY_5;
-import static com.example.android.quantitanti.database.CostEntry.CATEGORY_6;
-import static com.example.android.quantitanti.database.CostEntry.CATEGORY_7;
-import static com.example.android.quantitanti.database.CostEntry.CATEGORY_8;
-import static com.example.android.quantitanti.database.CostEntry.CATEGORY_9;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_1;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_2;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_3;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_4;
 import static java.lang.String.valueOf;
 
 public class DailyExpensesActivity extends AppCompatActivity implements DailyCostAdapter.DailyItemClickListener {
@@ -174,7 +143,7 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         mRecyclerView.setAdapter(mAdapter);
 
 
-// Instantiate a ViewPager, tablayout and a PagerAdapter:
+        // Instantiate a ViewPager, tablayout and a PagerAdapter:
         viewPager2 = findViewById(R.id.pager);
         tabLayout = findViewById(R.id.tablayout);
         pagerAdapter = new ScreenSlidePagerAdapter(this, viewPager2);
@@ -245,7 +214,7 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                         AppExecutors.getInstance().diskIO().execute(new Runnable() {
                             @Override
                             public void run() {
-                                int position = viewHolder.getAdapterPosition();
+                                int position = viewHolder.getAbsoluteAdapterPosition();
                                 List<DailyExpenseTagsWithPicsPojo> dailyExpensePicsPojos = mAdapter.getDailyCosts();
                                 //costEntries -> all costs from RecyclerView on certain date
                                 mDb.costDao().deleteCostWithId(dailyExpensePicsPojos.get(position).getCostEntry().getId());
@@ -258,7 +227,7 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog,
                         // so we will refresh the adapter to prevent hiding the item from UI
-                        mAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                        mAdapter.notifyItemChanged(viewHolder.getAbsoluteAdapterPosition());
                     }
                 });
                 builder.create();
@@ -322,6 +291,32 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         startActivity(intent);
     }
 
+    @Override
+    public void onDailyItemLongClickListener(int itemId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.okvir_za_datum_warning);
+        builder.setTitle("Warning");
+        builder.setMessage("Are you sure you want to delete this cost?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDb.costDao().deleteCostWithId(itemId);
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //nothing happens
+            }
+        });
+        builder.create();
+        builder.show();
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -335,14 +330,14 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         }
     }
 
-    public void setTotalCostPojosForAdapter(List<TotalCostPojo> totalCostPojos) {
-        if (totalCostPojos == null) {
-            Toast.makeText(this, "There is no data", Toast.LENGTH_SHORT).show();
-        } else {
-            totalCostPojosForAdapter = totalCostPojos;
-            Log.d(String.valueOf(totalCostPojosForAdapter), " dhdhdhd");  //ne radi
-        }
-    }
+//    public void setTotalCostPojosForAdapter(List<TotalCostPojo> totalCostPojos) {
+//        if (totalCostPojos == null) {
+//            Toast.makeText(this, "There is no data", Toast.LENGTH_SHORT).show();
+//        } else {
+//            totalCostPojosForAdapter = totalCostPojos;
+//            Log.d(String.valueOf(totalCostPojosForAdapter), " dhdhdhd");  //ne radi
+//        }
+//    }
 
 
     @Override

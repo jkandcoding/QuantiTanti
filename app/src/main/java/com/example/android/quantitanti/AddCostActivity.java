@@ -50,7 +50,7 @@ import com.example.android.quantitanti.database.PicsEntry;
 import com.example.android.quantitanti.factories.AddCostViewModelFactory;
 import com.example.android.quantitanti.fragments.MultiselectTagDialogFragment;
 import com.example.android.quantitanti.helpers.Helper;
-import com.example.android.quantitanti.models.AddCostViewModel;
+import com.example.android.quantitanti.viewmodels.AddCostViewModel;
 import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
 import com.google.android.material.chip.Chip;

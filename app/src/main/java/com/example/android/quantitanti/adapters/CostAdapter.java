@@ -2,9 +2,6 @@ package com.example.android.quantitanti.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.android.quantitanti.AppExecutors;
 import com.example.android.quantitanti.R;
 import com.example.android.quantitanti.database.CostDatabase;
-import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.helpers.Helper;
 import com.example.android.quantitanti.models.TotalFrontCostPojo;
 
@@ -26,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static com.example.android.quantitanti.CostListActivity.currency1;
-import static com.example.android.quantitanti.CostListActivity.currency2;
 import static java.lang.String.valueOf;
 
 //Adapter for CostListActivity
@@ -37,7 +30,6 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
     final private ItemClickListener mItemClickListener;
 
     // Class variables for the List that holds cost data and the Context
-   // private List<DailyExpensesView> mDailyExpenses;
     private List<TotalFrontCostPojo> mCostEntries;
     private Context mContext;
     private CostDatabase mDb;
@@ -72,7 +64,6 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
     @Override
     public void onBindViewHolder(@NonNull final CostAdapter.CostViewHolder holder, int position) {
         // Determine the values of the wanted data
-       // DailyExpensesView dailyExpens = mDailyExpenses.get(position);
          TotalFrontCostPojo totalFrontCostPojo = mCostEntries.get(position);
          String dateExpense = totalFrontCostPojo.getDate();
          String week_day = Helper.fromUperCaseToFirstCapitalizedLetter
@@ -84,11 +75,10 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
 
          Map<String, Integer> totalCost = totalFrontCostPojo.getFrontCosts();
 
-         //todo importiraj currency1 , 2..
-
         holder.tv_weekDay.setText(week_day);
         holder.tv_dateNo.setText(date_No);
 
+        holder.tv_mainCost.setText("");
         Map.Entry<String, Integer> lastEntry = ((TreeMap<String, Integer>) totalCost).lastEntry();
         for (Map.Entry<String, Integer> entry : totalCost.entrySet()) {
             if ((entry.getKey() + "=" + entry.getValue()).equals(lastEntry.toString())) {
@@ -106,23 +96,14 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
             }
         }
 
-//todo - ovo nize uglavi iznad
-//        if (totalCost < 0) {
-//            holder.tv_mainCost.setText("> " + currency1 + "21 474 836.47 " + currency2);
-//        } else {
-//            holder.tv_mainCost.setText(currency1 + totalCostString + currency2);
-//        }
-
-
-
         holder.tv_date_for_frontPage.setText(month + ", " + year);
 
         //month & year -> grouping items
-        if (position > 0) {
+        if (position < mCostEntries.size() - 1) {
             if (LocalDate.parse(mCostEntries.get(position).getDate()).getMonth()
-                    .equals(LocalDate.parse(mCostEntries.get(position - 1).getDate()).getMonth())
+                    .equals(LocalDate.parse(mCostEntries.get(position + 1).getDate()).getMonth())
                     && valueOf(LocalDate.parse(mCostEntries.get(position).getDate()).getYear())
-                    .equals(valueOf(LocalDate.parse(mCostEntries.get(position - 1).getDate()).getYear())) ) {
+                    .equals(valueOf(LocalDate.parse(mCostEntries.get(position + 1).getDate()).getYear())) ) {
                 holder.tv_date_for_frontPage.setVisibility(View.GONE);
             } else {
                 holder.tv_date_for_frontPage.setVisibility(View.VISIBLE);
@@ -159,10 +140,12 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
 
     public interface ItemClickListener {
         void onItemClickListener(String itemDate);
+        void onItemLongClickListener(String itemDate);
     }
 
+
     // Inner class for creating ViewHolders
-    class CostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class CostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         // Class variables for the date and daily cost
         TextView tv_weekDay;
@@ -183,12 +166,20 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
             tv_mainCost = itemView.findViewById(R.id.tv_mainCost);
             tv_date_for_frontPage = itemView.findViewById(R.id.tv_date_for_frontPage);
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            String elementDate = mCostEntries.get(getAdapterPosition()).getDate();
+            String elementDate = mCostEntries.get(getAbsoluteAdapterPosition()).getDate();
             mItemClickListener.onItemClickListener(elementDate);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            String elementDate = mCostEntries.get(getAbsoluteAdapterPosition()).getDate();
+            mItemClickListener.onItemLongClickListener(elementDate);
+            return true;
         }
     }
 

@@ -45,7 +45,7 @@ public interface CostDao {
     void deleteDailyCosts(String date);
 
     //todo change this to return SUM (cost) in all currencies
-    @Query("SELECT date, currency, cost FROM expenses ORDER BY date")
+    @Query("SELECT date, currency, cost FROM expenses ORDER BY date DESC")
     LiveData<List<TotalFrontHelpPojo>> loadTotalCosts();
 
     @Query("SELECT DISTINCT currency FROM expenses")
