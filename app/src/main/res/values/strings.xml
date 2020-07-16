@@ -37,5 +37,7 @@
     <string name="euroS">€</string>
     <string name="poundS">£</string>
     <string name="dollarS">$</string>
+    <string name="search">Search</string>
+    <string name="settings">Settings</string>
 
 </resources>

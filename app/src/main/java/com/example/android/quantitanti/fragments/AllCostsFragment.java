@@ -3,13 +3,18 @@ package com.example.android.quantitanti.fragments;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -53,6 +58,8 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
         // Initialize the adapter and attach it to the RecyclerView
         mAdapter = new AllCostsAdapter(this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
+
+        setHasOptionsMenu(true);
 
         return view;
     }
@@ -187,5 +194,28 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
         });
         builder.create();
         builder.show();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        MenuInflater inflater1 = requireActivity().getMenuInflater();
+        inflater1.inflate(R.menu.menu_all_costs_fragment, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
     }
 }

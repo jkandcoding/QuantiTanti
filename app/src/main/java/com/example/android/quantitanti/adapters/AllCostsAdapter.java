@@ -2,9 +2,12 @@ package com.example.android.quantitanti.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +26,7 @@ import com.google.android.material.chip.ChipGroup;
 
 import org.threeten.bp.LocalDate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +46,7 @@ import static com.example.android.quantitanti.database.CostEntry.CURRENCY_3;
 import static com.example.android.quantitanti.database.CostEntry.CURRENCY_4;
 import static java.lang.String.valueOf;
 
-public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCostsViewHolder> {
+public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCostsViewHolder> implements Filterable {
 
     private static String currency1;
     private static String currency2;
@@ -52,6 +56,9 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
 
     // Class variables for the List that holds cost data and the Context
     private List<DailyExpenseTagsWithPicsPojo> mAllCosts;
+    //copy of mAllCosts for Search purpose:
+    private List<DailyExpenseTagsWithPicsPojo> searchAllCosts;
+
     private Context mContext;
 
     public AllCostsAdapter(ItemClickListener listener, Context context) {
@@ -216,8 +223,44 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
 
     public void setAllCost(List<DailyExpenseTagsWithPicsPojo> allCosts) {
         mAllCosts = allCosts;
+        searchAllCosts = new ArrayList<>(allCosts);
         notifyDataSetChanged();
     }
+
+    @Override
+    public Filter getFilter() {
+        return searchFilter;
+    }
+
+    private Filter searchFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<DailyExpenseTagsWithPicsPojo> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(searchAllCosts);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                Log.d(filterPattern, "filterrr");
+                for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
+                    if (item.getCostEntry().getName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mAllCosts.clear();
+            mAllCosts.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
+
 
     public interface ItemClickListener {
         void onItemClickListener(int itemId);
