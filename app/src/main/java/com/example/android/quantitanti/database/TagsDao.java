@@ -7,6 +7,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.android.quantitanti.models.TagsPojo;
+
 import java.util.List;
 
 @Dao
@@ -22,9 +24,9 @@ public interface TagsDao {
     void deleteTag(TagEntry tagEntry);
 
     @Query("SELECT * FROM tags")
-    LiveData<TagEntry> loadAllTags();
+    LiveData<List<TagEntry>> loadAllTags();
 
-    @Query("SELECT tag_name FROM tags")
+    @Query("SELECT tag_name FROM tags ORDER BY tag_name")
     LiveData<List<String>> loadNameTags();
 
     @Query("SELECT tag_id FROM tags WHERE tag_name = :tag_name")

@@ -14,7 +14,7 @@
         <item>@string/pref_currency_value_dollar</item>
     </array>
 
-    <array name="tags">
+    <array name="tagsPojo">
         <item>rockas</item>
         <item>posao</item>
         <item>nesto</item>

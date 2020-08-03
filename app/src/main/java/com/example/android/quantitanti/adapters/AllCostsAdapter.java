@@ -58,6 +58,14 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
     private List<DailyExpenseTagsWithPicsPojo> mAllCosts;
     //copy of mAllCosts for Search purpose:
     private List<DailyExpenseTagsWithPicsPojo> searchAllCosts;
+    private List<DailyExpenseTagsWithPicsPojo> filteredCost;
+
+    private boolean searched = false;
+    private boolean filtered = false;
+    private int filteredCount;
+
+    private List<String> categoriesForFilter;
+    private List<String> tagsForFilter;
 
     private Context mContext;
 
@@ -88,7 +96,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull AllCostsViewHolder holder, int position) {
-    DailyExpenseTagsWithPicsPojo allCostsItem = mAllCosts.get(position);
+        DailyExpenseTagsWithPicsPojo allCostsItem = mAllCosts.get(position);
         String date_No = valueOf(LocalDate.parse(allCostsItem.getCostEntry().getDate()).getDayOfMonth());
         String month = Helper.fromUperCaseToFirstCapitalizedLetter
                 (LocalDate.parse(allCostsItem.getCostEntry().getDate()).getMonth().toString());
@@ -195,7 +203,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
         if (position < mAllCosts.size() - 1) {
             if (LocalDate.parse(mAllCosts.get(position).getCostEntry().getDate())
                     .equals(LocalDate.parse(mAllCosts.get(position + 1).getCostEntry().getDate()))
-                     ) {
+            ) {
                 holder.tv_date_for_frontPage_all.setVisibility(View.GONE);
             } else {
                 holder.tv_date_for_frontPage_all.setVisibility(View.VISIBLE);
@@ -227,6 +235,12 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
         notifyDataSetChanged();
     }
 
+    public void setCategoriesAndTagsForFilter(List<String> categories, List<String> tags) {
+        categoriesForFilter = categories;
+        tagsForFilter = tags;
+        getFilter().filter(null);
+    }
+
     @Override
     public Filter getFilter() {
         return searchFilter;
@@ -235,17 +249,66 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
     private Filter searchFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
+            List<DailyExpenseTagsWithPicsPojo> filteredListHelper = new ArrayList<>();
             List<DailyExpenseTagsWithPicsPojo> filteredList = new ArrayList<>();
 
-            if (constraint == null || constraint.length() == 0) {
+            if ((constraint == null || constraint.length() == 0) && (categoriesForFilter == null || categoriesForFilter.size() == 0) && (tagsForFilter == null || tagsForFilter.size() == 0)) {
                 filteredList.addAll(searchAllCosts);
-            } else {
-                String filterPattern = constraint.toString().toLowerCase().trim();
-                Log.d(filterPattern, "filterrr");
-                for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
-                    if (item.getCostEntry().getName().toLowerCase().contains(filterPattern)) {
-                        filteredList.add(item);
+
+                //todo -> da li tagsForFilter ide u istu petlju ili posebno???
+                //filter
+            } else if ((constraint == null || constraint.length() == 0) && (categoriesForFilter != null || tagsForFilter != null)) {
+                if (categoriesForFilter != null && tagsForFilter == null) {
+                    for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
+                        for (String category : categoriesForFilter) {
+                            if (category.equals(item.getCostEntry().getCategory())) {
+                                filteredList.add(item);
+                            }
+                        }
                     }
+                } else if (categoriesForFilter == null && tagsForFilter != null) {
+                    for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
+                        for (String tag : tagsForFilter) {
+                           if (item.getTagNames().contains(tag)) {
+                                filteredList.add(item);
+                            }
+                        }
+                    }
+                } else if (categoriesForFilter != null && tagsForFilter != null) {
+                    for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
+                        for (String category : categoriesForFilter) {
+                            if (category.equals(item.getCostEntry().getCategory())) {
+                                filteredListHelper.add(item);
+                            }
+                        }
+                    }
+                    for (DailyExpenseTagsWithPicsPojo item : filteredListHelper) {
+                        for (String tag : tagsForFilter) {
+                            if (item.getTagNames().contains(tag)) {
+                                filteredList.add(item);
+                            }
+                        }
+                    }
+                }
+
+            } else if (constraint.length() != 0) {
+                //search #1
+                if (mAllCosts.size() == searchAllCosts.size()) {
+                    String filterPattern = constraint.toString().toLowerCase().trim();
+                    for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
+                        if (item.getCostEntry().getName().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(item);
+                        }
+                    }
+                } else {
+                    // search when filtered
+                    String filterPattern = constraint.toString().toLowerCase().trim();
+                    for (DailyExpenseTagsWithPicsPojo item : mAllCosts) {
+                        if (item.getCostEntry().getName().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(item);
+                        }
+                    }
+
                 }
             }
             FilterResults results = new FilterResults();
@@ -264,6 +327,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
 
     public interface ItemClickListener {
         void onItemClickListener(int itemId);
+
         void onItemLongClickListener(int itemId);
     }
 

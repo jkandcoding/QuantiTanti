@@ -39,5 +39,9 @@
     <string name="dollarS">$</string>
     <string name="search">Search</string>
     <string name="settings">Settings</string>
+    <string name="filter">FILTER BY</string>
+    <string name="tags">TAGS</string>
+    <string name="cost_value">COST VALUE</string>
+    <string name="categories">CATEGORIES</string>
 
 </resources>

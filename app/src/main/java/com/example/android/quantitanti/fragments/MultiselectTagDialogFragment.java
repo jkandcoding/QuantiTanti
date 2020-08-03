@@ -22,7 +22,7 @@ import com.example.android.quantitanti.R;
 import com.example.android.quantitanti.adapters.TagsAdapter;
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.TagEntry;
-import com.example.android.quantitanti.models.Tags;
+import com.example.android.quantitanti.models.TagsPojo;
 import com.example.android.quantitanti.viewmodels.TagsViewModel;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class MultiselectTagDialogFragment extends DialogFragment {
     // String key for MultiSelectTagDialogFragment
     public static final String BUNDLE_TAGS = "bundleTags";
 
-    List<Tags> tags = new ArrayList<>();
+    List<TagsPojo> tagsChecked = new ArrayList<>();
     List<String> tagNames = new ArrayList<>();
     ArrayList<String> choosenTagsArray = new ArrayList<>();
 
@@ -75,7 +75,7 @@ public class MultiselectTagDialogFragment extends DialogFragment {
 
         layoutManager = new LinearLayoutManager(getContext());
         rv_tagRecyclerview.setLayoutManager(layoutManager);
-        tagsAdapter = new TagsAdapter(tags);
+        tagsAdapter = new TagsAdapter();
         rv_tagRecyclerview.setAdapter(tagsAdapter);
 
         mDb = CostDatabase.getInstance(getContext());
@@ -84,39 +84,27 @@ public class MultiselectTagDialogFragment extends DialogFragment {
 
         viewModel = new ViewModelProvider(this).get(TagsViewModel.class);
         //get tags from TagsViewModels LiveData:
-        viewModel.getTagNames().observe(getViewLifecycleOwner(), new Observer<List<String>>() {
+        viewModel.getTagsForDialog().observe(getViewLifecycleOwner(), new Observer<List<TagsPojo>>() {
             @Override
-            public void onChanged(List<String> strings) {
-                //       viewModel.getTagNames().removeObserver(this);
+            public void onChanged(List<TagsPojo> tagsForDialog) {
+                //setChecked if opening dialog when updating cost which already has tags
+                for (TagsPojo tag : tagsForDialog) {
+                    for (String stag : choosenTagsArray) {
+                        if (tag.getTagName().equals(stag)) {
+                            tag.setSelected(true);
+                        }
+                    }
+                }
+                //List<TagsPojo> checked tags written in AddCostActivity after dismiss MultiSTDFragment
+                tagsChecked.addAll(tagsForDialog);
 
-                tagNames.clear();
-                tagNames.addAll(strings);
-                fillTagObj();
-
+                tagsAdapter.setTags(tagsForDialog);
             }
         });
 
         dismissMultiSelectDialog();
         return v;
 
-    }
-
-    // 1) iz baze izvucem tag 2) spremim ga u List<String> tagNames
-    // 3) iz te liste spremim u Tags.class koja pomocu adaptera puni dialog
-    private void fillTagObj() {
-        tags.clear();
-        for (String s : tagNames) {
-            Tags tag = new Tags(s);
-            tag.setTagName(s); //object List<Tags> tag
-            for (String stag : choosenTagsArray) {
-                if (tag.getTagName().equals(stag)) {
-                    tag.setSelected(true);
-                }
-            }
-            tags.add(tag);      //lista List<Tags> tags
-            Log.d(String.valueOf(tag), "tagsss");
-
-        }
     }
 
     private void makeNewTag() {
@@ -134,15 +122,12 @@ public class MultiselectTagDialogFragment extends DialogFragment {
                     @Override
                     public void run() {
                         mDb.tagsDao().insertTag(tagEntry);
-                        Log.d(String.valueOf(tagEntry), "tagEntry");
                     }
                 });
 
                 et_AddATag.setText("");
                 Toast.makeText(getContext(), "Tag \"" + newTag + "\" added", Toast.LENGTH_SHORT).show();
                 hideKeyboardFromFragment(getContext(), v);
-
-
             }
         });
     }
@@ -171,7 +156,7 @@ public class MultiselectTagDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 List<String> selectedTags = new ArrayList<>();
-                for (Tags selTag : tags) {
+                for (TagsPojo selTag : tagsChecked) {
                     if (selTag.isSelected()) {
                         selectedTags.add(selTag.getTagName());
                     }

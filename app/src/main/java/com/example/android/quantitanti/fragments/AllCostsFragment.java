@@ -3,7 +3,6 @@ package com.example.android.quantitanti.fragments;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,8 +13,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -32,18 +35,29 @@ import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
 import com.example.android.quantitanti.viewmodels.CostListViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemClickListener {
+public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemClickListener, FilterDialogFragment.OnDataPass {
+
+    private static final int TARGET_FRAGMENT_REQUEST_CODE = 1;
 
     public static final String EXTRA_COST_ID = "extraCostId";
 
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
-  //  private View mEmptyView;
     private AllCostsAdapter mAdapter;
 
+
+
     private CostDatabase mDb;
+
+    public static AllCostsFragment getInstance() {
+        AllCostsFragment fragment = new AllCostsFragment();
+        return fragment;
+    }
+
 
     @Nullable
     @Override
@@ -58,6 +72,8 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
         // Initialize the adapter and attach it to the RecyclerView
         mAdapter = new AllCostsAdapter(this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
+
+
 
         setHasOptionsMenu(true);
 
@@ -135,19 +151,11 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
         mDb = CostDatabase.getInstance(requireActivity().getApplicationContext());
 
         setupViewModel();
+
+
     }
 
     private void setupViewModel() {
-//        AllCostsViewModelFactory factory = new AllCostsViewModelFactory(mDb);
-//
-//        AllCostsViewModel viewModel = new ViewModelProvider(this, factory).get(AllCostsViewModel.class);
-//        viewModel.getAllCosts().observe(getViewLifecycleOwner(), new Observer<List<DailyExpenseTagsWithPicsPojo>>() {
-//            @Override
-//            public void onChanged(List<DailyExpenseTagsWithPicsPojo> dailyExpenseTagsWithPicsPojos) {
-//                mAdapter.setAllCost(dailyExpenseTagsWithPicsPojos);
-//            }
-//        });
-
         CostListViewModelFactory factory = new CostListViewModelFactory(mDb);
 
         //CostListViewModel viewModel = new ViewModelProvider(this, factory).get(CostListViewModel.class);
@@ -216,6 +224,32 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
                 return false;
             }
         });
+    }
 
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_filter) {
+//            FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
+//            DialogFragment df = new FilterDialogFragment();
+//            df.show(ft, "dialogFilter");
+
+            FilterDialogFragment fragment = new FilterDialogFragment();
+            fragment.setTargetFragment(this, 1);
+            FragmentManager manager = getFragmentManager();
+            FragmentTransaction ft = manager.beginTransaction();
+            fragment.show(ft, "filterDialog");
+
+            //todo replace target deprecated API (iznad) with childFragmentManager.setFragmentResultListener(...)
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDataPass(List<String> dataCategories, List<String> dataTags) {
+        //todo send data to AllCostAdapter
+        mAdapter.setCategoriesAndTagsForFilter(dataCategories, dataTags);
     }
 }

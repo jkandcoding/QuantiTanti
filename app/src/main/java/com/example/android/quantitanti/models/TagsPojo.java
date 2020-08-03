@@ -1,12 +1,12 @@
 package com.example.android.quantitanti.models;
 
-public class Tags {
+public class TagsPojo {
 
     private String tagName;
     private boolean selected = false;
 
 
-    public Tags(String tagName) {
+    public TagsPojo(String tagName) {
         this.tagName = tagName;
     }
 

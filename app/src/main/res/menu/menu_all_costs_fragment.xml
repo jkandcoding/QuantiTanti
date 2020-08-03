@@ -11,4 +11,10 @@
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
+    <item
+        android:id="@+id/action_filter"
+        android:title="@string/filter"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+
 </menu>

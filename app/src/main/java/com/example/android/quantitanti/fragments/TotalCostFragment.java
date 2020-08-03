@@ -69,53 +69,6 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        /**
-         * Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
-         * An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
-         * and uses callbacks to signal when a user is performing these actions.
-         */
-//        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-//
-//            @Override
-//            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-//                return false;
-//            }
-//
-//            // Called when a user swipes left or right on a ViewHolder
-//            @Override
-//            public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int direction) {
-//                // swipe to delete + alertDialog
-//                AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.AlertDialogStyle);
-//                builder.setCancelable(false);
-//                builder.setIcon(R.drawable.okvir_za_datum_warning);
-//                builder.setTitle("Warning");
-//                builder.setMessage("Are you sure you want to delete entire day?");
-//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        // Get the position of the item to be deleted
-//                        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                int position = viewHolder.getAbsoluteAdapterPosition();
-//                                List<TotalFrontCostPojo> expenses = mAdapter.getDailyExpenses();
-//                                String deleteDate = expenses.get(position).getDate();
-//                                mDb.costDao().deleteDailyCosts(deleteDate);
-//                            }
-//                        });
-//                    }
-//                });
-//                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        // User cancelled the dialog,
-//                        // so we will refresh the adapter to prevent hiding the item from UI
-//                        mAdapter.notifyItemChanged(viewHolder.getAbsoluteAdapterPosition());
-//                    }
-//                });
-//                builder.create();
-//                builder.show();
-//
-//            }
-//        }).attachToRecyclerView(mRecyclerView);
 
         /**
          * Set the Floating Action Button (FAB) to its corresponding View.
