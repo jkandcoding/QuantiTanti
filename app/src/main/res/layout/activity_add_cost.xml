@@ -257,20 +257,21 @@
         android:inputType="number|numberDecimal"
         android:singleLine="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/et_costDescription"
-        app:layout_constraintEnd_toStartOf="@+id/tv_showCurrency"
+        app:layout_constraintEnd_toStartOf="@+id/cp_showCurrency"
         app:layout_constraintHorizontal_weight="2" />
 
-    <TextView
-        android:id="@+id/tv_showCurrency"
-        android:layout_width="0dp"
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/cp_showCurrency"
+        style="@style/CurrencyChip"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:padding="10dp"
-        android:text="$"
         app:layout_constraintBaseline_toBaselineOf="@+id/et_costDescription"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1"
-        tools:layout_editor_absoluteY="276dp" />
+        app:layout_constraintHorizontal_weight="1" />
+
+
 
     <TextView
         android:id="@+id/tv_pickATag"

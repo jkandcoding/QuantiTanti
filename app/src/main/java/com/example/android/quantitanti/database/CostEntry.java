@@ -17,8 +17,8 @@ public class CostEntry {
     private String date;
     private String currency;
 
-    @Ignore
-    private List<TagEntry> tagEntries = null;
+//    @Ignore
+//    private List<TagEntry> tagEntries = null;
 
     //todo upisi kategorije
     /**
@@ -43,9 +43,9 @@ public class CostEntry {
     @Ignore
     public static final String CATEGORY_9 = "Other";
 
-    /**
-     * Possible values for the currency
-     */
+//    /**
+//     * Possible values for the currency
+//     */
     @Ignore
     public static final String CURRENCY_1 = "kn";
     @Ignore

@@ -62,24 +62,23 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:paddingStart="8dp"
         android:gravity="end"
         android:inputType="number|numberDecimal"
         android:text="300,00"
-        app:layout_constraintEnd_toStartOf="@+id/tb_toggle"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="3"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ToggleButton
-        android:id="@+id/tb_toggle"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="ToggleButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/tv_costCurrency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/tv_costValue"
+        app:layout_constraintTop_toBottomOf="@+id/tv_costValue" />
+
+     />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

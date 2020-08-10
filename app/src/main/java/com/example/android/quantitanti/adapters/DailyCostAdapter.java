@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.quantitanti.R;
-import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.PicsEntry;
 import com.example.android.quantitanti.fragments.PhotosDialogFragment;
 import com.example.android.quantitanti.helpers.Helper;
@@ -112,23 +111,25 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
         }
 
         //set currency from DB
-        if (currency.equals(CURRENCY_1)) {
-            currency1 = "";
-            currency2 = " kn";
-        } else if (currency.equals(CURRENCY_2)) {
-            currency1 = "";
-            currency2 = " €";
-        } else if (currency.equals(CURRENCY_3)) {
-            currency1 = "£";
-            currency2 = "";
-        } else if (currency.equals(CURRENCY_4)) {
-            currency1 = "$";
-            currency2 = "";
-        }
+//        if (currency.equals(CURRENCY_1)) {
+//            currency1 = "";
+//            currency2 = " kn";
+//        } else if (currency.equals(CURRENCY_2)) {
+//            currency1 = "";
+//            currency2 = " €";
+//        } else if (currency.equals(CURRENCY_3)) {
+//            currency1 = "£";
+//            currency2 = "";
+//        } else if (currency.equals(CURRENCY_4)) {
+//            currency1 = "$";
+//            currency2 = "";
+//        }
 
         //Set holder values
         holder.tv_costDescription.setText(oneCostName);
-        holder.tv_costValue.setText(currency1 + oneCostValueString + currency2);
+        holder.tv_costValue.setText(oneCostValueString);
+        holder.tv_costCurrency.setText(currency);
+
         holder.cg_tags.removeAllViews();
         if (oneCostTags != null) {
             for (String s : oneCostTags) {
@@ -208,6 +209,7 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
         ImageView imgv_category;
         TextView tv_costDescription;
         TextView tv_costValue;
+        TextView tv_costCurrency;
         ChipGroup cg_tags;
         ImageView iv_getPic;
 
@@ -223,7 +225,7 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
             imgv_category = itemView.findViewById(R.id.imgv_category);
             tv_costDescription = itemView.findViewById(R.id.tv_costDescription);
             tv_costValue = itemView.findViewById(R.id.tv_costValue);
-            //      mTagRecyclerView = itemView.findViewById(R.id.recyclerViewDailyTag);
+            tv_costCurrency = itemView.findViewById(R.id.tv_costCurrency);
             cg_tags = itemView.findViewById(R.id.cg_tags);
             iv_getPic = itemView.findViewById(R.id.iv_getPic);
             itemView.setOnClickListener(this);

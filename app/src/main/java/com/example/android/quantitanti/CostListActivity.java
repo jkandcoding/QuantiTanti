@@ -3,6 +3,7 @@ package com.example.android.quantitanti;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +33,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.Comparator;
+import java.util.Currency;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class CostListActivity extends AppCompatActivity {
 
@@ -40,8 +45,7 @@ public class CostListActivity extends AppCompatActivity {
     private static final String TAG = CostListActivity.class.getSimpleName();
 
  //   constants for sp currency
-    public static String currency1;
-    public static String currency2;
+
 
     //todo NOVO
     private ViewPager2 viewPagerFragment;
@@ -73,6 +77,8 @@ public class CostListActivity extends AppCompatActivity {
                 }
             }
         }).attach();
+
+
 
     }
 

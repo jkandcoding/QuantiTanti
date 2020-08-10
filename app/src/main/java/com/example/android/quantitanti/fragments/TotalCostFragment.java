@@ -140,6 +140,5 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
         builder.create();
         builder.show();
     }
-//        }).attachToRecyclerView(mRecyclerView);
-//    }
+
 }

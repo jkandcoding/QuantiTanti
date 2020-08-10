@@ -33,6 +33,7 @@ import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
 import com.example.android.quantitanti.viewmodels.DailyExpensesViewModel;
 import com.example.android.quantitanti.models.TotalCostPojo;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -95,19 +96,7 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
     //sum category costs
     TextView tv_category_costs;
     TextView tv_total_cost;
-    int categoryCostSlideHeight = 0;
-  //  List<Integer> viewPager2MaxHight;
-    int totalCost;
-    String totalCostString;
-    int category1Cost;
-    int category2Cost;
-    int category3Cost;
-    int category4Cost;
-    int category5Cost;
-    int category6Cost;
-    int category7Cost;
-    int category8Cost;
-    int category9Cost;
+
 
     SliderLayout slider;
 
@@ -253,16 +242,16 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         if (savedInstanceState != null && savedInstanceState.containsKey(AddCostActivity.INSTANCE_COST_ID)) {
             mCostId = savedInstanceState.getInt(AddCostActivity.INSTANCE_COST_ID, DEFAULT_COST_ID);
         }
-        initViews();
+      //  initViews();
 
 
     }
 
-    private void initViews() {
-        tv_category_costs = findViewById(R.id.tv_category_costs);
-        tv_total_cost = findViewById(R.id.tv_total_cost);
-        slider = findViewById(R.id.slider);
-    }
+//    private void initViews() {
+//        tv_category_costs = findViewById(R.id.tv_category_costs);
+//        tv_total_cost = findViewById(R.id.tv_total_cost);
+//        slider = findViewById(R.id.slider);
+//    }
 
     private void calenderDateSetting() {
         //getting date for setting a calender
@@ -330,14 +319,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         }
     }
 
-//    public void setTotalCostPojosForAdapter(List<TotalCostPojo> totalCostPojos) {
-//        if (totalCostPojos == null) {
-//            Toast.makeText(this, "There is no data", Toast.LENGTH_SHORT).show();
-//        } else {
-//            totalCostPojosForAdapter = totalCostPojos;
-//            Log.d(String.valueOf(totalCostPojosForAdapter), " dhdhdhd");  //ne radi
-//        }
-//    }
 
 
     @Override
@@ -357,10 +338,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        viewPager2.unregisterOnPageChangeCallback(onPageChangeCallback);
-//    }
+
 }
 

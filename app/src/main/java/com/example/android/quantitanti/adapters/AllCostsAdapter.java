@@ -127,33 +127,33 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
         }
 
         //set currency from DB
-        if (currency != null) {         //todo brisi ovaj redak kada se iz baze izbrisu troskovi s null-avim currencyem
-            switch (currency) {
-                case CURRENCY_1:
-                    currency1 = "";
-                    currency2 = " kn";
-                    break;
-                case CURRENCY_2:
-                    currency1 = "";
-                    currency2 = " €";
-                    break;
-                case CURRENCY_3:
-                    currency1 = "£";
-                    currency2 = "";
-                    break;
-                case CURRENCY_4:
-                    currency1 = "$";
-                    currency2 = "";
-                    break;
-            }
-        } else {
-            currency1 = "?";
-            currency2 = " ?";
+        if (currency == null) {         //todo brisi ovaj redak kada se iz baze izbrisu troskovi s null-avim currencyem
+//            switch (currency) {
+//                case CURRENCY_1:
+//                    currency1 = "";
+//                    currency2 = " kn";
+//                    break;
+//                case CURRENCY_2:
+//                    currency1 = "";
+//                    currency2 = " €";
+//                    break;
+//                case CURRENCY_3:
+//                    currency1 = "£";
+//                    currency2 = "";
+//                    break;
+//                case CURRENCY_4:
+//                    currency1 = "$";
+//                    currency2 = "";
+//                    break;
+//            }
+//        } else {
+            holder.tv_costCurrency_all.setText("null");
         }
 
         //Set holder values
         holder.tv_costDescription_all.setText(oneCostName);
-        holder.tv_costValue_all.setText(currency1 + oneCostValueString + currency2);
+        holder.tv_costValue_all.setText(oneCostValueString);
+        holder.tv_costCurrency_all.setText(currency);
         holder.cg_tags_all.removeAllViews();
         if (oneCostTags != null) {
             for (String s : oneCostTags) {
@@ -337,6 +337,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
         ImageView imgv_category_all;
         TextView tv_costDescription_all;
         TextView tv_costValue_all;
+        TextView tv_costCurrency_all;
         ChipGroup cg_tags_all;
         ImageView iv_getPic_all;
 
@@ -346,6 +347,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
             imgv_category_all = itemView.findViewById(R.id.imgv_category_all);
             tv_costDescription_all = itemView.findViewById(R.id.tv_costDescription_all);
             tv_costValue_all = itemView.findViewById(R.id.tv_costValue_all);
+            tv_costCurrency_all = itemView.findViewById(R.id.tv_costCurrency_all);
             cg_tags_all = itemView.findViewById(R.id.cg_tags_all);
             iv_getPic_all = itemView.findViewById(R.id.iv_getPic_all);
             itemView.setOnClickListener(this);

@@ -107,7 +107,7 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     String category;
     EditText mCostDescription;
     EditText mCostValue;
-    TextView mShowCurrency;
+    Chip mShowCurrency;
     String currencySave;
     View horScrollV;
 
@@ -259,35 +259,34 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     private void setCurrencyFromPreferences(SharedPreferences sharedPreferences) {
         String currency = sharedPreferences.getString(getString(R.string.pref_currency_key),
                 getString(R.string.pref_currency_value_kuna));
-        if (currency.equals(getString(R.string.pref_currency_value_kuna))) {
-            currency1 = "";
-            currency2 = " kn";
-        } else if (currency.equals(getString(R.string.pref_currency_value_euro))) {
-            currency1 = "";
-            currency2 = " €";
-        } else if (currency.equals(getString(R.string.pref_currency_value_pound))) {
-            currency1 = "£";
-            currency2 = "";
-        } else if (currency.equals(getString(R.string.pref_currency_value_dollar))) {
-            currency1 = "$";
-            currency2 = "";
-        }
-        if (currency1.isEmpty()) {
-            mShowCurrency.setText(currency2.trim());
-        } else if (currency2.isEmpty()) {
-            mShowCurrency.setText(currency1);
-        }
+//        if (currency.equals(getString(R.string.pref_currency_value_kuna))) {
+//            currency1 = "";
+//            currency2 = " kn";
+//        } else if (currency.equals(getString(R.string.pref_currency_value_euro))) {
+//            currency1 = "";
+//            currency2 = " €";
+//        } else if (currency.equals(getString(R.string.pref_currency_value_pound))) {
+//            currency1 = "£";
+//            currency2 = "";
+//        } else if (currency.equals(getString(R.string.pref_currency_value_dollar))) {
+//            currency1 = "$";
+//            currency2 = "";
+//        }
+//        if (currency1.isEmpty()) {
+//            mShowCurrency.setText(currency2.trim());
+//        } else if (currency2.isEmpty()) {
+//            mShowCurrency.setText(currency1);
+//        }
+
+        mShowCurrency.setText(currency);
 
 
     }
 
     private void pickCurrency() {
-        mShowCurrency.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent startSettingsActivity = new Intent(AddCostActivity.this, SettingsActivity.class);
-                startActivity(startSettingsActivity);
-            }
+        mShowCurrency.setOnClickListener(v -> {
+            Intent startSettingsActivity = new Intent(AddCostActivity.this, SettingsActivity.class);
+            startActivity(startSettingsActivity);
         });
 
     }
@@ -427,7 +426,7 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
                 return false;
             }
         });
-        mShowCurrency = findViewById(R.id.tv_showCurrency);
+        mShowCurrency = findViewById(R.id.cp_showCurrency);
 
         //calender
         mCalender = findViewById(R.id.view_calender);
