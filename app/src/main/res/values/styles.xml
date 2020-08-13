@@ -54,16 +54,50 @@
     </style>
 
     <style name="SmallerText" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textSize">11sp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <!--    for currency Chip-->
     <style name="CurrencyChip" parent="Widget.MaterialComponents.Chip.Action">
          <item name="chipCornerRadius">4dp</item>
         <item name="chipMinHeight">18dp</item>
-        <item name="chipEndPadding">2dp</item>
-        <item name="chipStartPadding">2dp</item>
+        <item name="textStartPadding">0dp</item>
+        <item name="textEndPadding">0dp</item>
+        <item name="chipEndPadding">4dp</item>
+        <item name="chipMinTouchTargetSize">24dp</item>
         <item name="chipBackgroundColor">#a6a6a6</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textAppearance">@style/SmallerText</item>
+    </style>
+
+    <!--    for tags Chip-->
+    <style name="TagChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipCornerRadius">4dp</item>
+        <item name="chipMinHeight">18dp</item>
+        <item name="textStartPadding">0dp</item>
+        <item name="textEndPadding">2dp</item>
+        <item name="chipEndPadding">2dp</item>
+        <item name="closeIconEndPadding">0dp</item>
+        <item name="closeIconSize">14dp</item>
+        <item name="closeIconTint">#ffffff</item>
+        <item name="chipMinTouchTargetSize">24dp</item>
+        <item name="chipBackgroundColor">#66a3ff</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textAppearance">@style/SmallerText</item>
+    </style>
+
+    <!--    for pics Chip-->
+    <style name="PicChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipCornerRadius">4dp</item>
+        <item name="chipMinHeight">18dp</item>
+        <item name="textStartPadding">0dp</item>
+        <item name="textEndPadding">2dp</item>
+        <item name="chipEndPadding">2dp</item>
+        <item name="closeIconEndPadding">0dp</item>
+        <item name="closeIconSize">14dp</item>
+        <item name="closeIconTint">#ffffff</item>
+        <item name="chipMinTouchTargetSize">24dp</item>
+        <item name="chipBackgroundColor">#b366ff</item>
         <item name="android:textColor">#ffffff</item>
         <item name="android:textAppearance">@style/SmallerText</item>
     </style>

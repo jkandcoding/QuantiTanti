@@ -257,30 +257,8 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     }
 
     private void setCurrencyFromPreferences(SharedPreferences sharedPreferences) {
-        String currency = sharedPreferences.getString(getString(R.string.pref_currency_key),
-                getString(R.string.pref_currency_value_kuna));
-//        if (currency.equals(getString(R.string.pref_currency_value_kuna))) {
-//            currency1 = "";
-//            currency2 = " kn";
-//        } else if (currency.equals(getString(R.string.pref_currency_value_euro))) {
-//            currency1 = "";
-//            currency2 = " €";
-//        } else if (currency.equals(getString(R.string.pref_currency_value_pound))) {
-//            currency1 = "£";
-//            currency2 = "";
-//        } else if (currency.equals(getString(R.string.pref_currency_value_dollar))) {
-//            currency1 = "$";
-//            currency2 = "";
-//        }
-//        if (currency1.isEmpty()) {
-//            mShowCurrency.setText(currency2.trim());
-//        } else if (currency2.isEmpty()) {
-//            mShowCurrency.setText(currency1);
-//        }
-
+        String currency = sharedPreferences.getString(getString(R.string.pref_currency_key), getString(R.string.pref_currency_value_kuna));
         mShowCurrency.setText(currency);
-
-
     }
 
     private void pickCurrency() {
@@ -299,12 +277,10 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     }
 
 
-
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.pref_currency_key))) {
             setCurrencyFromPreferences(sharedPreferences);
-
         }
     }
 
@@ -368,9 +344,8 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
 
 
         for (Map.Entry<String, String> entry : picDataForDB.entrySet()) {
-            Chip chip_pic = new Chip(this);
-            //todo change to getKey()
-            chip_pic.setText(entry.getValue());
+            Chip chip_pic = (Chip) getLayoutInflater().inflate(R.layout.single_pic_chip_layout, null);
+            chip_pic.setText(entry.getKey());
             Log.d(entry.getValue(), "hhhhhhhhh");
             chip_pic.setCloseIconVisible(true);
             chip_pic.setOnCloseIconClickListener(v -> {
@@ -437,7 +412,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         //getting current date with threeTenABP
         OffsetDateTime defaultTodayDate = OffsetDateTime.now();
         defaultTodayDateString = defaultTodayDate.toLocalDate().toString();  //for db - localDate, no Time
-
 
         //Strings for tv_s -> default date
         dayOfMonthString = valueOf(defaultTodayDate.getDayOfMonth());
@@ -697,7 +671,8 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         cg_tags.setVisibility(View.VISIBLE);
         cg_tags.removeAllViews();
         for (String s : data) {
-            final Chip chip_tag = new Chip(this);
+//          final Chip chip_tag = new Chip(this);
+            Chip chip_tag = (Chip) getLayoutInflater().inflate(R.layout.single_tag_chip_layout, null);
             chip_tag.setText(s);
             chip_tag.setCloseIconVisible(true);
             chip_tag.setOnCloseIconClickListener(v -> {
@@ -831,11 +806,10 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     }
 
     public void setPicTags() {
-        //  choosenPicNames.add(picName);
-        Log.d("2", "redoslijed");
         cg_picUriResult.setVisibility(View.VISIBLE);
 
-        final Chip chip_pic = new Chip(this);
+//      final Chip chip_pic = new Chip(this);
+        Chip chip_pic = (Chip) getLayoutInflater().inflate(R.layout.single_pic_chip_layout, null);
         chip_pic.setText(picName);
         chip_pic.setCloseIconVisible(true);
         chip_pic.setOnCloseIconClickListener(v -> {
@@ -843,7 +817,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
             removeFromHashmap(picName);
         });
         cg_picUriResult.addView(chip_pic);
-
     }
 
     public void removeFromHashmap(String name) {

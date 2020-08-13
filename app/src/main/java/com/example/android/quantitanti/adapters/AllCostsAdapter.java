@@ -22,6 +22,7 @@ import com.example.android.quantitanti.fragments.PhotosDialogFragment;
 import com.example.android.quantitanti.helpers.Helper;
 import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
 
 import org.threeten.bp.LocalDate;
@@ -69,6 +70,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
 
     private Context mContext;
 
+
     public AllCostsAdapter(ItemClickListener listener, Context context) {
         mItemClickListener = listener;
         mContext = context;
@@ -114,6 +116,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
             photos.put(picsEntry.getPic_name(), picsEntry.getPic_uri());
         }
 
+
         if (!photos.isEmpty()) {
             holder.iv_getPic_all.setVisibility(View.VISIBLE);
             holder.iv_getPic_all.setOnClickListener(new View.OnClickListener() {
@@ -124,10 +127,12 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
                     photosDialogFragment.show(fm, "fragment_photo");
                 }
             });
+        } else {
+            holder.iv_getPic_all.setVisibility(View.GONE);
         }
 
         //set currency from DB
-        if (currency == null) {         //todo brisi ovaj redak kada se iz baze izbrisu troskovi s null-avim currencyem
+        //       if (currency == null) {         //todo brisi ovaj redak kada se iz baze izbrisu troskovi s null-avim currencyem
 //            switch (currency) {
 //                case CURRENCY_1:
 //                    currency1 = "";
@@ -147,8 +152,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
 //                    break;
 //            }
 //        } else {
-            holder.tv_costCurrency_all.setText("null");
-        }
+// //        }
 
         //Set holder values
         holder.tv_costDescription_all.setText(oneCostName);
@@ -157,7 +161,13 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
         holder.cg_tags_all.removeAllViews();
         if (oneCostTags != null) {
             for (String s : oneCostTags) {
-                Chip chip = new Chip(mContext);
+//                Chip chip = new Chip(mContext);
+//                ChipDrawable cd = ChipDrawable.createFromAttributes(mContext, null, 0, R.style.TagChip);
+//                chip.setChipDrawable(cd);
+//                chip.setTextAppearance(mContext, R.style.SmallerText);
+
+                LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                Chip chip = (Chip) layoutInflater.inflate(R.layout.single_tag_chip_layout, null);
                 chip.setText(s);
                 chip.setClickable(false);
                 holder.cg_tags_all.addView(chip);
@@ -269,7 +279,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
                 } else if (categoriesForFilter == null && tagsForFilter != null) {
                     for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
                         for (String tag : tagsForFilter) {
-                           if (item.getTagNames().contains(tag)) {
+                            if (item.getTagNames().contains(tag)) {
                                 filteredList.add(item);
                             }
                         }
