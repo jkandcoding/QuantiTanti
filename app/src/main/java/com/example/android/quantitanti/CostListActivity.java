@@ -77,10 +77,7 @@ public class CostListActivity extends AppCompatActivity {
                 }
             }
         }).attach();
-
-
-
-    }
+   }
 
 
     @Override

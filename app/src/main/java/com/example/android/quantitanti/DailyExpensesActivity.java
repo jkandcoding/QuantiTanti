@@ -40,8 +40,10 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.TextStyle;
 
 import java.util.List;
+import java.util.Locale;
 
 import static java.lang.String.valueOf;
 
@@ -242,16 +244,8 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         if (savedInstanceState != null && savedInstanceState.containsKey(AddCostActivity.INSTANCE_COST_ID)) {
             mCostId = savedInstanceState.getInt(AddCostActivity.INSTANCE_COST_ID, DEFAULT_COST_ID);
         }
-      //  initViews();
+      }
 
-
-    }
-
-//    private void initViews() {
-//        tv_category_costs = findViewById(R.id.tv_category_costs);
-//        tv_total_cost = findViewById(R.id.tv_total_cost);
-//        slider = findViewById(R.id.slider);
-//    }
 
     private void calenderDateSetting() {
         //getting date for setting a calender
@@ -259,7 +253,8 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                 (LocalDate.parse(mCostDate).getDayOfWeek().toString());
         String date_No = valueOf(LocalDate.parse(mCostDate).getDayOfMonth());
         String month = Helper.fromUperCaseToFirstCapitalizedLetter
-                (LocalDate.parse(mCostDate).getMonth().toString());
+              //  (LocalDate.parse(mCostDate).getMonth().toString());
+                (LocalDate.parse(mCostDate).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
         String year = valueOf(LocalDate.parse(mCostDate).getYear());
 
         tv_weekDay = findViewById(R.id.tv_weekDay);

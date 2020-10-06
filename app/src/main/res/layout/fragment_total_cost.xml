@@ -34,7 +34,7 @@
             android:gravity="center"
             android:text="Add some expenses!"
             android:textSize="40sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/color_primary_dark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +49,7 @@
             android:fontFamily="@font/cabin_sketch_bold"
             android:text="Click for update, \n Swipe for delete"
             android:textSize="30sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/color_primary_dark"
             app:layout_constraintEnd_toEndOf="@+id/tv_empty1"
             app:layout_constraintStart_toStartOf="@+id/tv_empty1"
             app:layout_constraintTop_toBottomOf="@+id/tv_empty1" />
@@ -57,12 +57,12 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
+        style="@style/FabStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/colorPrimaryDark"
         android:clickable="true"
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"

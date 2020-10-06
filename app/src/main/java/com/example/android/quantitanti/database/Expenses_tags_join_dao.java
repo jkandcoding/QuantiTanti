@@ -20,14 +20,21 @@ public interface Expenses_tags_join_dao {
     @Delete
     void delete(Expenses_tags_join expenses_tags_join);
 
-    //prikaz troskova selectano po tagu -> prikaz u novom activity-u
-    @Query("SELECT * FROM expenses INNER JOIN expenses_tags_join ON expenses.id = expenses_tags_join.expense_id " +
-            "WHERE tag_id = :tag_id")
-    List<CostEntry> getExpensesForTag(final int tag_id);
+//    //prikaz troskova selectano po tagu -> prikaz u novom activity-u
+//    @Query("SELECT * FROM expenses INNER JOIN expenses_tags_join ON expenses.id = expenses_tags_join.expense_id " +
+//            "WHERE tag_id = :tag_id")
+//    List<CostEntry> getExpensesForTag(final int tag_id);
 
     // svi tagovi nekog troska -> prikaz u AddCostActivityu, kod update-anja troska
     @Query("SELECT tag_id FROM expenses_tags_join WHERE expense_id = :expense_id")
     List<Integer> getTagIdsForCost(int expense_id);
+
+    //when deleting tag -> checking if tag is assigned to costs
+    @Query("SELECT expense_id FROM expenses_tags_join WHERE tag_id = :tag_id")
+    List<Integer> loadExpenseIdsForTag(int tag_id);
+
+    @Query("DELETE FROM expenses_tags_join WHERE tag_id = :tag_id")
+    void deleteWithTagId(int tag_id);
 
 
 

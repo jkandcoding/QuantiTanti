@@ -10,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 public class FilterDialogFragment extends DialogFragment {
 
@@ -42,6 +45,9 @@ public class FilterDialogFragment extends DialogFragment {
     private List<String> tagsForFilter;
 
 
+    private LinearLayout ll_category_filter;
+    private LinearLayout ll_tag_filter;
+
     private TextView tv_category_filter;
     private TextView tv_categoryList_filter;
     private TextView tv_tag_filter;
@@ -49,15 +55,19 @@ public class FilterDialogFragment extends DialogFragment {
 
     private Button btn_ok_filter;
     private Button btn_cancel_filter;
-    private Button cp_clear_categories;
-    private Button cp_clear_tags;
+    private Button btn_clear_categories;
+    private Button btn_clear_tags;
 
     private OnDataPass dataPasser;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_filter_dialog, container, false);
+
+        ll_category_filter = v.findViewById(R.id.ll_categories_open);
+        ll_tag_filter = v.findViewById(R.id.ll_tags_open);
 
         tv_category_filter = v.findViewById(R.id.tv_category_filter);
         tv_categoryList_filter = v.findViewById(R.id.tv_categoryList_filter);
@@ -66,12 +76,13 @@ public class FilterDialogFragment extends DialogFragment {
 
         btn_ok_filter = v.findViewById(R.id.btn_ok_filter);
         btn_cancel_filter = v.findViewById(R.id.btn_cancel_filter);
-        cp_clear_categories = v.findViewById(R.id.cp__clear_categories);
-        cp_clear_tags = v.findViewById(R.id.cp__clear_tags);
+        btn_clear_categories = v.findViewById(R.id.btn__clear_categories);
+        btn_clear_tags = v.findViewById(R.id.btn__clear_tags);
 
         setupViewModel();
         setupViews();
         setupOnClickListeners();
+
 
         return v;
     }
@@ -114,52 +125,54 @@ public class FilterDialogFragment extends DialogFragment {
 
         //"clear all" chips
         if (!tv_categoryList_filter.getText().toString().equals("NO FILTER")) {
-            cp_clear_categories.setVisibility(View.VISIBLE);
+            btn_clear_categories.setVisibility(View.VISIBLE);
         } else {
-            cp_clear_categories.setVisibility(View.GONE);
+            btn_clear_categories.setVisibility(View.GONE);
         }
 
         if (!tv_tagList_filter.getText().toString().equals("NO FILTER")) {
-            cp_clear_tags.setVisibility(View.VISIBLE);
+            btn_clear_tags.setVisibility(View.VISIBLE);
         } else {
-            cp_clear_tags.setVisibility(View.GONE);
+            btn_clear_tags.setVisibility(View.GONE);
         }
     }
 
     private void setupOnClickListeners() {
-        tv_category_filter.setOnClickListener(v -> openCategoryMultiSelectDialog(categoriesList));
 
-        tv_tag_filter.setOnClickListener(v -> openTagMultiSelectDialog(tagsList));
-
-        btn_ok_filter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                if (categoriesForFilter == null) {
-//                    categoriesForFilter = new ArrayList<>();
-//                    categoriesForFilter.addAll(categoriesList);
-//                }
-//
-//                if (tagsForFilter == null) {
-//                    tagsForFilter = new ArrayList<>();
-//                    tagsForFilter.addAll(tagsList);
-//                }
-                dataPasser.onDataPass(viewModel.getCategoriesForFilter(), viewModel.getTagsForFilter());
-                FilterDialogFragment.this.dismiss();
+        ll_category_filter.setOnClickListener(v -> {
+            if (categoriesList != null && !categoriesList.isEmpty()) {
+                openCategoryMultiSelectDialog(categoriesList);
+            } else {
+                Toast.makeText(requireActivity(), "No categories added yet", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        ll_tag_filter.setOnClickListener(v -> {
+            if (tagsList != null && !tagsList.isEmpty()) {
+                openTagMultiSelectDialog(tagsList);
+            } else {
+                Toast.makeText(requireActivity(), "No tags added yet", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        btn_ok_filter.setOnClickListener(v -> {
+            dataPasser.onDataPass(viewModel.getCategoriesForFilter(), viewModel.getTagsForFilter());
+            FilterDialogFragment.this.dismiss();
         });
 
         btn_cancel_filter.setOnClickListener(v -> dismiss());
 
-        cp_clear_categories.setOnClickListener(v -> {
+        btn_clear_categories.setOnClickListener(v -> {
             tv_categoryList_filter.setText("NO FILTER");
             viewModel.setCategoriesForFilter(null);
-            cp_clear_categories.setVisibility(View.GONE);
+            btn_clear_categories.setVisibility(View.GONE);
         });
 
-        cp_clear_tags.setOnClickListener(v -> {
+        btn_clear_tags.setOnClickListener(v -> {
             tv_tagList_filter.setText("NO FILTER");
             viewModel.setTagsForFilter(null);
-            cp_clear_tags.setVisibility(View.GONE);
+            btn_clear_tags.setVisibility(View.GONE);
         });
     }
 
@@ -191,7 +204,7 @@ public class FilterDialogFragment extends DialogFragment {
             }
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.AlertDialogStyle);
         builder.setMultiChoiceItems(categories, checkedItems,
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
@@ -220,8 +233,12 @@ public class FilterDialogFragment extends DialogFragment {
                             }
                             for (String category : viewModel.getCategoriesForFilter()) {
                                 tv_categoryList_filter.append(category + "\n");
-                                cp_clear_categories.setVisibility(View.VISIBLE);
+                                btn_clear_categories.setVisibility(View.VISIBLE);
                             }
+                        } else {
+                            tv_categoryList_filter.setText("NO FILTER");
+                            btn_clear_categories.setVisibility(View.GONE);
+                            viewModel.setCategoriesForFilter(null);
                         }
                     }
                 })
@@ -236,6 +253,7 @@ public class FilterDialogFragment extends DialogFragment {
 
     private void openTagMultiSelectDialog(List<String> tagsList) {
         Dialog dialog;
+
         int size = tagsList.size();
         String[] tags = tagsList.toArray(new String[size]);
 
@@ -261,7 +279,7 @@ public class FilterDialogFragment extends DialogFragment {
             }
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.AlertDialogStyle);
         builder.setMultiChoiceItems(tags, checkedItems,
                 new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
@@ -290,8 +308,12 @@ public class FilterDialogFragment extends DialogFragment {
                             }
                             for (String category : viewModel.getTagsForFilter()) {
                                 tv_tagList_filter.append(category + "\n");
-                                cp_clear_tags.setVisibility(View.VISIBLE);
+                                btn_clear_tags.setVisibility(View.VISIBLE);
                             }
+                        } else {
+                            tv_tagList_filter.setText("NO FILTER");
+                            btn_clear_tags.setVisibility(View.GONE);
+                            viewModel.setTagsForFilter(null);
                         }
                     }
                 })

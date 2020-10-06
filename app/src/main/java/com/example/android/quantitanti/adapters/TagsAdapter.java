@@ -1,8 +1,10 @@
 package com.example.android.quantitanti.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -17,9 +19,10 @@ import java.util.List;
 public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder> {
 
     private List<TagsPojo> mTags;
+    final private ItemClickListener mItemClickListener;
 
-    public TagsAdapter() {
-
+    public TagsAdapter(ItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
     }
 
 
@@ -56,17 +59,17 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
         return mTags.size();
     }
 
-    //ne treba mi
-//    public List<TagsPojo> getTags() {
-//        return mTags;
-//    }
 
     public void setTags(List<TagsPojo> tags) {
         mTags = tags;
         notifyDataSetChanged();
     }
 
-    public class TagViewHolder extends RecyclerView.ViewHolder {
+    public interface ItemClickListener {
+        void onItemLongClickListener(int tagIdforDel);
+    }
+
+    public class TagViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
         private TextView tagName;
         private CheckBox chk;
@@ -75,6 +78,15 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
             super(itemView);
             tagName = itemView.findViewById(R.id.tv_tagName_tagRowDialog);
             chk = itemView.findViewById(R.id.cb_tagRowDialog);
+            itemView.setOnLongClickListener(this);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            int tagIdforDel = mTags.get(getAbsoluteAdapterPosition()).getTagId();
+            mItemClickListener.onItemLongClickListener(tagIdforDel);
+            Log.d(String.valueOf(tagIdforDel), "tagId");
+            return true;
         }
     }
 }

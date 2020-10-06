@@ -20,8 +20,6 @@ public class FilterViewModel extends AndroidViewModel {
 
     private LiveData<List<String>> tagNames;
 
-
-
     private List<String> tagsForFilter;
 
 

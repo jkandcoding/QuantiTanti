@@ -55,32 +55,33 @@ public class PhotosDialogFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         slider = view.findViewById(R.id.slider);
-        if (getArguments()!= null) {
-        photos = (Map<String, String>) getArguments().getSerializable(BUNDLE_PHOTOS);
+        if (getArguments() != null) {
+            photos = (Map<String, String>) getArguments().getSerializable(BUNDLE_PHOTOS);
 
-        for (Map.Entry<String, String> entry : photos.entrySet()) {
+            for (Map.Entry<String, String> entry : photos.entrySet()) {
 
-         //   String string = Helper.setPic(entry.getValue(), slider);
+                //   String string = Helper.setPic(entry.getValue(), slider);
 
-            TextSliderView textSliderView = new TextSliderView(getContext());
-            textSliderView
-                    .description(entry.getKey())
-                    .image(entry.getValue());
-            //view transition effects:
-            slider.setPresetTransformer(9);
-            if (photos.size() == 1) {
-                slider.stopAutoCycle();
-                slider.setPagerTransformer(false, new BaseTransformer() {
-                    @Override
-                    protected void onTransform(View view, float position) {
+                TextSliderView textSliderView = new TextSliderView(getContext());
+                textSliderView
+                        .description(entry.getKey())
+                        .image(entry.getValue())
+                .setScaleType(BaseSliderView.ScaleType.CenterCrop);
 
-                    }
-                });
-                //todo: disable indicator
+                //view transition effects:
+                slider.setPresetTransformer(5);
+                if (photos.size() == 1) {
+                    slider.stopAutoCycle();
+                    slider.setPagerTransformer(false, new BaseTransformer() {
+                        @Override
+                        protected void onTransform(View view, float position) {
 
+                        }
+                    });
+                }
+                slider.addSlider(textSliderView);
+                slider.setPresetIndicator(SliderLayout.PresetIndicators.Right_Bottom);
             }
-            slider.addSlider(textSliderView);
-        }
         }
     }
 

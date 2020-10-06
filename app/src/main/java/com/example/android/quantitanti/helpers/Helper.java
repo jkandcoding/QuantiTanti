@@ -19,10 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_1;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_2;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_3;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_4;
+
 
 public class Helper {
 
@@ -147,26 +144,7 @@ public class Helper {
         listView.requestLayout();
     }
 
-    public static void setCurrencyForUI(String currency) {
 
-        String currency1 = "";
-        String currency2 = "";
-
-        if (currency.equals(CURRENCY_1)) {
-            currency1 = "";
-            currency2 = " kn";
-        } else if (currency.equals(CURRENCY_2)) {
-            currency1 = "";
-            currency2 = " €";
-        } else if (currency.equals(CURRENCY_3)) {
-            currency1 = "£";
-            currency2 = "";
-        } else if (currency.equals(CURRENCY_4)) {
-            currency1 = "$";
-            currency2 = "";
-        }
-
-    }
 
 }
 

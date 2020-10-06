@@ -13,7 +13,7 @@ import java.util.List;
 public interface DailyExpensesDao {
 
     @Transaction
-    @Query("SELECT * FROM expenses WHERE date =:date")
+    @Query("SELECT * FROM expenses WHERE date =:date ORDER BY id DESC")
     LiveData<List<DailyExpenseTagsWithPicsPojo>> loadCostsWithTagsAndPics(String date);
 
     @Transaction

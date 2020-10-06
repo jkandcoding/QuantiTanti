@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {CostEntry.class, TagEntry.class, Expenses_tags_join.class, PicsEntry.class}, version = 3, exportSchema = true)
+@Database(entities = {CostEntry.class, TagEntry.class, Expenses_tags_join.class, PicsEntry.class}, version = 4, exportSchema = true)
 public abstract class CostDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = CostDatabase.class.getSimpleName();
@@ -44,13 +44,27 @@ public abstract class CostDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE INDEX IF NOT EXISTS `cost_id` ON `expenses`(`id`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `category` ON `expenses`(`category`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `date` ON `expenses`(`date`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `tag_id` ON `tags`(`tag_id`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `tag_name` ON `tags`(`tag_name`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `expense_id` ON `pics`(`expense_id`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `expense_id_join` ON `expenses_tags_join`(`expense_id`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `tag_id_join` ON `expenses_tags_join`(`tag_id`)");
+        }
+    };
+
     public static CostDatabase getInstance(Context context) {
         if (sInstance == null) {
             synchronized (LOCK) {
                 Log.d(LOG_TAG, "Creating new database instance");
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         CostDatabase.class, CostDatabase.DATABASE_NAME)
-                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
       //                  .allowMainThreadQueries()
                         .build();
             }

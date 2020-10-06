@@ -64,6 +64,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.ZoneOffset;
+import org.threeten.bp.format.TextStyle;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,6 +74,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -98,8 +100,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     public static final String INSTANCE_COST_ID = "instanceCostId";
     // Constant for default cost id to be used when not in update mode
     private static final int DEFAULT_COST_ID = -1;
-    //Arbitrary image code
-    public static final int MY_IMAGE_CODE = 8;
     // Constant for logging
     private static final String TAG = AddCostActivity.class.getSimpleName();
     // Fields for views
@@ -110,10 +110,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     Chip mShowCurrency;
     String currencySave;
     View horScrollV;
-
-    //constants for sp currency
-    public static String currency1;
-    public static String currency2;
 
     //Category buttons
     ImageButton iBtn_car;
@@ -148,9 +144,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     String yearString;
     String dayOfWeekString;
 
-
-    private TagsAdapter mtagsAdapter;
-
     //tags
     TextView tv_addCost_label;
     TextView tv_pickATag;
@@ -163,9 +156,7 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     //pics
     TextView tv_takeAPic;
     ChipGroup cg_picUriResult;
-    List<String> choosenPicNames = new ArrayList<>();
     private String pictureFilePath;
-    String selectedImageUriString;
     String picName;
     Map<String, String> picDataForDB = new HashMap<>();
     private static final int REQUEST_CAPTURE_IMAGE = 100;
@@ -174,7 +165,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     String photoUriFromGalleryString = "";
     File mPhotoFile;
     private SliderLayout slider;
-    ImageView imageView;
 
     private int mCostId = DEFAULT_COST_ID;
     private static final String DEFAULT_COST_DATE = "2020-01-01";
@@ -207,7 +197,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
 
         mDb = CostDatabase.getInstance(getApplicationContext());
 
-
         if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_COST_ID)) {
             mCostId = savedInstanceState.getInt(INSTANCE_COST_ID, DEFAULT_COST_ID);
         }
@@ -232,7 +221,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
                 AddCostViewModelFactory factory = new AddCostViewModelFactory(mDb, mCostId);
                 final AddCostViewModel viewModel =
                         new ViewModelProvider(this, factory).get(AddCostViewModel.class);
-
 
                 //getCost from ViewModel
                 viewModel.getCost().observe(this, new Observer<DailyExpenseTagsWithPicsPojo>() {
@@ -266,7 +254,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
             Intent startSettingsActivity = new Intent(AddCostActivity.this, SettingsActivity.class);
             startActivity(startSettingsActivity);
         });
-
     }
 
     private void setupSharedPreferences() {
@@ -298,7 +285,7 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
                 (LocalDate.parse(mCostDate).getDayOfWeek().toString());
         String date_No = valueOf(LocalDate.parse(mCostDate).getDayOfMonth());
         String month = Helper.fromUperCaseToFirstCapitalizedLetter
-                (LocalDate.parse(mCostDate).getMonth().toString());
+                (LocalDate.parse(mCostDate).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
         String year = valueOf(LocalDate.parse(mCostDate).getYear());
 
         mTv_weekDay.setText(week_day);
@@ -319,7 +306,8 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
                 (LocalDate.parse(updateDateString).getDayOfWeek().toString()));
         mTv_dateNo.setText(valueOf(LocalDate.parse(updateDateString).getDayOfMonth()));
         String month = Helper.fromUperCaseToFirstCapitalizedLetter
-                (LocalDate.parse(updateDateString).getMonth().toString());
+                //  (LocalDate.parse(updateDateString).getMonth().toString());
+                        (LocalDate.parse(updateDateString).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
         String year = valueOf(LocalDate.parse(updateDateString).getYear());
         tv_toolbar_month_year.setText(month + ", " + year);
         tv_toolbar_month_year.setTypeface(null, Typeface.BOLD);
@@ -342,7 +330,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         //fill the chipgroup:
         cg_picUriResult.setVisibility(View.VISIBLE);
 
-
         for (Map.Entry<String, String> entry : picDataForDB.entrySet()) {
             Chip chip_pic = (Chip) getLayoutInflater().inflate(R.layout.single_pic_chip_layout, null);
             chip_pic.setText(entry.getKey());
@@ -352,7 +339,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
                 cg_picUriResult.removeView(chip_pic);
                 removeFromHashmap(entry.getKey());
             });
-
             cg_picUriResult.addView(chip_pic);
         }
 
@@ -415,7 +401,8 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
 
         //Strings for tv_s -> default date
         dayOfMonthString = valueOf(defaultTodayDate.getDayOfMonth());
-        monthString = Helper.fromUperCaseToFirstCapitalizedLetter(defaultTodayDate.getMonth().toString());
+        // monthString = Helper.fromUperCaseToFirstCapitalizedLetter(defaultTodayDate.getMonth().toString());
+        monthString = Helper.fromUperCaseToFirstCapitalizedLetter(defaultTodayDate.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
         yearString = valueOf(defaultTodayDate.getYear());
         dayOfWeekString = Helper.fromUperCaseToFirstCapitalizedLetter(defaultTodayDate.getDayOfWeek().toString());
 
@@ -440,115 +427,85 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     }
 
     public void onCategoryButtonsClicked() {
-        iBtn_car.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (updateCategory != null || setCategory != null) {
-                    setAlphaLow();
-                }
-                iBtn_car.setAlpha((float) 1);
-                setCategory = null;
-                setCategory = CATEGORY_1;
+        iBtn_car.setOnClickListener(v -> {
+            if (updateCategory != null || setCategory != null) {
+                setAlphaLow();
             }
+            iBtn_car.setAlpha((float) 1);
+            setCategory = null;
+            setCategory = CATEGORY_1;
         });
 
-        iBtn_clothes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (updateCategory != null || setCategory != null) {
-                    setAlphaLow();
-                }
-                iBtn_clothes.setAlpha((float) 1);
-                setCategory = null;
-                setCategory = CATEGORY_2;
+        iBtn_clothes.setOnClickListener(v -> {
+            if (updateCategory != null || setCategory != null) {
+                setAlphaLow();
             }
+            iBtn_clothes.setAlpha((float) 1);
+            setCategory = null;
+            setCategory = CATEGORY_2;
         });
 
-        iBtn_food.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (updateCategory != null || setCategory != null) {
-                    setAlphaLow();
-                }
-                iBtn_food.setAlpha((float) 1);
-                setCategory = null;
-                setCategory = CATEGORY_3;
+        iBtn_food.setOnClickListener(v -> {
+            if (updateCategory != null || setCategory != null) {
+                setAlphaLow();
             }
+            iBtn_food.setAlpha((float) 1);
+            setCategory = null;
+            setCategory = CATEGORY_3;
         });
 
-        iBtn_utilities.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (updateCategory != null || setCategory != null) {
-                    setAlphaLow();
-                }
-                iBtn_utilities.setAlpha((float) 1);
-                setCategory = null;
-                setCategory = CATEGORY_4;
+        iBtn_utilities.setOnClickListener(v -> {
+            if (updateCategory != null || setCategory != null) {
+                setAlphaLow();
             }
+            iBtn_utilities.setAlpha((float) 1);
+            setCategory = null;
+            setCategory = CATEGORY_4;
         });
 
-        iBtn_groceries.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (updateCategory != null || setCategory != null) {
-                    setAlphaLow();
-                }
-                iBtn_groceries.setAlpha((float) 1);
-                setCategory = null;
-                setCategory = CATEGORY_5;
+        iBtn_groceries.setOnClickListener(v -> {
+            if (updateCategory != null || setCategory != null) {
+                setAlphaLow();
             }
+            iBtn_groceries.setAlpha((float) 1);
+            setCategory = null;
+            setCategory = CATEGORY_5;
         });
 
-        iBtn_education.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (updateCategory != null || setCategory != null) {
-                    setAlphaLow();
-                }
-                iBtn_education.setAlpha((float) 1);
-                setCategory = null;
-                setCategory = CATEGORY_6;
+        iBtn_education.setOnClickListener(v -> {
+            if (updateCategory != null || setCategory != null) {
+                setAlphaLow();
             }
+            iBtn_education.setAlpha((float) 1);
+            setCategory = null;
+            setCategory = CATEGORY_6;
         });
 
-        iBtn_sport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (updateCategory != null || setCategory != null) {
-                    setAlphaLow();
-                }
-                iBtn_sport.setAlpha((float) 1);
-                setCategory = null;
-                setCategory = CATEGORY_7;
+        iBtn_sport.setOnClickListener(v -> {
+            if (updateCategory != null || setCategory != null) {
+                setAlphaLow();
             }
+            iBtn_sport.setAlpha((float) 1);
+            setCategory = null;
+            setCategory = CATEGORY_7;
         });
 
-        iBtn_cosmetics.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (updateCategory != null || setCategory != null) {
-                    setAlphaLow();
-                }
-                iBtn_cosmetics.setAlpha((float) 1);
-                setCategory = null;
-                setCategory = CATEGORY_8;
+        iBtn_cosmetics.setOnClickListener(v -> {
+            if (updateCategory != null || setCategory != null) {
+                setAlphaLow();
             }
+            iBtn_cosmetics.setAlpha((float) 1);
+            setCategory = null;
+            setCategory = CATEGORY_8;
         });
 
-        iBtn_other.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (updateCategory != null || setCategory != null) {
-                    setAlphaLow();
-                }
-                iBtn_other.setAlpha((float) 1);
-//            iBtn_other.setFocusable(true);            //ne radi
-//            iBtn_other.setFocusableInTouchMode(true);
-//            iBtn_other.requestFocus(View.FOCUS_RIGHT);
-                setCategory = null;
-                setCategory = CATEGORY_9;
+        iBtn_other.setOnClickListener(v -> {
+            if (updateCategory != null || setCategory != null) {
+                setAlphaLow();
             }
+            iBtn_other.setAlpha((float) 1);
+            setCategory = null;
+            setCategory = CATEGORY_9;
         });
 
     }
@@ -611,51 +568,45 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
 
     public void onCalenderClicked() {
         datePickerDialog = new DatePickerDialog(AddCostActivity.this, R.style.MyDatePickerDialogTheme,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                        chosenDateString = null;
+                (datePicker, year, month, dayOfMonth) -> {
+                    chosenDateString = null;
 
-                        // Get chosen date from DatePicker for saving into db
-                        OffsetDateTime chosenDate = OffsetDateTime.of(year, month + 1, dayOfMonth,
-                                0, 0, 0, 0, ZoneOffset.UTC);
-                        chosenDateString = chosenDate.toLocalDate().toString();
+                    // Get chosen date from DatePicker for saving into db
+                    OffsetDateTime chosenDate = OffsetDateTime.of(year, month + 1, dayOfMonth,
+                            0, 0, 0, 0, ZoneOffset.UTC);
+                    chosenDateString = chosenDate.toLocalDate().toString();
 
-                        //setting textviews with chosen date from DatePicker
-                        dayOfMonthString = valueOf(chosenDate.getDayOfMonth());
-                        monthString = Helper.fromUperCaseToFirstCapitalizedLetter(chosenDate.getMonth().toString());
-                        yearString = valueOf(chosenDate.getYear());
-                        dayOfWeekString = Helper.fromUperCaseToFirstCapitalizedLetter(chosenDate.getDayOfWeek().toString());
-                        mTv_dateNo.setText(dayOfMonthString);
-                        mTv_weekDay.setText(dayOfWeekString);
-                        tv_toolbar_month_year.setText(monthString + ", " + yearString);
-                    }
+                    //setting textviews with chosen date from DatePicker
+                    dayOfMonthString = valueOf(chosenDate.getDayOfMonth());
+                    monthString = Helper.fromUperCaseToFirstCapitalizedLetter(chosenDate.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
+                    yearString = valueOf(chosenDate.getYear());
+                    dayOfWeekString = Helper.fromUperCaseToFirstCapitalizedLetter(chosenDate.getDayOfWeek().toString());
+                    mTv_dateNo.setText(dayOfMonthString);
+                    mTv_weekDay.setText(dayOfWeekString);
+                    tv_toolbar_month_year.setText(monthString + ", " + yearString);
                 }, year, month - 1, dayOfMonth);  //indexes of DatePicker for month (0-11), indexes of threetenABP (1-12)
         datePickerDialog.show();
     }
 
 
     public void pickATag() {
-        tv_pickATag.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        tv_pickATag.setOnClickListener(v -> {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
 //                if (prev != null) {
 //                    ft.remove(prev);
 //                }
 //                ft.addToBackStack(null);
-                DialogFragment dialogFragment = new MultiselectTagDialogFragment();
-                //send tags that should be checked to dialogFragment
-                if (choosenTags.size() != 0) {
-                    Bundle bundle = new Bundle();
-                    ArrayList<String> choosenTagsArray = new ArrayList<>(choosenTags.size());
-                    choosenTagsArray.addAll(choosenTags);
-                    bundle.putStringArrayList(BUNDLE_TAGS, choosenTagsArray);
-                    dialogFragment.setArguments(bundle);
-                }
-                dialogFragment.show(ft, "dialog");
+            DialogFragment dialogFragment = new MultiselectTagDialogFragment();
+            //send tags that should be checked to dialogFragment
+            if (choosenTags.size() != 0) {
+                Bundle bundle = new Bundle();
+                ArrayList<String> choosenTagsArray = new ArrayList<>(choosenTags.size());
+                choosenTagsArray.addAll(choosenTags);
+                bundle.putStringArrayList(BUNDLE_TAGS, choosenTagsArray);
+                dialogFragment.setArguments(bundle);
             }
+            dialogFragment.show(ft, "dialog");
         });
     }
 
@@ -691,12 +642,12 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         tv_takeAPic.setOnClickListener(v -> {
 
             // Alert dialog for capture or select from galley
-
             final CharSequence[] items = {
                     "Take Photo", "Choose from Library",
                     "Cancel"
             };
-            AlertDialog.Builder builder = new AlertDialog.Builder(AddCostActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(AddCostActivity.this, R.style.AlertDialogStyle);
+            builder.setIcon(R.drawable.okvir_za_datum_warning);
             builder.setTitle("Source:");
             builder.setItems(items, (dialog, item) -> {
                 if (items[item].equals("Take Photo")) {
@@ -767,18 +718,22 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
                 if (imgFile.exists()) {
                     photoUriFromGalleryString = (Uri.fromFile(imgFile)).toString();
                 }
-
                 nameYourPic();
             }
         }
     }
 
     public void nameYourPic() {
-        //Name your picture:
+        // get alert_dialog_name_your_pic.xml view
+        LayoutInflater li = LayoutInflater.from(this);
+        View nameYourPic = li.inflate(R.layout.alert_dialog_name_your_pic, null);
+
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        final EditText edittext = new EditText(getApplicationContext());
-        alert.setTitle("Name your picture");
-        alert.setView(edittext);
+        alert.setView(nameYourPic);
+      //  final EditText edittext = new EditText(getApplicationContext());
+        final EditText edittext = nameYourPic.findViewById(R.id.et_nameYourPic);
+       // alert.setTitle("Name your picture");
+       // alert.setView(edittext);
         alert.setCancelable(false);
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {

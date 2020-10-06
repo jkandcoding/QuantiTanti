@@ -2,12 +2,20 @@ package com.example.android.quantitanti.models;
 
 public class TagsPojo {
 
+    private int tagId;
     private String tagName;
     private boolean selected = false;
 
-
-    public TagsPojo(String tagName) {
+    public TagsPojo(int tagId, String tagName) {
         this.tagName = tagName;
+    }
+
+    public int getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(int tagId) {
+        this.tagId = tagId;
     }
 
     public String getTagName() {
@@ -25,4 +33,6 @@ public class TagsPojo {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+
+
 }

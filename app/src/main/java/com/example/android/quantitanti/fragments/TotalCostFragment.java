@@ -60,8 +60,8 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
         mAdapter = new CostAdapter(this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
-        DividerItemDecoration decoration = new DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL);
-        mRecyclerView.addItemDecoration(decoration);
+//        DividerItemDecoration decoration = new DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL);
+//        mRecyclerView.addItemDecoration(decoration);
         return view;
     }
 
@@ -77,12 +77,9 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
          */
         FloatingActionButton fab = view.findViewById(R.id.fab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddCostActivity.class);
-                startActivity(intent);
-            }
+        fab.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AddCostActivity.class);
+            startActivity(intent);
         });
 
         mDb = CostDatabase.getInstance(requireActivity().getApplicationContext());

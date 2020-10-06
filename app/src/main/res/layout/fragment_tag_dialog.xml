@@ -11,69 +11,88 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingEnd="16dp"
+        android:paddingStart="18dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="18dp"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_SelectTagDialogTittle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:paddingBottom="8dp"
+            android:layout_marginStart="12dp"
             android:text="Select a tag"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
+            android:textColor="@color/color_primary_dark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.10"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/et_addATag"
+        <TextView
+            android:id="@+id/tv_LonClickForDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
+            android:text="(Long click for tag delete)"
+            android:textSize="12sp"
+            android:textColor="@color/color_primary"
+            app:layout_constraintStart_toStartOf="@id/tv_SelectTagDialogTittle"
+            app:layout_constraintTop_toBottomOf="@+id/tv_SelectTagDialogTittle"/>
+
+
+        <EditText
+            android:id="@+id/et_addATag"
+            style="@style/EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="12dp"
             android:ems="10"
             android:hint="Add a tag..."
             android:inputType="textPersonName"
             app:layout_constraintStart_toStartOf="@+id/tv_SelectTagDialogTittle"
-            app:layout_constraintTop_toBottomOf="@+id/tv_SelectTagDialogTittle" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_LonClickForDelete" />
 
         <Button
             android:id="@+id/btn_addTagDialog"
+            style="@style/SmallerBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
             android:text="add"
             app:layout_constraintStart_toStartOf="@+id/et_addATag"
             app:layout_constraintTop_toBottomOf="@+id/et_addATag" />
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_tagRecyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="7"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/btn_cancelDialog"
-            app:layout_constraintTop_toBottomOf="@id/btn_addTagDialog" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_tagRecyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_cancelDialog"
+                app:layout_constraintTop_toBottomOf="@id/btn_addTagDialog" />
+
 
         <LinearLayout
             android:id="@+id/ll_horLinLay"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btn_cancelDialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="12dp"
                 android:text="Cancel"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btn_selectTagDialog"

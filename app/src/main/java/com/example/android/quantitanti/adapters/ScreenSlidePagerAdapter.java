@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,11 +23,6 @@ import com.google.android.material.chip.Chip;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_1;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_2;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_3;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_4;
 
 
 public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePagerAdapter.SlideViewHolder> {
@@ -58,25 +54,6 @@ public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePag
 
         String currency = totalCostPojo.getCurrency();
 
-//        switch (currency) {
-//            case CURRENCY_1:
-//                currency1 = "";
-//                currency2 = " kn";
-//                break;
-//            case CURRENCY_2:
-//                currency1 = "";
-//                currency2 = " €";
-//                break;
-//            case CURRENCY_3:
-//                currency1 = "£";
-//                currency2 = "";
-//                break;
-//            case CURRENCY_4:
-//                currency1 = "$";
-//                currency2 = "";
-//                break;
-//        }
-
 
         //setting categories and their costs into Map:
         Map<String, Integer> categoryCosts = totalCostPojo.getCategoryCosts();
@@ -95,9 +72,6 @@ public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePag
                     holder.tv_category_costs.setText(new String(new char[newLineNumber]).replace("\0", "\n"));
                 }
 
-
-
-
         Map.Entry<String, Integer> lastEntry = ((TreeMap<String, Integer>) categoryCosts).lastEntry();
         for (Map.Entry<String, Integer> entry : categoryCosts.entrySet()) {
             if ((entry.getKey() + "=" + entry.getValue()).equals(lastEntry.toString())) {
@@ -108,12 +82,12 @@ public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePag
             }
         }
 
-        // update total cost
+        // total cost
         if (totalCost < 0) {
-            holder.tv_total_cost.setText("TOTAL > 21 474 836.47 ");
+            holder.tv_total_cost.setText(": > 21 474 836.47 ");
             holder.cp_categoryCurrency.setText(currency);
         } else {
-            holder.tv_total_cost.setText("TOTAL: " + Helper.fromIntToDecimalString(totalCost));
+            holder.tv_total_cost.setText(": " + Helper.fromIntToDecimalString(totalCost));
             holder.cp_categoryCurrency.setText(currency);
         }
     }
@@ -148,14 +122,14 @@ public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePag
         TextView tv_category_costs;
         TextView tv_total_cost;
         Chip cp_categoryCurrency;
-        ConstraintLayout cl_totalCost_slide;
+        RelativeLayout rl_totalCost_slide;
 
         public SlideViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_category_costs = itemView.findViewById(R.id.tv_category_costs);
             tv_total_cost = itemView.findViewById(R.id.tv_total_cost);
             cp_categoryCurrency = itemView.findViewById(R.id.cp_categoryCurrency);
-            cl_totalCost_slide = itemView.findViewById(R.id.totalCost_slide);
+            rl_totalCost_slide = itemView.findViewById(R.id.totalCost_slide);
         }
     }
 }

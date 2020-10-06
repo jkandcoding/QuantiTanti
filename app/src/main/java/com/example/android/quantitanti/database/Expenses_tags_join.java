@@ -3,6 +3,7 @@ package com.example.android.quantitanti.database;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 
 import static androidx.room.ForeignKey.CASCADE;
 
@@ -16,6 +17,10 @@ import static androidx.room.ForeignKey.CASCADE;
                 @ForeignKey(entity = TagEntry.class,
                         parentColumns = "tag_id",
                         childColumns = "tag_id")
+        },
+        indices = {
+                @Index(name = "expense_id_join", value = {"expense_id"}),
+                @Index(name = "tag_id_join", value = {"tag_id"})
         })
 
 public class Expenses_tags_join {

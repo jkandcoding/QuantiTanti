@@ -2,6 +2,13 @@ package com.example.android.quantitanti.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
+import android.text.style.TypefaceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static android.graphics.Typeface.BOLD;
+import static android.graphics.Typeface.ITALIC;
 import static java.lang.String.valueOf;
 
 //Adapter for CostListActivity
-public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder>  {
+public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder> {
 
     // Member variable to handle item clicks
     final private ItemClickListener mItemClickListener;
@@ -64,16 +73,16 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
     @Override
     public void onBindViewHolder(@NonNull final CostAdapter.CostViewHolder holder, int position) {
         // Determine the values of the wanted data
-         TotalFrontCostPojo totalFrontCostPojo = mCostEntries.get(position);
-         String dateExpense = totalFrontCostPojo.getDate();
-         String week_day = Helper.fromUperCaseToFirstCapitalizedLetter
+        TotalFrontCostPojo totalFrontCostPojo = mCostEntries.get(position);
+        String dateExpense = totalFrontCostPojo.getDate();
+        String week_day = Helper.fromUperCaseToFirstCapitalizedLetter
                 (LocalDate.parse(totalFrontCostPojo.getDate()).getDayOfWeek().toString());
-         String date_No = valueOf(LocalDate.parse(totalFrontCostPojo.getDate()).getDayOfMonth());
-         String month = Helper.fromUperCaseToFirstCapitalizedLetter
+        String date_No = valueOf(LocalDate.parse(totalFrontCostPojo.getDate()).getDayOfMonth());
+        String month = Helper.fromUperCaseToFirstCapitalizedLetter
                 (LocalDate.parse(totalFrontCostPojo.getDate()).getMonth().toString());
-         String year = valueOf(LocalDate.parse(totalFrontCostPojo.getDate()).getYear());
+        String year = valueOf(LocalDate.parse(totalFrontCostPojo.getDate()).getYear());
 
-         Map<String, Integer> totalCost = totalFrontCostPojo.getFrontCosts();
+        Map<String, Integer> totalCost = totalFrontCostPojo.getFrontCosts();
 
         holder.tv_weekDay.setText(week_day);
         holder.tv_dateNo.setText(date_No);
@@ -81,17 +90,28 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
         holder.tv_mainCost.setText("");
         Map.Entry<String, Integer> lastEntry = ((TreeMap<String, Integer>) totalCost).lastEntry();
         for (Map.Entry<String, Integer> entry : totalCost.entrySet()) {
+            Spannable sp = new SpannableString(entry.getKey());
+            sp.setSpan(new StyleSpan(Typeface.BOLD), 0, sp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             if ((entry.getKey() + "=" + entry.getValue()).equals(lastEntry.toString())) {
                 if (entry.getValue() < 0) {
-                    holder.tv_mainCost.setText(entry.getKey() + " to much");
+                   // holder.tv_mainCost.setText(entry.getKey() + " to much");
+                    holder.tv_mainCost.setText(sp);
+                    holder.tv_mainCost.append(" to much");
                 } else {
-                    holder.tv_mainCost.append(entry.getKey() + " " + Helper.fromIntToDecimalString(entry.getValue()));
+                   // holder.tv_mainCost.append(entry.getKey() + " " + Helper.fromIntToDecimalString(entry.getValue()));
+                    holder.tv_mainCost.append(sp, 0, sp.length());
+                    holder.tv_mainCost.append(" " + Helper.fromIntToDecimalString(entry.getValue()));
                 }
             } else {
                 if (entry.getValue() < 0) {
-                    holder.tv_mainCost.append(entry.getKey() + " to much | ");
+                   // holder.tv_mainCost.append(entry.getKey() + " to much '\n' ");
+                    holder.tv_mainCost.append(sp, 0, sp.length());
+                    holder.tv_mainCost.append(" to much '\n' ");
                 } else {
-                    holder.tv_mainCost.append(entry.getKey() + " " + Helper.fromIntToDecimalString(entry.getValue()) + " | ");
+                    //holder.tv_mainCost.append(sp + " " + Helper.fromIntToDecimalString(entry.getValue()) + '\n');
+                    holder.tv_mainCost.append(sp, 0, sp.length());
+                    holder.tv_mainCost.append(" " + Helper.fromIntToDecimalString(entry.getValue()) + '\n');
+
                 }
             }
         }
@@ -103,7 +123,7 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
             if (LocalDate.parse(mCostEntries.get(position).getDate()).getMonth()
                     .equals(LocalDate.parse(mCostEntries.get(position + 1).getDate()).getMonth())
                     && valueOf(LocalDate.parse(mCostEntries.get(position).getDate()).getYear())
-                    .equals(valueOf(LocalDate.parse(mCostEntries.get(position + 1).getDate()).getYear())) ) {
+                    .equals(valueOf(LocalDate.parse(mCostEntries.get(position + 1).getDate()).getYear()))) {
                 holder.tv_date_for_frontPage.setVisibility(View.GONE);
             } else {
                 holder.tv_date_for_frontPage.setVisibility(View.VISIBLE);
@@ -131,6 +151,7 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
     /**
      * When data changes, this method updates the list of dailyexpenses
      * and notifies the adapter to use the new values on it
+     *
      * @param totalFrontCostPojos
      */
     public void setmDailyExpenses(List<TotalFrontCostPojo> totalFrontCostPojos) {
@@ -140,6 +161,7 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
 
     public interface ItemClickListener {
         void onItemClickListener(String itemDate);
+
         void onItemLongClickListener(String itemDate);
     }
 

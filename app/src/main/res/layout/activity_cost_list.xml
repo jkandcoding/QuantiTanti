@@ -12,15 +12,16 @@
         android:layout_width="match_parent"
         android:background="?attr/colorPrimary"
         android:layout_height="?attr/actionBarSize"
-        android:theme="@style/MyStyle"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        style="@style/ToolbarText" />
 
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:id="@+id/tablayout_fragments"
         android:elevation="8dp"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginBottom="4dp" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:layout_width="match_parent"

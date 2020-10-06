@@ -1,6 +1,8 @@
 package com.example.android.quantitanti.adapters;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,10 +37,7 @@ import static com.example.android.quantitanti.database.CostEntry.CATEGORY_6;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_7;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_8;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_9;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_1;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_2;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_3;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_4;
+
 
 public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.DailyCostViewHolder> {
 
@@ -49,6 +48,8 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
     private List<DailyExpenseTagsWithPicsPojo> mdailyExpenseTagsWithPicsPojos;
 
     public static final String BUNDLE_PHOTOS = "bundlePhotos";
+
+
 
     private Context mContext;
     //private CostDatabase mDb;
@@ -93,6 +94,8 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
         List<String> oneCostTags = dailyExpenseTagsWithPicsPojo.getTagNames();
         List<PicsEntry> picsEntries = dailyExpenseTagsWithPicsPojo.getPicsEntries();
 
+
+        holder.iv_getPic.setVisibility(View.GONE);
         Map<String, String> photos = new HashMap<>();
         for (PicsEntry picsEntry : picsEntries) {
             photos.put(picsEntry.getPic_name(), picsEntry.getPic_uri());
@@ -106,24 +109,13 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
                     FragmentManager fm = ((AppCompatActivity) mContext).getSupportFragmentManager();
                     PhotosDialogFragment photosDialogFragment = PhotosDialogFragment.newInstance(photos);
                     photosDialogFragment.show(fm, "fragment_photo");
+                    Log.d(String.valueOf(photos), "fotke slanje");
                 }
             });
+            Log.d("fotke clear", "fotke clear");
         }
 
-        //set currency from DB
-//        if (currency.equals(CURRENCY_1)) {
-//            currency1 = "";
-//            currency2 = " kn";
-//        } else if (currency.equals(CURRENCY_2)) {
-//            currency1 = "";
-//            currency2 = " €";
-//        } else if (currency.equals(CURRENCY_3)) {
-//            currency1 = "£";
-//            currency2 = "";
-//        } else if (currency.equals(CURRENCY_4)) {
-//            currency1 = "$";
-//            currency2 = "";
-//        }
+
 
         //Set holder values
         holder.tv_costDescription.setText(oneCostName);
@@ -133,7 +125,8 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
         holder.cg_tags.removeAllViews();
         if (oneCostTags != null) {
             for (String s : oneCostTags) {
-                Chip chip = new Chip(mContext);
+                LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                Chip chip = (Chip) layoutInflater.inflate(R.layout.single_tag_chip_layout, null);
                 chip.setText(s);
                 chip.setClickable(false);
                 holder.cg_tags.addView(chip);
@@ -142,33 +135,36 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
 
 
         // setting imgv depending on category
+        holder.imgv_category.setBackgroundResource(R.drawable.ic_img_background_v);
+        holder.imgv_category.setColorFilter(mContext.getResources().getColor(R.color.color_primary_light), PorterDuff.Mode.SRC_IN);
         switch (oneCostCategory) {
             case CATEGORY_1:
-                holder.imgv_category.setBackgroundResource(R.drawable.car);
+                //   holder.imgv_category_all.setBackgroundResource(R.drawable.car);
+                holder.imgv_category.setImageResource(R.drawable.ic_car);
                 break;
             case CATEGORY_2:
-                holder.imgv_category.setBackgroundResource(R.drawable.clothes);
+                holder.imgv_category.setImageResource(R.drawable.ic_clothes);
                 break;
             case CATEGORY_3:
-                holder.imgv_category.setBackgroundResource(R.drawable.food);
+                holder.imgv_category.setImageResource(R.drawable.ic_food);
                 break;
             case CATEGORY_4:
-                holder.imgv_category.setBackgroundResource(R.drawable.utilities);
+                holder.imgv_category.setImageResource(R.drawable.ic_utilities);
                 break;
             case CATEGORY_5:
-                holder.imgv_category.setBackgroundResource(R.drawable.groceries);
+                holder.imgv_category.setImageResource(R.drawable.ic_groceries);
                 break;
             case CATEGORY_6:
-                holder.imgv_category.setBackgroundResource(R.drawable.education);
+                holder.imgv_category.setImageResource(R.drawable.ic_education);
                 break;
             case CATEGORY_7:
-                holder.imgv_category.setBackgroundResource(R.drawable.sport);
+                holder.imgv_category.setImageResource(R.drawable.ic_sport);
                 break;
             case CATEGORY_8:
-                holder.imgv_category.setBackgroundResource(R.drawable.cosmetics);
+                holder.imgv_category.setImageResource(R.drawable.ic_cosmetics);
                 break;
             case CATEGORY_9:
-                holder.imgv_category.setBackgroundResource(R.drawable.other);
+                holder.imgv_category.setImageResource(R.drawable.ic_other);
                 break;
             default:
                 break;
@@ -202,6 +198,7 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
 
     public interface DailyItemClickListener {
         void onDailyItemClickListener(int itemId);
+
         void onDailyItemLongClickListener(int itemId);
     }
 

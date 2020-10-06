@@ -1,6 +1,8 @@
 package com.example.android.quantitanti.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,10 +29,12 @@ import com.example.android.quantitanti.viewmodels.TagsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 import static com.example.android.quantitanti.helpers.Helper.hideKeyboardFromFragment;
 
-public class MultiselectTagDialogFragment extends DialogFragment {
+public class MultiselectTagDialogFragment extends DialogFragment implements TagsAdapter.ItemClickListener {
 
     private TagsViewModel viewModel;
 
@@ -40,6 +44,10 @@ public class MultiselectTagDialogFragment extends DialogFragment {
     List<TagsPojo> tagsChecked = new ArrayList<>();
     List<String> tagNames = new ArrayList<>();
     ArrayList<String> choosenTagsArray = new ArrayList<>();
+
+    List<Integer> expansesIdsForDel = new ArrayList<>();
+    String tagNameForDel;
+    int tagIdforDel;
 
     // private TagsAdapter tagsAdapter;
     private TagsAdapter tagsAdapter;
@@ -75,7 +83,7 @@ public class MultiselectTagDialogFragment extends DialogFragment {
 
         layoutManager = new LinearLayoutManager(getContext());
         rv_tagRecyclerview.setLayoutManager(layoutManager);
-        tagsAdapter = new TagsAdapter();
+        tagsAdapter = new TagsAdapter(this);
         rv_tagRecyclerview.setAdapter(tagsAdapter);
 
         mDb = CostDatabase.getInstance(getContext());
@@ -97,7 +105,6 @@ public class MultiselectTagDialogFragment extends DialogFragment {
                 }
                 //List<TagsPojo> checked tags written in AddCostActivity after dismiss MultiSTDFragment
                 tagsChecked.addAll(tagsForDialog);
-
                 tagsAdapter.setTags(tagsForDialog);
             }
         });
@@ -121,15 +128,132 @@ public class MultiselectTagDialogFragment extends DialogFragment {
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mDb.tagsDao().insertTag(tagEntry);
+                        // check if tag with that name already exists
+                        int tagExists = mDb.tagsDao().tagExists(newTag);
+                        if (tagExists == 1) {
+                            requireActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getContext(), "Tag \"" + newTag + "\" already exists", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else if (tagExists == 0) {
+                            mDb.tagsDao().insertTag(tagEntry);
+                            requireActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getContext(), "Tag \"" + newTag + "\" added", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
                     }
                 });
 
                 et_AddATag.setText("");
-                Toast.makeText(getContext(), "Tag \"" + newTag + "\" added", Toast.LENGTH_SHORT).show();
-                hideKeyboardFromFragment(getContext(), v);
+
+                hideKeyboardFromFragment(requireContext(), v);
             }
         });
+    }
+
+    @Override
+    public void onItemLongClickListener(int tagIdForDel) {
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                expansesIdsForDel = mDb.expenses_tags_join_dao().loadExpenseIdsForTag(tagIdForDel);
+                tagNameForDel = mDb.tagsDao().loadTagName(tagIdForDel);
+                countDownLatch.countDown();
+            }
+        });
+
+        try {
+            countDownLatch.await();
+            //if tag has no costs -> delete tag:
+            if (expansesIdsForDel == null || expansesIdsForDel.isEmpty()) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDb.tagsDao().deleteTagWithId(tagIdForDel);
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(requireActivity(), "Tag \"" + tagNameForDel + "\" deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+                //if tag is asigned to costs:
+            } else {
+                Log.d(String.valueOf(expansesIdsForDel), "jkjkjjkj");
+                deletingTagasignedToCosts(tagIdForDel);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deletingTagasignedToCosts(int tagIdForDel) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.AlertDialogStyle);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.okvir_za_datum_warning);
+        builder.setTitle("Deleting tag...");
+        builder.setMessage("This tag is already assigned to some costs. Do you want to delete these costs entirely, or remove just the tag from them?");
+        builder.setPositiveButton("Delete costs", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        //deleting costs entirely(tocke 1-4)
+
+                        mDb.expenses_tags_join_dao().deleteWithTagId(tagIdForDel);  // 1
+                        for (int costId : expansesIdsForDel) {
+                            mDb.picsDao().deletePicForCostWithCostId(costId);   // 2
+                            mDb.costDao().deleteCostWithId(costId);   // 3
+                        }
+                        mDb.tagsDao().deleteTagWithId(tagIdForDel);  // 4
+
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(requireActivity(), "Tag \"" + tagNameForDel + "\" deleted, \nrelated cost(s) deleted", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton("Remove tag", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        //removing just the tag from costs (tocke 1-2)
+                        mDb.expenses_tags_join_dao().deleteWithTagId(tagIdForDel);  // 1
+                        mDb.tagsDao().deleteTagWithId(tagIdForDel);                 // 2
+
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(requireActivity(), "Tag \"" + tagNameForDel + "\" deleted and removed from costs", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //          back to MultiSTDFragment dialog
+            }
+        });
+        builder.create();
+        builder.show();
     }
 
     public interface OnDataPass {

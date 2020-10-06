@@ -26,4 +26,7 @@ public interface PicsDao {
 
     @Query("SELECT * FROM pics WHERE expense_id = :expense_id")
     List<PicsEntry> loadPicsByCostId(int expense_id);
+
+    @Query("DELETE FROM pics WHERE expense_id =:expense_id")
+    void deletePicForCostWithCostId(int expense_id);
 }

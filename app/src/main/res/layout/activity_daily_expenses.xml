@@ -12,11 +12,10 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        style="@style/ToolbarText">
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -51,9 +50,8 @@
             android:id="@+id/tablayout"
             app:tabIndicator="@drawable/background_tab_indicator_dot_blue"
             app:tabBackground="@drawable/background_amber_dot_3dp"
-            app:tabIndicatorColor="@android:color/holo_red_dark"
+            app:tabIndicatorColor="@color/color_primary_dark"
             app:tabIndicatorGravity="center"
-
             app:tabMaxWidth="12dp"
             app:tabGravity="center"
             android:layout_height="match_parent"
@@ -69,11 +67,11 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabDaily"
+        style="@style/FabStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/colorPrimaryDark"
         android:clickable="true"
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"

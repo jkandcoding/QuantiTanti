@@ -6,7 +6,8 @@
         android:id="@+id/item_save"
         android:title="Save new costs"
         layout:showAsAction="ifRoom"
-        android:icon="@drawable/ic_save_black">
+        android:icon="@drawable/ic_save_black"
+        android:iconTint="@color/color_primary_light">
     </item>
 
 </menu>

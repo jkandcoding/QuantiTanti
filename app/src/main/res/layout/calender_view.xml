@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.499"
-        app:srcCompat="@drawable/calender_frame_y" />
+        app:srcCompat="@drawable/calender_frame_b" />
 
     <TextView
         android:id="@+id/tv_weekDay"
@@ -26,7 +26,7 @@
         android:fontFamily="@font/cabin_sketch_bold"
         android:gravity="center"
         android:text="Wednesday"
-        android:textColor="#ffffff"
+        android:textColor="@color/color_primary_light"
         android:textSize="9sp"
         app:layout_constraintEnd_toEndOf="@+id/imgv_calender"
         app:layout_constraintStart_toStartOf="@+id/imgv_calender"

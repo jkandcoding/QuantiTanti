@@ -2,6 +2,8 @@ package com.example.android.quantitanti.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,10 +43,7 @@ import static com.example.android.quantitanti.database.CostEntry.CATEGORY_6;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_7;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_8;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_9;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_1;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_2;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_3;
-import static com.example.android.quantitanti.database.CostEntry.CURRENCY_4;
+
 import static java.lang.String.valueOf;
 
 public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCostsViewHolder> implements Filterable {
@@ -119,40 +118,15 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
 
         if (!photos.isEmpty()) {
             holder.iv_getPic_all.setVisibility(View.VISIBLE);
-            holder.iv_getPic_all.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    FragmentManager fm = ((AppCompatActivity) mContext).getSupportFragmentManager();
-                    PhotosDialogFragment photosDialogFragment = PhotosDialogFragment.newInstance(photos);
-                    photosDialogFragment.show(fm, "fragment_photo");
-                }
+            holder.iv_getPic_all.setOnClickListener(v -> {
+                FragmentManager fm = ((AppCompatActivity) mContext).getSupportFragmentManager();
+                PhotosDialogFragment photosDialogFragment = PhotosDialogFragment.newInstance(photos);
+                photosDialogFragment.show(fm, "fragment_photo");
             });
         } else {
             holder.iv_getPic_all.setVisibility(View.GONE);
         }
 
-        //set currency from DB
-        //       if (currency == null) {         //todo brisi ovaj redak kada se iz baze izbrisu troskovi s null-avim currencyem
-//            switch (currency) {
-//                case CURRENCY_1:
-//                    currency1 = "";
-//                    currency2 = " kn";
-//                    break;
-//                case CURRENCY_2:
-//                    currency1 = "";
-//                    currency2 = " €";
-//                    break;
-//                case CURRENCY_3:
-//                    currency1 = "£";
-//                    currency2 = "";
-//                    break;
-//                case CURRENCY_4:
-//                    currency1 = "$";
-//                    currency2 = "";
-//                    break;
-//            }
-//        } else {
-// //        }
 
         //Set holder values
         holder.tv_costDescription_all.setText(oneCostName);
@@ -172,36 +146,41 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
                 chip.setClickable(false);
                 holder.cg_tags_all.addView(chip);
             }
+        } else {
+            holder.cg_tags_all.setVisibility(View.GONE);
         }
 
         // setting imgv depending on category
+        holder.imgv_category_all.setBackgroundResource(R.drawable.ic_img_background_v);
+        holder.imgv_category_all.setColorFilter(mContext.getResources().getColor(R.color.color_primary_light), PorterDuff.Mode.SRC_IN);
         switch (oneCostCategory) {
             case CATEGORY_1:
-                holder.imgv_category_all.setBackgroundResource(R.drawable.car);
+             //   holder.imgv_category_all.setBackgroundResource(R.drawable.car);
+               holder.imgv_category_all.setImageResource(R.drawable.ic_car);
                 break;
             case CATEGORY_2:
-                holder.imgv_category_all.setBackgroundResource(R.drawable.clothes);
+                holder.imgv_category_all.setImageResource(R.drawable.ic_clothes);
                 break;
             case CATEGORY_3:
-                holder.imgv_category_all.setBackgroundResource(R.drawable.food);
+                holder.imgv_category_all.setImageResource(R.drawable.ic_food);
                 break;
             case CATEGORY_4:
-                holder.imgv_category_all.setBackgroundResource(R.drawable.utilities);
+                holder.imgv_category_all.setImageResource(R.drawable.ic_utilities);
                 break;
             case CATEGORY_5:
-                holder.imgv_category_all.setBackgroundResource(R.drawable.groceries);
+                holder.imgv_category_all.setImageResource(R.drawable.ic_groceries);
                 break;
             case CATEGORY_6:
-                holder.imgv_category_all.setBackgroundResource(R.drawable.education);
+                holder.imgv_category_all.setImageResource(R.drawable.ic_education);
                 break;
             case CATEGORY_7:
-                holder.imgv_category_all.setBackgroundResource(R.drawable.sport);
+                holder.imgv_category_all.setImageResource(R.drawable.ic_sport);
                 break;
             case CATEGORY_8:
-                holder.imgv_category_all.setBackgroundResource(R.drawable.cosmetics);
+                holder.imgv_category_all.setImageResource(R.drawable.ic_cosmetics);
                 break;
             case CATEGORY_9:
-                holder.imgv_category_all.setBackgroundResource(R.drawable.other);
+                holder.imgv_category_all.setImageResource(R.drawable.ic_other);
                 break;
             default:
                 break;

@@ -3,19 +3,19 @@ package com.example.android.quantitanti.fragments;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.appcompat.widget.SearchView;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -35,7 +35,6 @@ import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
 import com.example.android.quantitanti.viewmodels.CostListViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,7 +47,6 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
     private AllCostsAdapter mAdapter;
-
 
 
     private CostDatabase mDb;
@@ -72,8 +70,6 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
         // Initialize the adapter and attach it to the RecyclerView
         mAdapter = new AllCostsAdapter(this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
-
-
 
         setHasOptionsMenu(true);
 
@@ -209,9 +205,26 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
         MenuInflater inflater1 = requireActivity().getMenuInflater();
         inflater1.inflate(R.menu.menu_all_costs_fragment, menu);
 
+        //animate filter/search icons to slowly appear
+        MenuItem filterItem = menu.findItem(R.id.action_filter);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        // Post delayed so the view can be built,
+        //         otherwise findViewById(R.id.menu_filter) would be null
+        new Handler().postDelayed(() -> {
+            AlphaAnimation animation = new AlphaAnimation(0.0f, 1.0f);
+            animation.setDuration(250);
 
+            // Make item visible and start the animation
+            filterItem.setVisible(true);
+            searchItem.setVisible(true);
+
+            requireActivity().findViewById(R.id.action_filter).startAnimation(animation);
+            requireActivity().findViewById(R.id.action_search).startAnimation(animation);
+        }, 1);
+
+
+       //searching costs:
+        SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -251,5 +264,28 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
     public void onDataPass(List<String> dataCategories, List<String> dataTags) {
         //todo send data to AllCostAdapter
         mAdapter.setCategoriesAndTagsForFilter(dataCategories, dataTags);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+
+        //animate filter/search icons to slowly disappear
+//        MenuItem filterItem = menu.findItem(R.id.action_filter);
+//        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+
+ //       new Handler().postDelayed(() -> {
+//            AlphaAnimation animation = new AlphaAnimation(1.0f, 0.0f);
+//            animation.setDuration(250);
+
+             //Make item visible and start the animation
+//            filterItem.setVisible(true);
+//            searchItem.setVisible(true);
+
+//            requireActivity().findViewById(R.id.action_filter).startAnimation(animation);
+//            requireActivity().findViewById(R.id.action_search).startAnimation(animation);
+//        }, 1);
     }
 }

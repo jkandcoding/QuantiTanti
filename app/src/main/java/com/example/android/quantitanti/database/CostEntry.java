@@ -2,11 +2,16 @@ package com.example.android.quantitanti.database;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.util.List;
 
-@Entity(tableName = "expenses")
+@Entity(tableName = "expenses", indices = {
+        @Index(name = "cost_id", value = {"id"}),
+        @Index(name = "category", value = {"category"}),
+        @Index(name = "date", value = {"date"})
+})
 public class CostEntry {
 
     @PrimaryKey(autoGenerate = true)
@@ -17,8 +22,6 @@ public class CostEntry {
     private String date;
     private String currency;
 
-//    @Ignore
-//    private List<TagEntry> tagEntries = null;
 
     //todo upisi kategorije
     /**
@@ -33,7 +36,7 @@ public class CostEntry {
     @Ignore
     public static final String CATEGORY_4 = "Utilities";
     @Ignore
-    public static final String CATEGORY_5 ="Groceries";
+    public static final String CATEGORY_5 = "Groceries";
     @Ignore
     public static final String CATEGORY_6 = "Education";
     @Ignore
@@ -46,20 +49,22 @@ public class CostEntry {
 //    /**
 //     * Possible values for the currency
 //     */
-    @Ignore
-    public static final String CURRENCY_1 = "kn";
-    @Ignore
-    public static final String CURRENCY_2 = "€";
-    @Ignore
-    public static final String CURRENCY_3 = "£";
-    @Ignore
-    public static final String CURRENCY_4 = "$";
-
+//    @Ignore
+//    public static final String CURRENCY_1 = "kn";
+//    @Ignore
+//    public static final String CURRENCY_2 = "€";
+//    @Ignore
+//    public static final String CURRENCY_3 = "£";
+//    @Ignore
+//    public static final String CURRENCY_4 = "$";
 
 
     public CostEntry() {
     }
 
+    //todo-x-dodana ignore anotacija
+
+    @Ignore
     public CostEntry(int id, String category, String name, int cost, String date, String currency) {
         this.id = id;
         this.category = category;
@@ -118,8 +123,12 @@ public class CostEntry {
         this.date = date;
     }
 
-    public String getCurrency() { return currency; }
+    public String getCurrency() {
+        return currency;
+    }
 
-    public void setCurrency(String currency) { this.currency = currency; }
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
 }

@@ -6,17 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".AddCostActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar_ac"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        style="@style/ToolbarText" />
 
     <TextView
         android:id="@+id/tv_addCost_label"
@@ -29,213 +35,244 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar_ac" />
 
-    <HorizontalScrollView
-        android:id="@+id/horizontalScrollView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_addCost_label">
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/tl_categoryHorizontalLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-
-            <ImageButton
-                android:id="@+id/iBtn_car"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="32dp"
-                android:alpha="0.3"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/car" />
-
-            <ImageButton
-                android:id="@+id/iBtn_clothes"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="32dp"
-                android:alpha="0.3"
-                app:layout_constraintStart_toEndOf="@+id/iBtn_car"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/clothes" />
-
-
-            <ImageButton
-                android:id="@+id/iBtn_food"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="32dp"
-                android:alpha="0.3"
-                app:layout_constraintStart_toEndOf="@+id/iBtn_clothes"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/food" />
-
-            <ImageButton
-                android:id="@+id/iBtn_utilities"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="32dp"
-                android:alpha="0.3"
-                app:layout_constraintStart_toEndOf="@id/iBtn_food"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/utilities" />
-
-            <ImageButton
-                android:id="@+id/iBtn_education"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="32dp"
-                android:alpha="0.3"
-                app:layout_constraintStart_toEndOf="@id/iBtn_utilities"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/education" />
-
-
-            <ImageButton
-                android:id="@+id/iBtn_groceries"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="32dp"
-                android:alpha="0.3"
-                app:layout_constraintStart_toEndOf="@id/iBtn_education"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/groceries" />
-
-            <ImageButton
-                android:id="@+id/iBtn_sport"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="32dp"
-                android:alpha="0.3"
-                app:layout_constraintStart_toEndOf="@id/iBtn_groceries"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/sport" />
-
-            <ImageButton
-                android:id="@+id/iBtn_cosmetics"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="32dp"
-                android:alpha="0.3"
-                app:layout_constraintStart_toEndOf="@id/iBtn_sport"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/cosmetics" />
-
-            <ImageButton
-                android:id="@+id/iBtn_other"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="32dp"
-                android:alpha="0.3"
+            <HorizontalScrollView
+                android:id="@+id/horizontalScrollView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                app:layout_constraintStart_toEndOf="@id/iBtn_cosmetics"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/other" />
+                android:scrollbars="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_addCost_label">
 
 
-            <TextView
-                android:id="@+id/tv_category_label_car"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/car_transport"
-                app:layout_constraintEnd_toEndOf="@+id/iBtn_car"
-                app:layout_constraintStart_toStartOf="@+id/iBtn_car"
-                app:layout_constraintTop_toBottomOf="@+id/iBtn_car" />
-
-            <TextView
-                android:id="@+id/tv_category_label_clothes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/clothes_shoes"
-                app:layout_constraintEnd_toEndOf="@+id/iBtn_clothes"
-                app:layout_constraintStart_toStartOf="@+id/iBtn_clothes"
-                app:layout_constraintTop_toBottomOf="@+id/iBtn_clothes" />
-
-            <TextView
-                android:id="@+id/tv_category_label_food"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/food_drinks"
-                app:layout_constraintEnd_toEndOf="@+id/iBtn_food"
-                app:layout_constraintStart_toStartOf="@+id/iBtn_food"
-                app:layout_constraintTop_toBottomOf="@+id/iBtn_food" />
-
-            <TextView
-                android:id="@+id/tv_category_label_utilities"
-                android:layout_width="65dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/utilities"
-                app:layout_constraintEnd_toEndOf="@+id/iBtn_utilities"
-                app:layout_constraintStart_toStartOf="@+id/iBtn_utilities"
-                app:layout_constraintTop_toBottomOf="@+id/iBtn_utilities" />
-
-            <TextView
-                android:id="@+id/tv_category_label_education"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/education"
-                app:layout_constraintEnd_toEndOf="@+id/iBtn_education"
-                app:layout_constraintStart_toStartOf="@+id/iBtn_education"
-                app:layout_constraintTop_toBottomOf="@+id/iBtn_education" />
-
-            <TextView
-                android:id="@+id/tv_category_label_groceries"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/groceries"
-                app:layout_constraintEnd_toEndOf="@+id/iBtn_groceries"
-                app:layout_constraintStart_toStartOf="@+id/iBtn_groceries"
-                app:layout_constraintTop_toBottomOf="@+id/iBtn_groceries" />
-
-            <TextView
-                android:id="@+id/tv_category_label_sport"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/sport_activities"
-                app:layout_constraintEnd_toEndOf="@+id/iBtn_sport"
-                app:layout_constraintStart_toStartOf="@+id/iBtn_sport"
-                app:layout_constraintTop_toBottomOf="@+id/iBtn_sport" />
-
-            <TextView
-                android:id="@+id/tv_category_label_cosmetics"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/cosmetics"
-                app:layout_constraintEnd_toEndOf="@+id/iBtn_cosmetics"
-                app:layout_constraintStart_toStartOf="@+id/iBtn_cosmetics"
-                app:layout_constraintTop_toBottomOf="@+id/iBtn_cosmetics" />
-
-            <TextView
-                android:id="@+id/tv_category_label_other"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/other_stuff"
-                app:layout_constraintEnd_toEndOf="@+id/iBtn_other"
-                app:layout_constraintStart_toStartOf="@+id/iBtn_other"
-                app:layout_constraintTop_toBottomOf="@+id/iBtn_other" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/tl_categoryHorizontalLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </HorizontalScrollView>
+                    <!--            <ImageButton-->
+                    <!--                android:id="@+id/iBtn_car"-->
+                    <!--                android:layout_width="50dp"-->
+                    <!--                android:layout_height="50dp"-->
+                    <!--                android:layout_marginStart="32dp"-->
+                    <!--                android:alpha="0.3"-->
+                    <!--                app:layout_constraintStart_toStartOf="parent"-->
+                    <!--                app:layout_constraintTop_toTopOf="parent"-->
+                    <!--                app:srcCompat="@drawable/car" />-->
 
-    <EditText
+                    <ImageButton
+                        android:id="@+id/iBtn_car"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:alpha="0.3"
+                        android:background="@drawable/ic_img_background_v"
+                        android:tint="@color/color_primary_light"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_car" />
+
+                    <ImageButton
+                        android:id="@+id/iBtn_clothes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+                        android:alpha="0.3"
+                        android:background="@drawable/ic_img_background_v"
+                        android:tint="@color/color_primary_light"
+                        app:layout_constraintStart_toEndOf="@+id/iBtn_car"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_clothes" />
+
+
+                    <ImageButton
+                        android:id="@+id/iBtn_food"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+                        android:alpha="0.3"
+                        android:background="@drawable/ic_img_background_v"
+                        android:tint="@color/color_primary_light"
+                        app:layout_constraintStart_toEndOf="@+id/iBtn_clothes"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_food" />
+
+                    <ImageButton
+                        android:id="@+id/iBtn_utilities"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+                        android:alpha="0.3"
+                        android:background="@drawable/ic_img_background_v"
+                        android:tint="@color/color_primary_light"
+                        app:layout_constraintStart_toEndOf="@id/iBtn_food"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_utilities" />
+
+                    <ImageButton
+                        android:id="@+id/iBtn_education"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+                        android:alpha="0.3"
+                        android:background="@drawable/ic_img_background_v"
+                        android:tint="@color/color_primary_light"
+                        app:layout_constraintStart_toEndOf="@id/iBtn_utilities"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_education" />
+
+
+                    <ImageButton
+                        android:id="@+id/iBtn_groceries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+                        android:alpha="0.3"
+                        android:background="@drawable/ic_img_background_v"
+                        android:tint="@color/color_primary_light"
+                        app:layout_constraintStart_toEndOf="@id/iBtn_education"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_groceries" />
+
+                    <ImageButton
+                        android:id="@+id/iBtn_sport"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+                        android:alpha="0.3"
+                        android:background="@drawable/ic_img_background_v"
+                        android:tint="@color/color_primary_light"
+                        app:layout_constraintStart_toEndOf="@id/iBtn_groceries"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_sport" />
+
+                    <ImageButton
+                        android:id="@+id/iBtn_cosmetics"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+                        android:alpha="0.3"
+                        android:background="@drawable/ic_img_background_v"
+                        android:tint="@color/color_primary_light"
+                        app:layout_constraintStart_toEndOf="@id/iBtn_sport"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_cosmetics" />
+
+                    <ImageButton
+                        android:id="@+id/iBtn_other"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+                        android:alpha="0.3"
+                        android:background="@drawable/ic_img_background_v"
+                        android:tint="@color/color_primary_light"
+                        app:layout_constraintStart_toEndOf="@id/iBtn_cosmetics"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_other" />
+
+
+                    <TextView
+                        android:id="@+id/tv_category_label_car"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/car_transport"
+                        app:layout_constraintEnd_toEndOf="@+id/iBtn_car"
+                        app:layout_constraintStart_toStartOf="@+id/iBtn_car"
+                        app:layout_constraintTop_toBottomOf="@+id/iBtn_car" />
+
+                    <TextView
+                        android:id="@+id/tv_category_label_clothes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/clothes_shoes"
+                        app:layout_constraintEnd_toEndOf="@+id/iBtn_clothes"
+                        app:layout_constraintStart_toStartOf="@+id/iBtn_clothes"
+                        app:layout_constraintTop_toBottomOf="@+id/iBtn_clothes" />
+
+                    <TextView
+                        android:id="@+id/tv_category_label_food"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/food_drinks"
+                        app:layout_constraintEnd_toEndOf="@+id/iBtn_food"
+                        app:layout_constraintStart_toStartOf="@+id/iBtn_food"
+                        app:layout_constraintTop_toBottomOf="@+id/iBtn_food" />
+
+                    <TextView
+                        android:id="@+id/tv_category_label_utilities"
+                        android:layout_width="65dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/utilities"
+                        app:layout_constraintEnd_toEndOf="@+id/iBtn_utilities"
+                        app:layout_constraintStart_toStartOf="@+id/iBtn_utilities"
+                        app:layout_constraintTop_toBottomOf="@+id/iBtn_utilities" />
+
+                    <TextView
+                        android:id="@+id/tv_category_label_education"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/education"
+                        app:layout_constraintEnd_toEndOf="@+id/iBtn_education"
+                        app:layout_constraintStart_toStartOf="@+id/iBtn_education"
+                        app:layout_constraintTop_toBottomOf="@+id/iBtn_education" />
+
+                    <TextView
+                        android:id="@+id/tv_category_label_groceries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/groceries"
+                        app:layout_constraintEnd_toEndOf="@+id/iBtn_groceries"
+                        app:layout_constraintStart_toStartOf="@+id/iBtn_groceries"
+                        app:layout_constraintTop_toBottomOf="@+id/iBtn_groceries" />
+
+                    <TextView
+                        android:id="@+id/tv_category_label_sport"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/sport_activities"
+                        app:layout_constraintEnd_toEndOf="@+id/iBtn_sport"
+                        app:layout_constraintStart_toStartOf="@+id/iBtn_sport"
+                        app:layout_constraintTop_toBottomOf="@+id/iBtn_sport" />
+
+                    <TextView
+                        android:id="@+id/tv_category_label_cosmetics"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/cosmetics"
+                        app:layout_constraintEnd_toEndOf="@+id/iBtn_cosmetics"
+                        app:layout_constraintStart_toStartOf="@+id/iBtn_cosmetics"
+                        app:layout_constraintTop_toBottomOf="@+id/iBtn_cosmetics" />
+
+                    <TextView
+                        android:id="@+id/tv_category_label_other"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/other_stuff"
+                        app:layout_constraintEnd_toEndOf="@+id/iBtn_other"
+                        app:layout_constraintStart_toStartOf="@+id/iBtn_other"
+                        app:layout_constraintTop_toBottomOf="@+id/iBtn_other" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </HorizontalScrollView>
+
+            <EditText
         android:id="@+id/et_costDescription"
+        style="@style/EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -250,6 +287,7 @@
 
     <EditText
         android:id="@+id/et_costValue"
+        style="@style/EditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="end"
@@ -264,6 +302,7 @@
     <com.google.android.material.chip.Chip
         android:id="@+id/cp_showCurrency"
         style="@style/CurrencyChip"
+        android:textSize="14sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -319,5 +358,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_takeAPic" />
 
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

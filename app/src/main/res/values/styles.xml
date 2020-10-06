@@ -1,71 +1,112 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="MyCustomTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="chipIconTint">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="android:textColorPrimary">@color/color_primary_light</item>
+        <item name="colorControlNormal">@color/color_primary_light</item>
+        <item name="android:colorAccent">@color/color_accent</item>
+        <item name="android:statusBarColor">@color/color_primary_dark</item>
+        <item name="android:textCursorDrawable">@null</item>
         <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-
     </style>
 
-<!--    for smth-->
-    <style name="MyStyle" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-   </style>
-
-<!--    for app tittle-->
+    <!--    for app tittle-->
     <style name="AppTitle">
         <item name="android:fontFamily">@font/cabin_sketch_bold</item>
+        <item name="android:textSize">25sp</item>
+
     </style>
 
-<!--    for alertDialog-->
-    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:colorAccent">@color/colorAccent</item>
-        <item name="android:textColor">@color/colorPrimaryDark</item>
+    <!--    for tv_toolbar_text -->
+    <style name="ToolbarText" parent="Theme.MaterialComponents">
+
     </style>
 
-<!--    for DatePicker-->
-    <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
-        <item name="android:colorAccent">@color/colorPrimaryDark</item>
+
+    <!--    for alertDialog-->
+    <style name="AlertDialogStyle" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="android:textColorPrimary">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_primary_dark</item>
+        <item name="textColorAlertDialogListItem">@color/color_primary_dark</item>
+    </style>
+
+    <!--    for fab-->
+    <style name="FabStyle" parent="Theme.AppCompat.Light">
+        <item name="backgroundTint">@color/color_primary_light</item>
+        <item name="tint">@color/color_primary_dark</item>
+        <item name="borderWidth">0dp</item>
+
+    </style>
+
+
+    <!--    for DatePicker-->
+    <style name="MyDatePickerDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog">
         <item name="android:datePickerStyle">@style/MyDatePickerStyle</item>
+        <item name="android:textColorPrimary">@color/color_primary_dark</item>
+        <item name="android:colorAccent">@color/color_primary_dark</item>
+        <!--    for selected date-->
+        <item name="colorControlActivated">@color/color_primary_dark</item>
     </style>
+
 
     <style name="MyDatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">
-        <item name="android:headerBackground">@color/colorPrimaryDark</item>
-        <item name="android:headerYearTextAppearance">@color/colorPrimaryLight</item>
+        <item name="android:headerBackground">@color/color_primary</item>
+        <item name="android:headerYearTextAppearance">@color/color_primary_light</item>
+
     </style>
 
-<!--        for Preference-->
-<!--    <style name="PreferenceThemeOverlay" parent="Theme.AppCompat.Light.Dialog">-->
-<!--    </style>-->
+    <!--    for editText -->
+    <style name="EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:backgroundTint">@color/color_primary_dark</item>
+        <item name="android:textColor">@color/color_primary</item>
+        <item name="android:textColorHint">@color/color_primary_light</item>
 
-    <!--    for thinner Chip-->
-    <style name="ThinnerChip" parent="Widget.MaterialComponents.Chip.Action">
+  </style>
+
+    <!--    for NameYourPic -->
+    <style name="NameYourPic" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="android:textColorPrimary">@color/color_primary_dark</item>
+        <item name="android:textColor">@color/color_primary_dark</item>
+        <item name="colorControlActivated">@color/color_primary_dark</item>
+
+
+    </style>
+
+
+    <!--        for Preference-->
+    <!--    <style name="PreferenceThemeOverlay" parent="Theme.AppCompat.Light.Dialog">-->
+    <!--    </style>-->
+
+    <!--    for currency text -> lighter-->
+    <style name="CurrencyText" parent="Theme.MaterialComponents.Light">
+        <item name="colorPrimary">@color/color_primary_light</item>
+
+    </style>
+
+    <!--    for clear_all Chip-->
+    <style name="CloseChip" parent="Widget.MaterialComponents.Chip.Action">
         <item name="chipCornerRadius">4dp</item>
-        <item name="chipMinHeight">24dp</item>
+        <item name="chipMinHeight">18dp</item>
+        <item name="chipBackgroundColor">@color/color_accent</item>
+        <item name="textStartPadding">0dp</item>
+        <item name="textEndPadding">0dp</item>
+        <item name="android:elevation">4dp</item>
         <item name="android:textAppearance">@style/SmallerText</item>
-    </style>
-
-    <style name="SmallerText" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textSize">12sp</item>
     </style>
 
     <!--    for currency Chip-->
     <style name="CurrencyChip" parent="Widget.MaterialComponents.Chip.Action">
-         <item name="chipCornerRadius">4dp</item>
+        <item name="chipCornerRadius">4dp</item>
         <item name="chipMinHeight">18dp</item>
         <item name="textStartPadding">0dp</item>
         <item name="textEndPadding">0dp</item>
         <item name="chipEndPadding">4dp</item>
         <item name="chipMinTouchTargetSize">24dp</item>
-        <item name="chipBackgroundColor">#a6a6a6</item>
+        <item name="chipBackgroundColor">@color/color_primary</item>
         <item name="android:textColor">#ffffff</item>
         <item name="android:textAppearance">@style/SmallerText</item>
     </style>
@@ -79,10 +120,10 @@
         <item name="chipEndPadding">2dp</item>
         <item name="closeIconEndPadding">0dp</item>
         <item name="closeIconSize">14dp</item>
-        <item name="closeIconTint">#ffffff</item>
+        <item name="closeIconTint">@color/color_primary_light</item>
         <item name="chipMinTouchTargetSize">24dp</item>
-        <item name="chipBackgroundColor">#66a3ff</item>
-        <item name="android:textColor">#ffffff</item>
+        <item name="chipBackgroundColor">@color/color_chipTag</item>
+        <item name="android:textColor">@color/color_primary_light</item>
         <item name="android:textAppearance">@style/SmallerText</item>
     </style>
 
@@ -95,11 +136,33 @@
         <item name="chipEndPadding">2dp</item>
         <item name="closeIconEndPadding">0dp</item>
         <item name="closeIconSize">14dp</item>
-        <item name="closeIconTint">#ffffff</item>
+        <item name="closeIconTint">@color/color_primary_light</item>
         <item name="chipMinTouchTargetSize">24dp</item>
-        <item name="chipBackgroundColor">#b366ff</item>
-        <item name="android:textColor">#ffffff</item>
+        <item name="chipBackgroundColor">@color/color_chipPic</item>
+        <item name="android:textColor">@color/color_primary_light</item>
         <item name="android:textAppearance">@style/SmallerText</item>
+    </style>
+
+    <!--    for smaller text-->
+    <style name="SmallerText" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!--    for smaller buttons-->
+    <style name="SmallerBtn" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textSize">12sp</item>
+
+    </style>
+
+    <!--    for filterdialog text color-->
+    <style name="FilterdialogTextColor" parent="">
+        <item name="android:textColor">@color/color_primary_dark</item>
     </style>
 
 </resources>
