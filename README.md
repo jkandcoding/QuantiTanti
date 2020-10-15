@@ -9,7 +9,7 @@ day and review individual expenses of that day.
 Not much more to say, hope you 'll like it!
 
 ## Acknowledgments
-"Icons made by Freepik, Kiranshastry, Good Ware and DinosoftLabs from www.flaticon.com"
+Icons made by Freepik, Kiranshastry, Good Ware and DinosoftLabs from www.flaticon.com
 
 ## License
 (https://www.apache.org/licenses/LICENSE-2.0)
