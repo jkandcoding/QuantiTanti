@@ -22,8 +22,6 @@ public class CostEntry {
     private String date;
     private String currency;
 
-
-    //todo upisi kategorije
     /**
      * Possible values for the categories
      */
@@ -46,23 +44,9 @@ public class CostEntry {
     @Ignore
     public static final String CATEGORY_9 = "Other";
 
-//    /**
-//     * Possible values for the currency
-//     */
-//    @Ignore
-//    public static final String CURRENCY_1 = "kn";
-//    @Ignore
-//    public static final String CURRENCY_2 = "€";
-//    @Ignore
-//    public static final String CURRENCY_3 = "£";
-//    @Ignore
-//    public static final String CURRENCY_4 = "$";
-
 
     public CostEntry() {
     }
-
-    //todo-x-dodana ignore anotacija
 
     @Ignore
     public CostEntry(int id, String category, String name, int cost, String date, String currency) {

@@ -14,12 +14,6 @@ public class SwitchFrontFragmentAdapter extends FragmentStateAdapter {
     public SwitchFrontFragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
-//    public SwitchFrontFragmentAdapter(@NonNull Fragment fragment) {
-//        super(fragment);
-//    }
-//    public SwitchFrontFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
-//        super(fragmentManager, lifecycle);
-//    }
 
     @NonNull
     @Override
@@ -37,6 +31,5 @@ public class SwitchFrontFragmentAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         return 2;
     }
-
 
 }

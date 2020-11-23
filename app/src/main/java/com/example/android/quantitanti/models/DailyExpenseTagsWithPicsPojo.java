@@ -58,5 +58,4 @@ public class DailyExpenseTagsWithPicsPojo {
     public void setPicsEntries(List<PicsEntry> picsEntries) {
         this.picsEntries = picsEntries;
     }
-
 }

@@ -40,14 +40,11 @@ import java.util.Objects;
 
 public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemClickListener, FilterDialogFragment.OnDataPass {
 
-    private static final int TARGET_FRAGMENT_REQUEST_CODE = 1;
-
     public static final String EXTRA_COST_ID = "extraCostId";
 
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
     private AllCostsAdapter mAdapter;
-
 
     private CostDatabase mDb;
 
@@ -55,7 +52,6 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
         AllCostsFragment fragment = new AllCostsFragment();
         return fragment;
     }
-
 
     @Nullable
     @Override
@@ -111,7 +107,6 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
                                 List<DailyExpenseTagsWithPicsPojo> expenses = mAdapter.getmAllCosts();
                                 int deleteId = expenses.get(position).getCostEntry().getId();
                                 mDb.costDao().deleteCostWithId(deleteId);
-                                //todo refresh adapter from TotalCostFragment
                             }
                         });
                     }
@@ -147,8 +142,6 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
         mDb = CostDatabase.getInstance(requireActivity().getApplicationContext());
 
         setupViewModel();
-
-
     }
 
     private void setupViewModel() {
@@ -164,7 +157,6 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
             }
         });
     }
-
 
     @Override
     public void onItemClickListener(int itemId) {
@@ -222,8 +214,7 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
             requireActivity().findViewById(R.id.action_search).startAnimation(animation);
         }, 1);
 
-
-       //searching costs:
+        //searching costs:
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -262,30 +253,12 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
 
     @Override
     public void onDataPass(List<String> dataCategories, List<String> dataTags) {
-        //todo send data to AllCostAdapter
+        // send data to AllCostAdapter
         mAdapter.setCategoriesAndTagsForFilter(dataCategories, dataTags);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
-
-        //animate filter/search icons to slowly disappear
-//        MenuItem filterItem = menu.findItem(R.id.action_filter);
-//        MenuItem searchItem = menu.findItem(R.id.action_search);
-
-
- //       new Handler().postDelayed(() -> {
-//            AlphaAnimation animation = new AlphaAnimation(1.0f, 0.0f);
-//            animation.setDuration(250);
-
-             //Make item visible and start the animation
-//            filterItem.setVisible(true);
-//            searchItem.setVisible(true);
-
-//            requireActivity().findViewById(R.id.action_filter).startAnimation(animation);
-//            requireActivity().findViewById(R.id.action_search).startAnimation(animation);
-//        }, 1);
     }
 }

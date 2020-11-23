@@ -26,8 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.android.quantitanti.DailyExpensesActivity.currency1;
-import static com.example.android.quantitanti.DailyExpensesActivity.currency2;
+
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_1;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_2;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_3;
@@ -46,10 +45,6 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
 
     // Class variables for the List that holds cost data and the Context
     private List<DailyExpenseTagsWithPicsPojo> mdailyExpenseTagsWithPicsPojos;
-
-    public static final String BUNDLE_PHOTOS = "bundlePhotos";
-
-
 
     private Context mContext;
     //private CostDatabase mDb;
@@ -94,7 +89,6 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
         List<String> oneCostTags = dailyExpenseTagsWithPicsPojo.getTagNames();
         List<PicsEntry> picsEntries = dailyExpenseTagsWithPicsPojo.getPicsEntries();
 
-
         holder.iv_getPic.setVisibility(View.GONE);
         Map<String, String> photos = new HashMap<>();
         for (PicsEntry picsEntry : picsEntries) {
@@ -109,13 +103,9 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
                     FragmentManager fm = ((AppCompatActivity) mContext).getSupportFragmentManager();
                     PhotosDialogFragment photosDialogFragment = PhotosDialogFragment.newInstance(photos);
                     photosDialogFragment.show(fm, "fragment_photo");
-                    Log.d(String.valueOf(photos), "fotke slanje");
                 }
             });
-            Log.d("fotke clear", "fotke clear");
         }
-
-
 
         //Set holder values
         holder.tv_costDescription.setText(oneCostName);
@@ -132,7 +122,6 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
                 holder.cg_tags.addView(chip);
             }
         }
-
 
         // setting imgv depending on category
         holder.imgv_category.setBackgroundResource(R.drawable.ic_img_background_v);
@@ -210,7 +199,6 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
         ChipGroup cg_tags;
         ImageView iv_getPic;
 
-
         /**
          * Constructor for the DailyCostViewHolders.
          *
@@ -242,5 +230,4 @@ public class DailyCostAdapter extends RecyclerView.Adapter<DailyCostAdapter.Dail
             return true;
         }
     }
-
 }

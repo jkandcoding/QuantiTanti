@@ -5,7 +5,6 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.android.quantitanti.database.CostDatabase;
-import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
 import com.example.android.quantitanti.models.TotalFrontCostPojo;
 import com.example.android.quantitanti.models.TotalFrontHelpPojo;
@@ -46,7 +45,7 @@ public class CostListViewModel extends ViewModel {
         List<String> helpDate = new ArrayList<>();
 
         for (TotalFrontHelpPojo totalFrontHelpPojo1 : totalFrontHelpPojos) {
-            if (totalFrontHelpPojo1.getCurrency() != null) {        //todo - makni ovaj redak kad se izbrisu iz baze troskovi s currency = null
+            if (totalFrontHelpPojo1.getCurrency() != null) {        //necessary for costs with currency = null
                 //new TotalFrontCostPojo, new date
                 if (!helpDate.contains(totalFrontHelpPojo1.getDate())) {
                     TotalFrontCostPojo obj = new TotalFrontCostPojo();
@@ -85,10 +84,9 @@ public class CostListViewModel extends ViewModel {
                     }
                 }
             }
-        }       //todo - makni ovu zagradu lijevo
-            helpPair.clear();
-            helpDate.clear();
-            return totalFrontCostPojos;
-
+        }
+        helpPair.clear();
+        helpDate.clear();
+        return totalFrontCostPojos;
     }
 }

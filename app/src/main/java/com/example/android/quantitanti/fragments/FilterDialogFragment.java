@@ -60,7 +60,6 @@ public class FilterDialogFragment extends DialogFragment {
 
     private OnDataPass dataPasser;
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,7 +81,6 @@ public class FilterDialogFragment extends DialogFragment {
         setupViewModel();
         setupViews();
         setupOnClickListeners();
-
 
         return v;
     }
@@ -155,7 +153,6 @@ public class FilterDialogFragment extends DialogFragment {
             }
         });
 
-
         btn_ok_filter.setOnClickListener(v -> {
             dataPasser.onDataPass(viewModel.getCategoriesForFilter(), viewModel.getTagsForFilter());
             FilterDialogFragment.this.dismiss();
@@ -216,36 +213,29 @@ public class FilterDialogFragment extends DialogFragment {
                         } else if (itemsSelected.contains(selectedItemId)) {
                             itemsSelected.remove(Integer.valueOf(selectedItemId));
                         }
-
                     }
                 })
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        //send itemsSelected to previous filter pop up
-                        categoriesForFilter = new ArrayList<>();
-                        if (itemsSelected.size() != 0) {
-                            tv_categoryList_filter.setText("");
+                .setPositiveButton("OK", (dialog12, id) -> {
+                    //send itemsSelected to previous filter pop up
+                    categoriesForFilter = new ArrayList<>();
+                    if (itemsSelected.size() != 0) {
+                        tv_categoryList_filter.setText("");
 
-                            for (int item : itemsSelected) {
-                                categoriesForFilter.add(categoriesList.get(item));
-                                viewModel.setCategoriesForFilter(categoriesForFilter);
-                            }
-                            for (String category : viewModel.getCategoriesForFilter()) {
-                                tv_categoryList_filter.append(category + "\n");
-                                btn_clear_categories.setVisibility(View.VISIBLE);
-                            }
-                        } else {
-                            tv_categoryList_filter.setText("NO FILTER");
-                            btn_clear_categories.setVisibility(View.GONE);
-                            viewModel.setCategoriesForFilter(null);
+                        for (int item : itemsSelected) {
+                            categoriesForFilter.add(categoriesList.get(item));
+                            viewModel.setCategoriesForFilter(categoriesForFilter);
                         }
+                        for (String category : viewModel.getCategoriesForFilter()) {
+                            tv_categoryList_filter.append(category + "\n");
+                            btn_clear_categories.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        tv_categoryList_filter.setText("NO FILTER");
+                        btn_clear_categories.setVisibility(View.GONE);
+                        viewModel.setCategoriesForFilter(null);
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
+                .setNegativeButton("Cancel", (dialog1, id) -> {
                 });
         dialog = builder.create();
         dialog.show();
@@ -281,46 +271,36 @@ public class FilterDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.AlertDialogStyle);
         builder.setMultiChoiceItems(tags, checkedItems,
-                new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int selectedItemId,
-                                        boolean isSelected) {
+                (dialog1, selectedItemId, isSelected) -> {
 
-                        if (isSelected) {
-                            itemsSelected.add(selectedItemId);
-                        } else if (itemsSelected.contains(selectedItemId)) {
-                            itemsSelected.remove(Integer.valueOf(selectedItemId));
+                    if (isSelected) {
+                        itemsSelected.add(selectedItemId);
+                    } else if (itemsSelected.contains(selectedItemId)) {
+                        itemsSelected.remove(Integer.valueOf(selectedItemId));
+                    }
+
+                })
+                .setPositiveButton("OK", (dialog12, id) -> {
+                    //send itemsSelected to previous filter pop up
+                    tagsForFilter = new ArrayList<>();
+                    if (itemsSelected.size() != 0) {
+                        tv_tagList_filter.setText("");
+
+                        for (int item : itemsSelected) {
+                            tagsForFilter.add(tagsList.get(item));
+                            viewModel.setTagsForFilter(tagsForFilter);
                         }
-
+                        for (String category : viewModel.getTagsForFilter()) {
+                            tv_tagList_filter.append(category + "\n");
+                            btn_clear_tags.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        tv_tagList_filter.setText("NO FILTER");
+                        btn_clear_tags.setVisibility(View.GONE);
+                        viewModel.setTagsForFilter(null);
                     }
                 })
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        //send itemsSelected to previous filter pop up
-                        tagsForFilter = new ArrayList<>();
-                        if (itemsSelected.size() != 0) {
-                            tv_tagList_filter.setText("");
-
-                            for (int item : itemsSelected) {
-                                tagsForFilter.add(tagsList.get(item));
-                                viewModel.setTagsForFilter(tagsForFilter);
-                            }
-                            for (String category : viewModel.getTagsForFilter()) {
-                                tv_tagList_filter.append(category + "\n");
-                                btn_clear_tags.setVisibility(View.VISIBLE);
-                            }
-                        } else {
-                            tv_tagList_filter.setText("NO FILTER");
-                            btn_clear_tags.setVisibility(View.GONE);
-                            viewModel.setTagsForFilter(null);
-                        }
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
+                .setNegativeButton("Cancel", (dialog13, id) -> {
                 });
         dialog = builder.create();
         dialog.show();
@@ -337,7 +317,6 @@ public class FilterDialogFragment extends DialogFragment {
 
     public interface OnDataPass {
         void onDataPass(List<String> dataCategories, List<String> dataTags);
-
     }
 
 
@@ -346,6 +325,4 @@ public class FilterDialogFragment extends DialogFragment {
         super.onAttach(context);
         dataPasser = (OnDataPass) getTargetFragment();
     }
-
-
 }

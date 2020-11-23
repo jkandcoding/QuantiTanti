@@ -32,16 +32,19 @@
     <string name="are_you_sure">Are you sure you want to delete this cost?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="pick_a_tag_optional">Pick a tag (optional):</string>
+    <string name="pick_a_tag_optional">Pick a tag (optional)</string>
     <string name="knS">kn</string>
     <string name="euroS">€</string>
     <string name="poundS">£</string>
     <string name="dollarS">$</string>
     <string name="search">Search</string>
-    <string name="language">Language</string>
+    <string name="currency">Currency</string>
     <string name="filter">FILTER BY</string>
     <string name="tags">TAGS</string>
     <string name="cost_value">COST VALUE</string>
     <string name="categories">CATEGORIES</string>
+    <string name="legal">Legal</string>
+    <string name="take_a_pic_optional">Take a pic (optional)</string>
+
 
 </resources>

@@ -27,14 +27,10 @@ import java.util.TreeMap;
 
 public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePagerAdapter.SlideViewHolder> {
 
-    private static String currency1;
-    private static String currency2;
-
     private List<TotalCostPojo> mTotalCostPojos;
     private LayoutInflater layoutInflater;
     private ViewPager2 viewPager2;
     private int mHeight;
-
 
     public ScreenSlidePagerAdapter(Context context, ViewPager2 viewPager2) {
         this.layoutInflater = LayoutInflater.from(context);
@@ -54,7 +50,6 @@ public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePag
 
         String currency = totalCostPojo.getCurrency();
 
-
         //setting categories and their costs into Map:
         Map<String, Integer> categoryCosts = totalCostPojo.getCategoryCosts();
 
@@ -64,13 +59,13 @@ public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePag
             totalCost += entry.getValue();
         }
 
-  //      int hight = mViewPager2MaxHight.get(position);
+        //      int hight = mViewPager2MaxHight.get(position);
         holder.tv_category_costs.setText("");
         holder.tv_category_costs.setMinLines(mHeight);
         if (mHeight > totalCostPojo.getCategoryCosts().size()) {
-                    int newLineNumber = mHeight - totalCostPojo.getCategoryCosts().size();
-                    holder.tv_category_costs.setText(new String(new char[newLineNumber]).replace("\0", "\n"));
-                }
+            int newLineNumber = mHeight - totalCostPojo.getCategoryCosts().size();
+            holder.tv_category_costs.setText(new String(new char[newLineNumber]).replace("\0", "\n"));
+        }
 
         Map.Entry<String, Integer> lastEntry = ((TreeMap<String, Integer>) categoryCosts).lastEntry();
         for (Map.Entry<String, Integer> entry : categoryCosts.entrySet()) {
@@ -101,11 +96,6 @@ public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePag
         return mTotalCostPojos.size();
     }
 
-    public List<TotalCostPojo> getmTotalCostPojos() {
-        return mTotalCostPojos;
-    }
-
-
     /**
      * When data changes, this method updates the list of costEntries
      * and notifies the adapter to use the new values on it
@@ -115,7 +105,6 @@ public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePag
         mHeight = height;
         notifyDataSetChanged();
     }
-
 
     public static class SlideViewHolder extends RecyclerView.ViewHolder {
 

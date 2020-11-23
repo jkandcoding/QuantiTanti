@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -59,7 +60,6 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
         return mTags.size();
     }
 
-
     public void setTags(List<TagsPojo> tags) {
         mTags = tags;
         notifyDataSetChanged();
@@ -85,7 +85,6 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
         public boolean onLongClick(View v) {
             int tagIdforDel = mTags.get(getAbsoluteAdapterPosition()).getTagId();
             mItemClickListener.onItemLongClickListener(tagIdforDel);
-            Log.d(String.valueOf(tagIdforDel), "tagId");
             return true;
         }
     }

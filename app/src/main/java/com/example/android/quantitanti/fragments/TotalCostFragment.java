@@ -40,8 +40,6 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
 
     private CostDatabase mDb;
 
-
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,7 +67,6 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         /**
          * Set the Floating Action Button (FAB) to its corresponding View.
          * Attach an OnClickListener to it, so that when it's clicked, a new intent will be created
@@ -84,10 +81,8 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
 
         mDb = CostDatabase.getInstance(requireActivity().getApplicationContext());
 
-
         //       setupSharedPreferences();
         setupViewModel();
-
     }
 
     private void setupViewModel() {
@@ -110,7 +105,6 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
         startActivity(intent);
     }
 
-
     @Override
     public void onItemLongClickListener(String itemDate) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.AlertDialogStyle);
@@ -131,11 +125,10 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-               //nothing happens
+                //nothing happens
             }
         });
         builder.create();
         builder.show();
     }
-
 }

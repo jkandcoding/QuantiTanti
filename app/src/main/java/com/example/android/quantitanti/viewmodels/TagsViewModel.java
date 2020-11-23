@@ -41,5 +41,4 @@ public class TagsViewModel extends AndroidViewModel {
         }
         return tags;
     }
-
 }

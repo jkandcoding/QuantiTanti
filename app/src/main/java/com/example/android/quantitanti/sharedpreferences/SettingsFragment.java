@@ -1,7 +1,6 @@
 package com.example.android.quantitanti.sharedpreferences;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.preference.DropDownPreference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -12,7 +11,6 @@ import java.util.Comparator;
 import java.util.Currency;
 import java.util.Set;
 import java.util.TreeSet;
-
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -39,10 +37,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         assert dropDownPreference != null;
         dropDownPreference.setEntries(entries);
         dropDownPreference.setEntryValues(entryValues);
-
-
-
-
     }
 
     static class SbufferComparator implements Comparator<Currency> {
@@ -51,7 +45,5 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         public int compare(Currency s1, Currency s2) {
             return s1.getCurrencyCode().compareTo(s2.getCurrencyCode());
         }
-
-
     }
 }

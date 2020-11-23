@@ -13,27 +13,28 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/my_toolbar_ac"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        style="@style/ToolbarText" />
 
-    <TextView
-        android:id="@+id/tv_addCost_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/pick_your_cost_category"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar_ac" />
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/my_toolbar_ac"
+                style="@style/ToolbarText"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:elevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_addCost_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/pick_your_cost_category"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/my_toolbar_ac" />
 
             <HorizontalScrollView
                 android:id="@+id/horizontalScrollView"
@@ -53,17 +54,6 @@
                     android:id="@+id/tl_categoryHorizontalLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
-
-
-                    <!--            <ImageButton-->
-                    <!--                android:id="@+id/iBtn_car"-->
-                    <!--                android:layout_width="50dp"-->
-                    <!--                android:layout_height="50dp"-->
-                    <!--                android:layout_marginStart="32dp"-->
-                    <!--                android:alpha="0.3"-->
-                    <!--                app:layout_constraintStart_toStartOf="parent"-->
-                    <!--                app:layout_constraintTop_toTopOf="parent"-->
-                    <!--                app:srcCompat="@drawable/car" />-->
 
                     <ImageButton
                         android:id="@+id/iBtn_car"
@@ -271,92 +261,133 @@
             </HorizontalScrollView>
 
             <EditText
-        android:id="@+id/et_costDescription"
-        style="@style/EditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:hint="Cost description"
-        android:inputType="textShortMessage|textMultiLine"
-        app:layout_constraintEnd_toStartOf="@+id/et_costValue"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintHorizontal_weight="3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cg_picUriResult" />
+                android:id="@+id/et_costDescription"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:hint="Cost description"
+                android:inputType="textShortMessage|textMultiLine"
+                app:layout_constraintEnd_toStartOf="@+id/et_costValue"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_weight="3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cg_picUriResult" />
 
-    <EditText
-        android:id="@+id/et_costValue"
-        style="@style/EditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:hint="Cost value"
-        android:inputType="number|numberDecimal"
-        android:singleLine="true"
-        app:layout_constraintBaseline_toBaselineOf="@+id/et_costDescription"
-        app:layout_constraintEnd_toStartOf="@+id/cp_showCurrency"
-        app:layout_constraintHorizontal_weight="2" />
-
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/cp_showCurrency"
-        style="@style/CurrencyChip"
-        android:textSize="14sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/et_costDescription"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1" />
+            <EditText
+                android:id="@+id/et_costValue"
+                style="@style/EditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:hint="Cost value"
+                android:inputType="number|numberDecimal"
+                android:singleLine="true"
+                app:layout_constraintBaseline_toBaselineOf="@+id/et_costDescription"
+                app:layout_constraintEnd_toStartOf="@+id/cp_showCurrency"
+                app:layout_constraintHorizontal_weight="2" />
 
 
-
-    <TextView
-        android:id="@+id/tv_pickATag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:padding="8dp"
-        android:text="@string/pick_a_tag_optional"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/cg_tags"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_pickATag" />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/cp_showCurrency"
+                style="@style/CurrencyChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textSize="14sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/et_costDescription"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1" />
 
 
+            <LinearLayout
+                android:id="@+id/ll_pickATag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView">
 
-    <TextView
-        android:id="@+id/tv_takeAPic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:padding="8dp"
-        android:text="Take a pic (optional):"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cg_tags" />
+                <TextView
+                    android:id="@+id/tv_pickATag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="@string/pick_a_tag_optional"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/cg_picUriResult"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_takeAPic" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_drop_down_24"
+                    app:layout_constraintStart_toEndOf="@+id/tv_pickATag"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+            </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cg_tags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_pickATag" />
+
+
+            <LinearLayout
+                android:id="@+id/ll_takeAPic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cg_tags">
+
+                <TextView
+                    android:id="@+id/tv_takeAPic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="@string/take_a_pic_optional"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_drop_down_24"
+                    app:layout_constraintStart_toEndOf="@+id/tv_takeAPic"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+
+            </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cg_picUriResult"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_takeAPic" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

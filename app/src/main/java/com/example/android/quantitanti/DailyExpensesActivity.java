@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,16 +25,14 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.daimajia.slider.library.SliderLayout;
 import com.example.android.quantitanti.adapters.DailyCostAdapter;
-
 import com.example.android.quantitanti.adapters.ScreenSlidePagerAdapter;
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.factories.DailyExpensesViewModelFactory;
 import com.example.android.quantitanti.helpers.Helper;
 import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
-import com.example.android.quantitanti.viewmodels.DailyExpensesViewModel;
 import com.example.android.quantitanti.models.TotalCostPojo;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
-import com.google.android.material.chip.Chip;
+import com.example.android.quantitanti.viewmodels.DailyExpensesViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -49,41 +48,20 @@ import static java.lang.String.valueOf;
 
 public class DailyExpensesActivity extends AppCompatActivity implements DailyCostAdapter.DailyItemClickListener {
 
-    // Constant for logging
-    private static final String TAG = CostListActivity.class.getSimpleName();
-
     // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
     private DailyCostAdapter mAdapter;
-    //  private DailyCostTagAdapter mTagAdapter;
-
 
     private CostDatabase mDb;
 
-    //constants for sp currency
-    String currency;
-    public static String currency1;
-    public static String currency2;
-    List<String> diffCurrencies;
-
-
     //View Pager
-    //todo number of total_cost slides (no of diff currencies on a date)
-    public static int NUM_PAGES;
     private ViewPager2 viewPager2;
     private TabLayout tabLayout;
     private ScreenSlidePagerAdapter pagerAdapter;
-    List<TotalCostPojo> totalCostPojosForAdapter;
-    List<Integer> minHight;
-    private ViewPager2.OnPageChangeCallback onPageChangeCallback;
 
-
-    // Extra for the cost ID to be received after rotation
-    public static final String INSTANCE_COST_ID = "instanceCostId";
     // Constant for default cost id to be used when not in update mode
     private static final int DEFAULT_COST_ID = -1;
     private int mCostId = DEFAULT_COST_ID;
-    private int costId;
 
     // Constant for default cost id to be used when not in update mode
     private static final String DEFAULT_COST_DATE = "2020-01-01";
@@ -95,20 +73,11 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
     TextView tv_dateNo;
     TextView tv_toolbar_mont_year;
 
-    //sum category costs
-    TextView tv_category_costs;
-    TextView tv_total_cost;
-
-
-    SliderLayout slider;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidThreeTen.init(this);
         setContentView(R.layout.activity_daily_expenses);
-
 
         mDb = CostDatabase.getInstance(getApplicationContext());
 
@@ -133,7 +102,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         mAdapter = new DailyCostAdapter(this, this);
         mRecyclerView.setAdapter(mAdapter);
 
-
         // Instantiate a ViewPager, tablayout and a PagerAdapter:
         viewPager2 = findViewById(R.id.pager);
         tabLayout = findViewById(R.id.tablayout);
@@ -146,7 +114,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
             }
         });
         tabLayoutMediator.attach();
-
 
         //receiving intent when onItemClickListener in CostListActivity
         Intent intent = getIntent();
@@ -170,9 +137,9 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                 viewModel.getTotalCategoryCosts().observe(this, totalCostPojos -> {
                     int height = 0;
                     for (TotalCostPojo tcp : totalCostPojos) {
-                         if (tcp.getCategoryCosts().size() > height) {
-                             height = tcp.getCategoryCosts().size();
-                         }
+                        if (tcp.getCategoryCosts().size() > height) {
+                            height = tcp.getCategoryCosts().size();
+                        }
                     }
                     pagerAdapter.setmDailyCategoryCosts(totalCostPojos, height);
                 });
@@ -209,17 +176,14 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                                 List<DailyExpenseTagsWithPicsPojo> dailyExpensePicsPojos = mAdapter.getDailyCosts();
                                 //costEntries -> all costs from RecyclerView on certain date
                                 mDb.costDao().deleteCostWithId(dailyExpensePicsPojos.get(position).getCostEntry().getId());
-                                //  sumCategoriesAndTotal(); todo delete this
                             }
                         });
                     }
                 });
-                builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog,
-                        // so we will refresh the adapter to prevent hiding the item from UI
-                        mAdapter.notifyItemChanged(viewHolder.getAbsoluteAdapterPosition());
-                    }
+                builder.setNegativeButton(getString(R.string.no), (dialog, id) -> {
+                    // User cancelled the dialog,
+                    // so we will refresh the adapter to prevent hiding the item from UI
+                    mAdapter.notifyItemChanged(viewHolder.getAbsoluteAdapterPosition());
                 });
                 builder.create();
                 builder.show();
@@ -232,20 +196,16 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
          * to launch the AddCostActivity.
          */
         FloatingActionButton fab = findViewById(R.id.fabDaily);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DailyExpensesActivity.this, AddCostActivity.class);
-                intent.putExtra(EXTRA_COST_DATE, mCostDate);
-                startActivity(intent);
-            }
+        fab.setOnClickListener(v -> {
+            Intent intent1 = new Intent(DailyExpensesActivity.this, AddCostActivity.class);
+            intent1.putExtra(EXTRA_COST_DATE, mCostDate);
+            startActivity(intent1);
         });
 
         if (savedInstanceState != null && savedInstanceState.containsKey(AddCostActivity.INSTANCE_COST_ID)) {
             mCostId = savedInstanceState.getInt(AddCostActivity.INSTANCE_COST_ID, DEFAULT_COST_ID);
         }
-      }
-
+    }
 
     private void calenderDateSetting() {
         //getting date for setting a calender
@@ -253,8 +213,8 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                 (LocalDate.parse(mCostDate).getDayOfWeek().toString());
         String date_No = valueOf(LocalDate.parse(mCostDate).getDayOfMonth());
         String month = Helper.fromUperCaseToFirstCapitalizedLetter
-              //  (LocalDate.parse(mCostDate).getMonth().toString());
-                (LocalDate.parse(mCostDate).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
+                //  (LocalDate.parse(mCostDate).getMonth().toString());
+                        (LocalDate.parse(mCostDate).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
         String year = valueOf(LocalDate.parse(mCostDate).getYear());
 
         tv_weekDay = findViewById(R.id.tv_weekDay);
@@ -301,7 +261,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         builder.show();
     }
 
-
     @Override
     public void onBackPressed() {
         if (viewPager2.getCurrentItem() == 0) {
@@ -313,8 +272,6 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
             viewPager2.setCurrentItem(viewPager2.getCurrentItem() - 1);
         }
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -330,9 +287,21 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
             startActivity(startSettingsActivity);
             return true;
         }
+
+        if (id == R.id.action_legal) {
+            String privacyPolicyUrl = "https://sites.google.com/view/quantitanti-legal";
+            openWebPage(privacyPolicyUrl);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
-
+    private void openWebPage(String privacyPolicyUrl) {
+        Uri uri = Uri.parse(privacyPolicyUrl);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
 }
 

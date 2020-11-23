@@ -23,10 +23,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +41,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import com.daimajia.slider.library.SliderLayout;
-import com.example.android.quantitanti.adapters.TagsAdapter;
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.database.Expenses_tags_join;
@@ -50,9 +48,9 @@ import com.example.android.quantitanti.database.PicsEntry;
 import com.example.android.quantitanti.factories.AddCostViewModelFactory;
 import com.example.android.quantitanti.fragments.MultiselectTagDialogFragment;
 import com.example.android.quantitanti.helpers.Helper;
-import com.example.android.quantitanti.viewmodels.AddCostViewModel;
 import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
+import com.example.android.quantitanti.viewmodels.AddCostViewModel;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.jakewharton.threetenabp.AndroidThreeTen;
@@ -145,6 +143,7 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     String dayOfWeekString;
 
     //tags
+    LinearLayout ll_pickATag;
     TextView tv_addCost_label;
     TextView tv_pickATag;
     ChipGroup cg_tags;
@@ -154,6 +153,7 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     int costIdWithTagOrPic;
 
     //pics
+    LinearLayout ll_takeAPic;
     TextView tv_takeAPic;
     ChipGroup cg_picUriResult;
     private String pictureFilePath;
@@ -263,7 +263,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
-
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.pref_currency_key))) {
@@ -324,7 +323,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         List<PicsEntry> picsData = dailyExpTagsWithPicsPojo.getPicsEntries();
         for (PicsEntry p : picsData) {
             picDataForDB.put(p.getPic_name(), p.getPic_uri());
-
         }
 
         //fill the chipgroup:
@@ -341,7 +339,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
             });
             cg_picUriResult.addView(chip_pic);
         }
-
     }
 
     @Override
@@ -365,14 +362,15 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
 
         //tags
         tv_addCost_label = findViewById(R.id.tv_addCost_label);
+        ll_pickATag = findViewById(R.id.ll_pickATag);
         tv_pickATag = findViewById(R.id.tv_pickATag);
         cg_tags = findViewById(R.id.cg_tags);
 
         //pics
+        ll_takeAPic = findViewById(R.id.ll_takeAPic);
         tv_takeAPic = findViewById(R.id.tv_takeAPic);
         cg_picUriResult = findViewById(R.id.cg_picUriResult);
         slider = findViewById(R.id.slider);
-
 
         // one cost item
         mCostDescription = findViewById(R.id.et_costDescription);
@@ -507,20 +505,7 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
             setCategory = null;
             setCategory = CATEGORY_9;
         });
-
     }
-
-
-//    public void ctgBtnGetInFocus(View v) {
-//        horScrollV.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-//            @Override
-//            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
-//                                       int oldTop, int oldRight, int oldBottom) {
-//                horScrollV.removeOnLayoutChangeListener(this);
-//                horScrollV.scrollTo(View.FOCUS_RIGHT, 0);
-//            }
-//        });
-//    }
 
     public void setAlphaLow() {
         iBtn_car.setAlpha((float) 0.3);
@@ -588,9 +573,8 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         datePickerDialog.show();
     }
 
-
     public void pickATag() {
-        tv_pickATag.setOnClickListener(v -> {
+        ll_pickATag.setOnClickListener(v -> {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
 //                if (prev != null) {
@@ -639,7 +623,7 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     }
 
     public void takeAPic() {
-        tv_takeAPic.setOnClickListener(v -> {
+        ll_takeAPic.setOnClickListener(v -> {
 
             // Alert dialog for capture or select from galley
             final CharSequence[] items = {
@@ -713,7 +697,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
             } else if (requestCode == REQUEST_GALLERY_PHOTO) {
                 Uri selectedImage = data.getData();
 
-                //todo if img is rotated, #305: https://github.com/daimajia/AndroidImageSlider/issues/305
                 File imgFile = new File(getRealPathFromUri(selectedImage));
                 if (imgFile.exists()) {
                     photoUriFromGalleryString = (Uri.fromFile(imgFile)).toString();
@@ -730,10 +713,10 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
 
         final AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setView(nameYourPic);
-      //  final EditText edittext = new EditText(getApplicationContext());
+        //  final EditText edittext = new EditText(getApplicationContext());
         final EditText edittext = nameYourPic.findViewById(R.id.et_nameYourPic);
-       // alert.setTitle("Name your picture");
-       // alert.setView(edittext);
+        // alert.setTitle("Name your picture");
+        // alert.setView(edittext);
         alert.setCancelable(false);
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -783,7 +766,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
             }
         }
     }
-
 
     /**
      * Requesting multiple permissions (storage and camera) at once
@@ -847,9 +829,8 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", getPackageName(), null);
         intent.setData(uri);
-        startActivityForResult(intent, 101);
+        startActivityForResult(intent, 101);  //todo: registerForActivityResult
     }
-
 
     /**
      * Create file with current timestamp name
@@ -902,7 +883,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     /**
      * onSaveItemClicked is called when the "save" item is clicked.
@@ -1039,20 +1019,11 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
                     }
                 }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(AddCostActivity.this, "Item saved", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                //  Log.d(String.valueOf(picDataForDB), "huhuhuhuh");  //
+                runOnUiThread(() -> Toast.makeText(AddCostActivity.this, "Item saved", Toast.LENGTH_SHORT).show());
                 finish();
-
             }
         });
     }
-
-
 }
 //------------------------------------------------------------------------------------------
 

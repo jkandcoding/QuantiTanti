@@ -29,7 +29,6 @@ public class PhotosDialogFragment extends DialogFragment {
     public static final String BUNDLE_PHOTOS = "bundlePhotos";
     private SliderLayout slider;
 
-
     private Map<String, String> photos = new HashMap<>();
 
     public PhotosDialogFragment() {
@@ -60,13 +59,11 @@ public class PhotosDialogFragment extends DialogFragment {
 
             for (Map.Entry<String, String> entry : photos.entrySet()) {
 
-                //   String string = Helper.setPic(entry.getValue(), slider);
-
                 TextSliderView textSliderView = new TextSliderView(getContext());
                 textSliderView
                         .description(entry.getKey())
                         .image(entry.getValue())
-                .setScaleType(BaseSliderView.ScaleType.CenterCrop);
+                        .setScaleType(BaseSliderView.ScaleType.CenterCrop);
 
                 //view transition effects:
                 slider.setPresetTransformer(5);
@@ -75,7 +72,6 @@ public class PhotosDialogFragment extends DialogFragment {
                     slider.setPagerTransformer(false, new BaseTransformer() {
                         @Override
                         protected void onTransform(View view, float position) {
-
                         }
                     });
                 }

@@ -19,7 +19,6 @@ public abstract class CostDatabase extends RoomDatabase {
     private static CostDatabase sInstance;
 
 
-
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
@@ -65,7 +64,7 @@ public abstract class CostDatabase extends RoomDatabase {
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         CostDatabase.class, CostDatabase.DATABASE_NAME)
                         .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
-      //                  .allowMainThreadQueries()
+                        //                  .allowMainThreadQueries()
                         .build();
             }
         }
@@ -74,8 +73,12 @@ public abstract class CostDatabase extends RoomDatabase {
     }
 
     public abstract CostDao costDao();
+
     public abstract TagsDao tagsDao();
+
     public abstract Expenses_tags_join_dao expenses_tags_join_dao();
+
     public abstract PicsDao picsDao();
+
     public abstract DailyExpensesDao dailyExpensesDao();
 }

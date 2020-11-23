@@ -41,7 +41,6 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
     // Class variables for the List that holds cost data and the Context
     private List<TotalFrontCostPojo> mCostEntries;
     private Context mContext;
-    private CostDatabase mDb;
 
     public CostAdapter(ItemClickListener listener, Context context) {
         mItemClickListener = listener;
@@ -74,7 +73,6 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
     public void onBindViewHolder(@NonNull final CostAdapter.CostViewHolder holder, int position) {
         // Determine the values of the wanted data
         TotalFrontCostPojo totalFrontCostPojo = mCostEntries.get(position);
-        String dateExpense = totalFrontCostPojo.getDate();
         String week_day = Helper.fromUperCaseToFirstCapitalizedLetter
                 (LocalDate.parse(totalFrontCostPojo.getDate()).getDayOfWeek().toString());
         String date_No = valueOf(LocalDate.parse(totalFrontCostPojo.getDate()).getDayOfMonth());
@@ -94,24 +92,23 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
             sp.setSpan(new StyleSpan(Typeface.BOLD), 0, sp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             if ((entry.getKey() + "=" + entry.getValue()).equals(lastEntry.toString())) {
                 if (entry.getValue() < 0) {
-                   // holder.tv_mainCost.setText(entry.getKey() + " to much");
+                    // holder.tv_mainCost.setText(entry.getKey() + " to much");
                     holder.tv_mainCost.setText(sp);
                     holder.tv_mainCost.append(" to much");
                 } else {
-                   // holder.tv_mainCost.append(entry.getKey() + " " + Helper.fromIntToDecimalString(entry.getValue()));
+                    // holder.tv_mainCost.append(entry.getKey() + " " + Helper.fromIntToDecimalString(entry.getValue()));
                     holder.tv_mainCost.append(sp, 0, sp.length());
                     holder.tv_mainCost.append(" " + Helper.fromIntToDecimalString(entry.getValue()));
                 }
             } else {
                 if (entry.getValue() < 0) {
-                   // holder.tv_mainCost.append(entry.getKey() + " to much '\n' ");
+                    // holder.tv_mainCost.append(entry.getKey() + " to much '\n' ");
                     holder.tv_mainCost.append(sp, 0, sp.length());
                     holder.tv_mainCost.append(" to much '\n' ");
                 } else {
                     //holder.tv_mainCost.append(sp + " " + Helper.fromIntToDecimalString(entry.getValue()) + '\n');
                     holder.tv_mainCost.append(sp, 0, sp.length());
                     holder.tv_mainCost.append(" " + Helper.fromIntToDecimalString(entry.getValue()) + '\n');
-
                 }
             }
         }
@@ -144,10 +141,6 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
         return mCostEntries.size();
     }
 
-    public List<TotalFrontCostPojo> getDailyExpenses() {
-        return mCostEntries;
-    }
-
     /**
      * When data changes, this method updates the list of dailyexpenses
      * and notifies the adapter to use the new values on it
@@ -164,7 +157,6 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
 
         void onItemLongClickListener(String itemDate);
     }
-
 
     // Inner class for creating ViewHolders
     class CostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -204,5 +196,4 @@ public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder
             return true;
         }
     }
-
 }

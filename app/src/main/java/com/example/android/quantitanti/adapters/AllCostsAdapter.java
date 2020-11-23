@@ -48,9 +48,6 @@ import static java.lang.String.valueOf;
 
 public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCostsViewHolder> implements Filterable {
 
-    private static String currency1;
-    private static String currency2;
-
     // Member variable to handle item clicks
     final private ItemClickListener mItemClickListener;
 
@@ -58,17 +55,11 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
     private List<DailyExpenseTagsWithPicsPojo> mAllCosts;
     //copy of mAllCosts for Search purpose:
     private List<DailyExpenseTagsWithPicsPojo> searchAllCosts;
-    private List<DailyExpenseTagsWithPicsPojo> filteredCost;
-
-    private boolean searched = false;
-    private boolean filtered = false;
-    private int filteredCount;
 
     private List<String> categoriesForFilter;
     private List<String> tagsForFilter;
 
     private Context mContext;
-
 
     public AllCostsAdapter(ItemClickListener listener, Context context) {
         mItemClickListener = listener;
@@ -155,8 +146,8 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
         holder.imgv_category_all.setColorFilter(mContext.getResources().getColor(R.color.color_primary_light), PorterDuff.Mode.SRC_IN);
         switch (oneCostCategory) {
             case CATEGORY_1:
-             //   holder.imgv_category_all.setBackgroundResource(R.drawable.car);
-               holder.imgv_category_all.setImageResource(R.drawable.ic_car);
+                //   holder.imgv_category_all.setBackgroundResource(R.drawable.car);
+                holder.imgv_category_all.setImageResource(R.drawable.ic_car);
                 break;
             case CATEGORY_2:
                 holder.imgv_category_all.setImageResource(R.drawable.ic_clothes);
@@ -235,7 +226,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
         return searchFilter;
     }
 
-    private Filter searchFilter = new Filter() {
+    private final Filter searchFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<DailyExpenseTagsWithPicsPojo> filteredListHelper = new ArrayList<>();
@@ -244,7 +235,6 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
             if ((constraint == null || constraint.length() == 0) && (categoriesForFilter == null || categoriesForFilter.size() == 0) && (tagsForFilter == null || tagsForFilter.size() == 0)) {
                 filteredList.addAll(searchAllCosts);
 
-                //todo -> da li tagsForFilter ide u istu petlju ili posebno???
                 //filter
             } else if ((constraint == null || constraint.length() == 0) && (categoriesForFilter != null || tagsForFilter != null)) {
                 if (categoriesForFilter != null && tagsForFilter == null) {
@@ -297,7 +287,6 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
                             filteredList.add(item);
                         }
                     }
-
                 }
             }
             FilterResults results = new FilterResults();

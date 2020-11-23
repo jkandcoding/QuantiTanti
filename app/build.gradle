@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.jkandcoding.android.quantitanti"
         minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 4
-        versionName "2.2"
+        targetSdkVersion 29
+        versionCode 7
+        versionName "3.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -78,6 +78,7 @@ dependencies {
     // Dexter runtime permissions
     implementation 'com.karumi:dexter:6.0.0'
     // daimajia / AndroidImageSlider
+    //noinspection GradleCompatible
     implementation "com.android.support:support-v4:28.0.0"
     implementation 'com.squareup.picasso:picasso:2.3.2'
     implementation 'com.nineoldandroids:library:2.4.0'

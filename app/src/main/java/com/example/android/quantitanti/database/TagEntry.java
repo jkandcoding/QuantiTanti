@@ -18,7 +18,6 @@ public class TagEntry {
     public TagEntry() {
     }
 
-
     @Ignore
     public TagEntry(String tag_name) {
         this.tag_name = tag_name;

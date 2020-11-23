@@ -1,15 +1,5 @@
 package com.example.android.quantitanti.models;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Transformations;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 public class CostPojo {
 
     private String currency;
@@ -42,6 +32,4 @@ public class CostPojo {
     public void setCategoryCosts(int categoryCosts) {
         this.categoryCosts = categoryCosts;
     }
-
-
 }

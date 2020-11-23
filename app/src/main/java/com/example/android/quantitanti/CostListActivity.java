@@ -1,53 +1,23 @@
 package com.example.android.quantitanti;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
-
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.android.quantitanti.adapters.CostAdapter;
 import com.example.android.quantitanti.adapters.SwitchFrontFragmentAdapter;
-import com.example.android.quantitanti.database.CostDatabase;
-import com.example.android.quantitanti.factories.CostListViewModelFactory;
-import com.example.android.quantitanti.viewmodels.CostListViewModel;
-import com.example.android.quantitanti.models.TotalFrontCostPojo;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.util.Comparator;
-import java.util.Currency;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 public class CostListActivity extends AppCompatActivity {
 
-    // Constant for logging
-    private static final String TAG = CostListActivity.class.getSimpleName();
-
- //   constants for sp currency
-
-
-    //todo NOVO
     private ViewPager2 viewPagerFragment;
     private SwitchFrontFragmentAdapter switchAdapter;
     TabLayout tabLayoutFragments;
@@ -61,7 +31,7 @@ public class CostListActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         myToolbar.setTitleTextAppearance(this, R.style.AppTitle);
 
-        //todo ovo ostaje u CostListActivityu -> setup fragmentPager
+        //this stays in CostListActivity -> setup fragmentPager
         viewPagerFragment = findViewById(R.id.fragment_pager);
         switchAdapter = new SwitchFrontFragmentAdapter(this);
         viewPagerFragment.setAdapter(switchAdapter);
@@ -71,14 +41,13 @@ public class CostListActivity extends AppCompatActivity {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 if (position == 0) {
-                    tab.setText("DAILY TOTAL");
+                    tab.setText("DAILY TOTALS");
                 } else if (position == 1) {
                     tab.setText("ALL COSTS");
                 }
             }
         }).attach();
-   }
-
+    }
 
     @Override
     public void onBackPressed() {
@@ -91,7 +60,6 @@ public class CostListActivity extends AppCompatActivity {
             viewPagerFragment.setCurrentItem(viewPagerFragment.getCurrentItem() - 1);
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,9 +75,19 @@ public class CostListActivity extends AppCompatActivity {
             startActivity(startSettingsActivity);
             return true;
         }
+        if (id == R.id.action_legal) {
+            String privacyPolicyUrl = "https://sites.google.com/view/quantitanti-legal";
+            openWebPage(privacyPolicyUrl);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
-
-
+    private void openWebPage(String privacyPolicyUrl) {
+        Uri uri = Uri.parse(privacyPolicyUrl);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
 }

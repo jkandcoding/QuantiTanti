@@ -29,30 +29,12 @@ public class PicsEntry {
     public PicsEntry() {
     }
 
-//todo-x-for delete
-
-    //    @Ignore
-//    public PicsEntry(int pics_id, String pic_uri, String pic_name, int expense_id) {
-//        this.pics_id = pics_id;
-//        this.pic_uri = pic_uri;
-//        this.pic_name = pic_name;
-//        this.expense_id = expense_id;
-//    }
-
     @Ignore
     public PicsEntry(String pic_uri, String pic_name, int expense_id) {
         this.pic_uri = pic_uri;
         this.pic_name = pic_name;
         this.expense_id = expense_id;
     }
-
-//todo-x-for delete
-
-//        @Ignore
-//    public PicsEntry(String pic_uri, int expense_id) {
-//        this.pic_uri = pic_uri;
-//        this.expense_id = expense_id;
-//    }
 
     public int getPics_id() {
         return pics_id;
