@@ -59,9 +59,9 @@ dependencies {
     //RecycleView
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     // For control over item selection of both touch and mouse driven selection
-    implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc01"
+    implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc03"
     //FAB
-    implementation 'com.google.android.material:material:1.3.0-alpha02'
+    implementation 'com.google.android.material:material:1.3.0-alpha03'
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.2.0"
     //saved state
@@ -79,7 +79,7 @@ dependencies {
     implementation 'com.karumi:dexter:6.0.0'
     // daimajia / AndroidImageSlider
     //noinspection GradleCompatible
-    implementation "com.android.support:support-v4:28.0.0"
+    //implementation "com.android.support:support-v4:28.0.0"
     implementation 'com.squareup.picasso:picasso:2.3.2'
     implementation 'com.nineoldandroids:library:2.4.0'
     implementation 'com.daimajia.slider:library:1.1.5@aar'

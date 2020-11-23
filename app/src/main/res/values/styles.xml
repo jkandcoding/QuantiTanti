@@ -16,7 +16,6 @@
     <style name="AppTitle">
         <item name="android:fontFamily">@font/cabin_sketch_bold</item>
         <item name="android:textSize">25sp</item>
-
     </style>
 
     <!--    for tv_toolbar_text -->
@@ -26,10 +25,11 @@
 
 
     <!--    for alertDialog-->
-    <style name="AlertDialogStyle" parent="Theme.MaterialComponents.Dialog">
+    <style name="AlertDialogStyle" parent="Theme.MaterialComponents.Light.Dialog">
         <item name="android:textColorPrimary">@color/color_primary_dark</item>
         <item name="colorAccent">@color/color_primary_dark</item>
-        <item name="colorOnPrimary">@color/color_primary</item>     <!--todo: btn text color-->
+        <item name="colorOnPrimary">@color/color_primary</item>     <!-- btn text color on "Deleting tag" dialog-->
+        <item name="colorPrimary">@color/color_primary</item>       <!-- btn text color on "Deleting cost" dialog-->
         <item name="textColorAlertDialogListItem">@color/color_primary_dark</item>
     </style>
 
