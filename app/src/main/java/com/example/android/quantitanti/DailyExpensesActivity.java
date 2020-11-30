@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.daimajia.slider.library.SliderLayout;
 import com.example.android.quantitanti.adapters.DailyCostAdapter;
 import com.example.android.quantitanti.adapters.ScreenSlidePagerAdapter;
 import com.example.android.quantitanti.database.CostDatabase;

@@ -202,6 +202,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
         if (mAllCosts == null) {
             return 0;
         }
+        Log.d(String.valueOf(mAllCosts.size()), "jkjkjkjk");
         return mAllCosts.size();
     }
 
@@ -232,10 +233,13 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
             List<DailyExpenseTagsWithPicsPojo> filteredListHelper = new ArrayList<>();
             List<DailyExpenseTagsWithPicsPojo> filteredList = new ArrayList<>();
 
+
+            //----------- search = false, filter = false ----------------
+
             if ((constraint == null || constraint.length() == 0) && (categoriesForFilter == null || categoriesForFilter.size() == 0) && (tagsForFilter == null || tagsForFilter.size() == 0)) {
                 filteredList.addAll(searchAllCosts);
 
-                //filter
+                //----------- search = false, filter = true ----------------
             } else if ((constraint == null || constraint.length() == 0) && (categoriesForFilter != null || tagsForFilter != null)) {
                 if (categoriesForFilter != null && tagsForFilter == null) {
                     for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
@@ -245,11 +249,13 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
                             }
                         }
                     }
-                } else if (categoriesForFilter == null && tagsForFilter != null) {
+                } else if (categoriesForFilter == null && tagsForFilter != null) {   //todo bug
                     for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
                         for (String tag : tagsForFilter) {
                             if (item.getTagNames().contains(tag)) {
-                                filteredList.add(item);
+                                if (!filteredList.contains(item)) {
+                                    filteredList.add(item);
+                                }
                             }
                         }
                     }
@@ -258,39 +264,35 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
                         for (String category : categoriesForFilter) {
                             if (category.equals(item.getCostEntry().getCategory())) {
                                 filteredListHelper.add(item);
+
                             }
                         }
                     }
                     for (DailyExpenseTagsWithPicsPojo item : filteredListHelper) {
                         for (String tag : tagsForFilter) {
                             if (item.getTagNames().contains(tag)) {
-                                filteredList.add(item);
+                                if (!filteredList.contains(item)) {
+                                    filteredList.add(item);
+                                }
                             }
                         }
                     }
                 }
-
+                //----------- search = true, filter = false ----------------
             } else if (constraint.length() != 0) {
-                //search #1
-                if (mAllCosts.size() == searchAllCosts.size()) {
-                    String filterPattern = constraint.toString().toLowerCase().trim();
-                    for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
-                        if (item.getCostEntry().getName().toLowerCase().contains(filterPattern)) {
-                            filteredList.add(item);
-                        }
-                    }
-                } else {
-                    // search when filtered
-                    String filterPattern = constraint.toString().toLowerCase().trim();
-                    for (DailyExpenseTagsWithPicsPojo item : mAllCosts) {
-                        if (item.getCostEntry().getName().toLowerCase().contains(filterPattern)) {
-                            filteredList.add(item);
-                        }
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
+                    if (item.getCostEntry().getName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
                     }
                 }
             }
+
+            // TODO: simultaneously search what is filtered and filter what is searched
+
             FilterResults results = new FilterResults();
             results.values = filteredList;
+            Log.d("kraj metode", "testt");
             return results;
         }
 
@@ -299,6 +301,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
             mAllCosts.clear();
             mAllCosts.addAll((List) results.values);
             notifyDataSetChanged();
+            Log.d("publish", "testt");
         }
     };
 

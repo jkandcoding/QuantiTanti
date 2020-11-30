@@ -16,20 +16,32 @@ import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.concurrent.CountDownLatch;
+
 public class CostListActivity extends AppCompatActivity {
 
     private ViewPager2 viewPagerFragment;
     private SwitchFrontFragmentAdapter switchAdapter;
     TabLayout tabLayoutFragments;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cost_list);
 
+        CountDownLatch cdl = new CountDownLatch(1);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar_cl);
         setSupportActionBar(myToolbar);
-        myToolbar.setTitleTextAppearance(this, R.style.AppTitle);
+        cdl.countDown();
+
+        try {
+            cdl.await();
+            myToolbar.setTitleTextAppearance(this, R.style.AppTitle);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
 
         //this stays in CostListActivity -> setup fragmentPager
         viewPagerFragment = findViewById(R.id.fragment_pager);

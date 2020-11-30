@@ -1,7 +1,6 @@
 package com.example.android.quantitanti.fragments;
 
-import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,13 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.daimajia.slider.library.SliderLayout;
-import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.TextSliderView;
-import com.daimajia.slider.library.Transformers.BaseTransformer;
 import com.example.android.quantitanti.R;
-import com.example.android.quantitanti.database.CostDatabase;
-import com.example.android.quantitanti.helpers.Helper;
+import com.example.android.quantitanti.adapters.PhotoSliderAdapter;
+import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -27,7 +24,8 @@ import java.util.Map;
 public class PhotosDialogFragment extends DialogFragment {
 
     public static final String BUNDLE_PHOTOS = "bundlePhotos";
-    private SliderLayout slider;
+    private SliderView sliderView;
+    private PhotoSliderAdapter sliderAdapter;
 
     private Map<String, String> photos = new HashMap<>();
 
@@ -53,37 +51,23 @@ public class PhotosDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        slider = view.findViewById(R.id.slider);
+        sliderView = view.findViewById(R.id.imageSlider);
+        sliderAdapter = new PhotoSliderAdapter(getContext());
+
+        sliderView.setSliderAdapter(sliderAdapter);
         if (getArguments() != null) {
             photos = (Map<String, String>) getArguments().getSerializable(BUNDLE_PHOTOS);
+            sliderAdapter.setmSliderItems(photos);
 
-            for (Map.Entry<String, String> entry : photos.entrySet()) {
-
-                TextSliderView textSliderView = new TextSliderView(getContext());
-                textSliderView
-                        .description(entry.getKey())
-                        .image(entry.getValue())
-                        .setScaleType(BaseSliderView.ScaleType.CenterCrop);
-
-                //view transition effects:
-                slider.setPresetTransformer(5);
-                if (photos.size() == 1) {
-                    slider.stopAutoCycle();
-                    slider.setPagerTransformer(false, new BaseTransformer() {
-                        @Override
-                        protected void onTransform(View view, float position) {
-                        }
-                    });
-                }
-                slider.addSlider(textSliderView);
-                slider.setPresetIndicator(SliderLayout.PresetIndicators.Right_Bottom);
-            }
+            sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+//            sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+//            sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_BACK_AND_FORTH);
+//            sliderView.setIndicatorSelectedColor(Color.WHITE);
+//            sliderView.setIndicatorUnselectedColor(Color.GRAY);
+//            sliderView.setScrollTimeInSec(1); //set scroll delay in seconds :
+//            sliderView.startAutoCycle();
         }
     }
 
-    @Override
-    public void onStop() {
-        slider.stopAutoCycle();
-        super.onStop();
-    }
+
 }

@@ -42,12 +42,10 @@ public class MultiselectTagDialogFragment extends DialogFragment implements Tags
     public static final String BUNDLE_TAGS = "bundleTags";
 
     List<TagsPojo> tagsChecked = new ArrayList<>();
-    List<String> tagNames = new ArrayList<>();
     ArrayList<String> choosenTagsArray = new ArrayList<>();
 
     List<Integer> expansesIdsForDel = new ArrayList<>();
     String tagNameForDel;
-    int tagIdforDel;
 
     // private TagsAdapter tagsAdapter;
     private TagsAdapter tagsAdapter;
@@ -163,8 +161,7 @@ public class MultiselectTagDialogFragment extends DialogFragment implements Tags
                 });
                 //if tag is asigned to costs:
             } else {
-                Log.d(String.valueOf(expansesIdsForDel), "jkjkjjkj");
-                deletingTagasignedToCosts(tagIdForDel);
+               deletingTagasignedToCosts(tagIdForDel);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -222,7 +219,8 @@ public class MultiselectTagDialogFragment extends DialogFragment implements Tags
         dataPasser = (OnDataPass) context;
     }
 
-    private void dismissMultiSelectDialog() {
+    private void
+    dismissMultiSelectDialog() {
         btn_cancelDialog.setOnClickListener(v -> dismiss());
 
         btn_selectDialog.setOnClickListener(v -> {

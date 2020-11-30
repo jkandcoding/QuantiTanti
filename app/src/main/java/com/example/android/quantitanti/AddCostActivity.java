@@ -40,16 +40,15 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
-import com.daimajia.slider.library.SliderLayout;
 import com.example.android.quantitanti.database.CostDatabase;
 import com.example.android.quantitanti.database.CostEntry;
 import com.example.android.quantitanti.database.Expenses_tags_join;
 import com.example.android.quantitanti.database.PicsEntry;
 import com.example.android.quantitanti.factories.AddCostViewModelFactory;
+import com.example.android.quantitanti.fragments.CurrencyFragment;
 import com.example.android.quantitanti.fragments.MultiselectTagDialogFragment;
 import com.example.android.quantitanti.helpers.Helper;
 import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
-import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
 import com.example.android.quantitanti.viewmodels.AddCostViewModel;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -88,7 +87,7 @@ import static com.example.android.quantitanti.database.CostEntry.CATEGORY_8;
 import static com.example.android.quantitanti.database.CostEntry.CATEGORY_9;
 import static java.lang.String.valueOf;
 
-public class AddCostActivity extends AppCompatActivity implements MultiselectTagDialogFragment.OnDataPass, SharedPreferences.OnSharedPreferenceChangeListener {
+public class AddCostActivity extends AppCompatActivity implements MultiselectTagDialogFragment.OnDataPass, CurrencyFragment.OnDataPassCurr, SharedPreferences.OnSharedPreferenceChangeListener {
 
     // String key for MultiSelectTagDialogFragment
     public static final String BUNDLE_TAGS = "bundleTags";
@@ -164,7 +163,7 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     String photoUriFromCameraString = "";
     String photoUriFromGalleryString = "";
     File mPhotoFile;
-    private SliderLayout slider;
+//    private SliderLayout slider;
 
     private int mCostId = DEFAULT_COST_ID;
     private static final String DEFAULT_COST_DATE = "2020-01-01";
@@ -251,8 +250,17 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
 
     private void pickCurrency() {
         mShowCurrency.setOnClickListener(v -> {
-            Intent startSettingsActivity = new Intent(AddCostActivity.this, SettingsActivity.class);
-            startActivity(startSettingsActivity);
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+//                if (prev != null) {
+//                    ft.remove(prev);
+//                }
+//                ft.addToBackStack(null);
+            DialogFragment dialogFragment = new CurrencyFragment();
+            dialogFragment.show(ft, "currencyDialog");
+
+
         });
     }
 
@@ -331,7 +339,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         for (Map.Entry<String, String> entry : picDataForDB.entrySet()) {
             Chip chip_pic = (Chip) getLayoutInflater().inflate(R.layout.single_pic_chip_layout, null);
             chip_pic.setText(entry.getKey());
-            Log.d(entry.getValue(), "hhhhhhhhh");
             chip_pic.setCloseIconVisible(true);
             chip_pic.setOnCloseIconClickListener(v -> {
                 cg_picUriResult.removeView(chip_pic);
@@ -370,7 +377,7 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
         ll_takeAPic = findViewById(R.id.ll_takeAPic);
         tv_takeAPic = findViewById(R.id.tv_takeAPic);
         cg_picUriResult = findViewById(R.id.cg_picUriResult);
-        slider = findViewById(R.id.slider);
+        //slider = findViewById(R.id.slider);
 
         // one cost item
         mCostDescription = findViewById(R.id.et_costDescription);
@@ -571,6 +578,11 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
                     tv_toolbar_month_year.setText(monthString + ", " + yearString);
                 }, year, month - 1, dayOfMonth);  //indexes of DatePicker for month (0-11), indexes of threetenABP (1-12)
         datePickerDialog.show();
+    }
+
+    @Override
+    public void onDataPassCurr(String currencyCode) {
+        mShowCurrency.setText(currencyCode);
     }
 
     public void pickATag() {
@@ -1024,6 +1036,8 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
             }
         });
     }
+
+
 }
 //------------------------------------------------------------------------------------------
 
