@@ -58,8 +58,6 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
         mAdapter = new CostAdapter(this, getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
-//        DividerItemDecoration decoration = new DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL);
-//        mRecyclerView.addItemDecoration(decoration);
         return view;
     }
 
@@ -81,7 +79,6 @@ public class TotalCostFragment extends Fragment implements CostAdapter.ItemClick
 
         mDb = CostDatabase.getInstance(requireActivity().getApplicationContext());
 
-        //       setupSharedPreferences();
         setupViewModel();
     }
 

@@ -249,7 +249,7 @@ public class AllCostsAdapter extends RecyclerView.Adapter<AllCostsAdapter.AllCos
                             }
                         }
                     }
-                } else if (categoriesForFilter == null && tagsForFilter != null) {   //todo bug
+                } else if (categoriesForFilter == null && tagsForFilter != null) {
                     for (DailyExpenseTagsWithPicsPojo item : searchAllCosts) {
                         for (String tag : tagsForFilter) {
                             if (item.getTagNames().contains(tag)) {

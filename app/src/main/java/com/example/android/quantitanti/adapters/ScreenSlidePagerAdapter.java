@@ -87,7 +87,6 @@ public class ScreenSlidePagerAdapter extends RecyclerView.Adapter<ScreenSlidePag
         }
     }
 
-
     @Override
     public int getItemCount() {
         if (mTotalCostPojos == null) {

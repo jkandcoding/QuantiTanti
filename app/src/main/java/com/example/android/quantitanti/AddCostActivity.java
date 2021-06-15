@@ -163,7 +163,6 @@ public class AddCostActivity extends AppCompatActivity implements MultiselectTag
     String photoUriFromCameraString = "";
     String photoUriFromGalleryString = "";
     File mPhotoFile;
-//    private SliderLayout slider;
 
     private int mCostId = DEFAULT_COST_ID;
     private static final String DEFAULT_COST_DATE = "2020-01-01";

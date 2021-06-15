@@ -1,18 +1,19 @@
 apply plugin: 'com.android.application'
 
+
 android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.jkandcoding.android.quantitanti"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 7
-        versionName "3.1"
+        versionCode 8
+        versionName "3.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation"  : "$projectDir/schemas".toString(),
-                             "room.incremental"     : "true",      //todo what does this do?
+                             "room.incremental"     : "true",
                              "room.expandProjection": "true"]
                 //use only columns that you need in queries
 
@@ -83,25 +84,27 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     // Glide v4 uses this new annotation processor -- see https://bumptech.github.io/glide/doc/generatedapi.html
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-
-
-
-    // daimajia / AndroidImageSlider
-    //noinspection GradleCompatible
-    //implementation "com.android.support:support-v4:28.0.0"
-//    implementation 'com.squareup.picasso:picasso:2.3.2'
-//    implementation 'com.nineoldandroids:library:2.4.0'
-//    implementation 'com.daimajia.slider:library:1.1.5@aar'
-
-
-
     //viewpager
     implementation "androidx.viewpager2:viewpager2:1.1.0-alpha01"
     //fragment
     implementation 'androidx.fragment:fragment-ktx:1.3.0-alpha08'
-    //retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    //gson
-    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    //ads
+    implementation 'com.google.android.gms:play-services-ads:19.6.0'
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:26.2.0')
+    // Add the dependency for the Firebase SDK for Google Analytics
+    implementation 'com.google.firebase:firebase-analytics'
+    //...and Firebase Remote Config
+    //implementation 'com.google.firebase:firebase-config'
+    //...and Firebase Storage
+    //implementation 'com.google.firebase:firebase-storage'
+
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-messaging'
+
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
 
 }
+
+apply plugin: 'com.google.gms.google-services'

@@ -35,6 +35,7 @@ import static java.lang.String.valueOf;
 //Adapter for CostListActivity
 public class CostAdapter extends RecyclerView.Adapter<CostAdapter.CostViewHolder> {
 
+    //first branch
     // Member variable to handle item clicks
     final private ItemClickListener mItemClickListener;
 

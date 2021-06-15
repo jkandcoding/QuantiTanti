@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,14 +33,26 @@ import com.example.android.quantitanti.models.DailyExpenseTagsWithPicsPojo;
 import com.example.android.quantitanti.models.TotalCostPojo;
 import com.example.android.quantitanti.sharedpreferences.SettingsActivity;
 import com.example.android.quantitanti.viewmodels.DailyExpensesViewModel;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.TextStyle;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,7 +60,6 @@ import static java.lang.String.valueOf;
 
 public class DailyExpensesActivity extends AppCompatActivity implements DailyCostAdapter.DailyItemClickListener {
 
-    // Member variables for the adapter and RecyclerView
     private RecyclerView mRecyclerView;
     private DailyCostAdapter mAdapter;
 
@@ -72,8 +84,12 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
     TextView tv_dateNo;
     TextView tv_toolbar_mont_year;
 
+    //adMob
+    private AdView mAdView;
+    private String banner_id;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         AndroidThreeTen.init(this);
         setContentView(R.layout.activity_daily_expenses);
@@ -89,18 +105,61 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View calender = inflater.inflate(R.layout.calender_view, null);
         myToolbar.addView(calender);
+
         // set TextView on Toolbar
         LayoutInflater inflater2 = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View monthYear = inflater2.inflate(R.layout.tv_toolbar_montyear, null);
         myToolbar.addView(monthYear);
 
+        //adMob
+        MobileAds.initialize(this, initializationStatus -> {
+        });
+        //Adding test device -> todo REMOVE CODE WHEN RELEASING THE APP
+        List<String> testDeviceIds = Arrays.asList("B115ED9C35FB45C3EBA320C9D527AA0A");
+        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+        MobileAds.setRequestConfiguration(configuration);
+
+        loadBannerIdFromFirebase();
+
         //setting DailyCostAdapter
+        // Member variables for the adapter and RecyclerView
         mRecyclerView = findViewById(R.id.recyclerViewDailyCost);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mAdapter = new DailyCostAdapter(this, this);
         mRecyclerView.setAdapter(mAdapter);
 
+        sumCategoriesSetup();
+        hasIntentFromCostListActivity();
+        swipeToDeleteItems();
+        fabSetup();
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(AddCostActivity.INSTANCE_COST_ID)) {
+            mCostId = savedInstanceState.getInt(AddCostActivity.INSTANCE_COST_ID, DEFAULT_COST_ID);
+        }
+    }
+
+    private void loadBannerIdFromFirebase() {
+        //Firebase
+        FirebaseApp.initializeApp(this);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference().child("banner_unit_id");
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                banner_id = snapshot.getValue(String.class);
+                loadBannerAd();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("banerIssue", String.valueOf(error.toException()));
+            }
+        });
+    }
+
+    private void sumCategoriesSetup() {
         // Instantiate a ViewPager, tablayout and a PagerAdapter:
         viewPager2 = findViewById(R.id.pager);
         tabLayout = findViewById(R.id.tablayout);
@@ -109,15 +168,16 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, true, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-
             }
         });
         tabLayoutMediator.attach();
+    }
 
-        //receiving intent when onItemClickListener in CostListActivity
+    private void hasIntentFromCostListActivity() {
+        //receiving intent when onItemClickListener in CostListActivity is triggered
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_COST_DATE)) {
-            if (mCostDate == DEFAULT_COST_DATE) {
+            if (mCostDate.equals(DEFAULT_COST_DATE)) {
                 mCostDate = intent.getStringExtra(EXTRA_COST_DATE);
 
                 calenderDateSetting();
@@ -126,12 +186,7 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
 
                 final DailyExpensesViewModel viewModel = new ViewModelProvider(this, factory).get(DailyExpensesViewModel.class);
 
-                viewModel.getCosts().observe(this, new Observer<List<DailyExpenseTagsWithPicsPojo>>() {
-                    @Override
-                    public void onChanged(List<DailyExpenseTagsWithPicsPojo> dailyExpenseTagsWithPicsPojos) {
-                        mAdapter.setmDailyCosts(dailyExpenseTagsWithPicsPojos);
-                    }
-                });
+                viewModel.getCosts().observe(this, dailyExpenseTagsWithPicsPojos -> mAdapter.setmDailyCosts(dailyExpenseTagsWithPicsPojos));
 
                 viewModel.getTotalCategoryCosts().observe(this, totalCostPojos -> {
                     int height = 0;
@@ -144,7 +199,9 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                 });
             }
         }
+    }
 
+    private void swipeToDeleteItems() {
         /**
          * Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
          * An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
@@ -188,22 +245,26 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
                 builder.show();
             }
         }).attachToRecyclerView(mRecyclerView);
+    }
 
-        /**
-         * Set the Floating Action Button (FAB) to its corresponding View.
-         * Attach an OnClickListener to it, so that when it's clicked, a new intent will be created
-         * to launch the AddCostActivity.
-         */
+    private void fabSetup() {
         FloatingActionButton fab = findViewById(R.id.fabDaily);
         fab.setOnClickListener(v -> {
             Intent intent1 = new Intent(DailyExpensesActivity.this, AddCostActivity.class);
             intent1.putExtra(EXTRA_COST_DATE, mCostDate);
             startActivity(intent1);
         });
+    }
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(AddCostActivity.INSTANCE_COST_ID)) {
-            mCostId = savedInstanceState.getInt(AddCostActivity.INSTANCE_COST_ID, DEFAULT_COST_ID);
-        }
+    private void loadBannerAd() {
+        ConstraintLayout bannerLayout = findViewById(R.id.cl_banner);
+        mAdView = new AdView(this);
+        //mAdView = findViewById(R.id.av_banner);
+        mAdView.setAdSize(AdSize.BANNER);
+        mAdView.setAdUnitId(banner_id);
+        bannerLayout.addView(mAdView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void calenderDateSetting() {
@@ -243,12 +304,7 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         builder.setMessage("Are you sure you want to delete this cost?");
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDb.costDao().deleteCostWithId(itemId);
-                    }
-                });
+                AppExecutors.getInstance().diskIO().execute(() -> mDb.costDao().deleteCostWithId(itemId));
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -301,6 +357,12 @@ public class DailyExpensesActivity extends AppCompatActivity implements DailyCos
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mAdView.destroy();
+        super.onDestroy();
     }
 }
 

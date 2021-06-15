@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "281158919404",
+    "project_id": "quantitanti-5c699",
+    "storage_bucket": "quantitanti-5c699.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:281158919404:android:b0703c54a13561e13ab1c9",
+        "android_client_info": {
+          "package_name": "com.jkandcoding.android.quantitanti"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "281158919404-bsc3tvrtr9i1gs5fnesaf00b6rbgsmbg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkT7FOA7zz4ZcSlvoH0p4-UeRqCD3FdRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "281158919404-bsc3tvrtr9i1gs5fnesaf00b6rbgsmbg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

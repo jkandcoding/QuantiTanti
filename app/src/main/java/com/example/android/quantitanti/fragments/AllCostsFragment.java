@@ -149,13 +149,7 @@ public class AllCostsFragment extends Fragment implements AllCostsAdapter.ItemCl
 
         //CostListViewModel viewModel = new ViewModelProvider(this, factory).get(CostListViewModel.class);
         CostListViewModel viewModel = new ViewModelProvider(requireActivity(), factory).get(CostListViewModel.class);
-        viewModel.getAllCosts().observe(getViewLifecycleOwner(), new Observer<List<DailyExpenseTagsWithPicsPojo>>() {
-
-            @Override
-            public void onChanged(List<DailyExpenseTagsWithPicsPojo> dailyExpenseTagsWithPicsPojos) {
-                mAdapter.setAllCost(dailyExpenseTagsWithPicsPojos);
-            }
-        });
+        viewModel.getAllCosts().observe(getViewLifecycleOwner(), dailyExpenseTagsWithPicsPojos -> mAdapter.setAllCost(dailyExpenseTagsWithPicsPojos));
     }
 
     @Override
